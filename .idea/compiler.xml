@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="video-downloader-system" />
+        <module name="video-downloader-core" />
+        <module name="video-downloader-app" />
+        <module name="video-downloader-manager" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="video-downloader-app" target="1.9" />
+      <module name="video-downloader-core" target="1.9" />
+      <module name="video-downloader-manager" target="1.9" />
+      <module name="video-downloader-system" target="1.9" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
