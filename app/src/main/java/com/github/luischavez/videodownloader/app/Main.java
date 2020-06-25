@@ -1,90 +1,105 @@
 package com.github.luischavez.videodownloader.app;
 
-import com.github.luischavez.videodownloader.BaseContext;
 import com.github.luischavez.videodownloader.Context;
-import com.github.luischavez.videodownloader.manager.Manager;
-import com.github.luischavez.videodownloader.manager.ManagerListener;
-import com.github.luischavez.videodownloader.manager.SingleThreadManager;
-import com.github.luischavez.videodownloader.system.DefaultSystem;
-import com.github.luischavez.videodownloader.system.GuiceDependencyInjection;
-import com.github.luischavez.videodownloader.system.Injected;
-import com.github.luischavez.videodownloader.system.System;
+import com.github.luischavez.videodownloader.app.configuration.StreamConfiguration;
+import com.github.luischavez.videodownloader.app.gui.MainFrame;
+import com.github.luischavez.videodownloader.app.gui.model.StreamTableModel;
+import com.github.luischavez.videodownloader.app.manager.GuiRepaintManager;
+import com.github.luischavez.videodownloader.app.task.RunningPids;
+import com.github.luischavez.videodownloader.app.task.ScheduleStreamTask;
+import com.github.luischavez.videodownloader.configuration.ConfigurationManager;
+import com.github.luischavez.videodownloader.manager.configuration.SerializerConfigurationManager;
+import com.github.luischavez.videodownloader.schedule.*;
+import com.github.luischavez.videodownloader.manager.support.PluggableSupportManager;
+import com.github.luischavez.videodownloader.support.SupportManager;
+import com.github.luischavez.videodownloader.task.*;
+import org.pushingpixels.substance.api.skin.SubstanceNightShadeLookAndFeel;
+
+import javax.swing.*;
+import java.util.List;
 
 public class Main {
 
-    public static void main(String... args) throws Exception {
-        final System system = new DefaultSystem(new GuiceDependencyInjection());
+    private final AppContext context;
+    private final MainFrame mainFrame;
 
-        system.getDependencyInjection().configure(dependencyRegister -> {
-            dependencyRegister.bind(System.class, system);
-            dependencyRegister.single(Context.class, DefaultConext.class);
-            dependencyRegister.single(IFoo.class, FooA.class);
-            //dependencyRegister.single(DemoManager.class, DemoManager.class);
+    public Main() {
+        context = AppContext.instance();
+        mainFrame = new MainFrame();
+    }
+
+    private void start() {
+        context.getSystem().getDependencyInjection().configure(dependencyRegister -> {
+            dependencyRegister.bindClass(Context.class).toInstance(context);
+
+            dependencyRegister.bindClass(ConfigurationManager.class).toClass(SerializerConfigurationManager.class);
+            dependencyRegister.bindClass(ScheduleManager.class).toClass(DefaultScheduleManager.class);
+            dependencyRegister.bindClass(SupportManager.class).toClass(PluggableSupportManager.class);
+            dependencyRegister.bindClass(TaskManager.class).toClass(DefaultTaskManager.class);
         });
 
-        IFoo foo = system.getDependencyInjection().make(IFoo.class);
-        foo.sayHello();
+        context.getSystem().registerManager(ConfigurationManager.class);
+        context.getSystem().registerManager(ScheduleManager.class);
+        context.getSystem().registerManager(SupportManager.class);
+        context.getSystem().registerManager(TaskManager.class);
 
-        system.registerManager(DemoManager.class);
+        context.getSystem().startAllManagers(true);
 
-        DemoManager demoManager = system.getManager(DemoManager.class);
-        demoManager.start();
+        final ConfigurationManager configurationManager = context.getSystem().getManager(ConfigurationManager.class);
+        final ScheduleManager scheduleManager = context.getSystem().getManager(ScheduleManager.class);
+
+        final List<StreamConfiguration> streamConfigurations = configurationManager.list(StreamConfiguration.class);
+        streamConfigurations.stream()
+                .forEach(streamConfiguration -> {
+                    final long uid = streamConfiguration.uid();
+
+                    final ScheduleTask scheduleTask = new ScheduleStreamTask(context, uid);
+                    final List<Schedule> schedules = streamConfiguration.getSchedules();
+
+                    if (streamConfiguration.isEnabled() && streamConfiguration.isScheduleWhenAvailable()) {
+                        scheduleManager.add(uid, new AllTimeSchedule(), scheduleTask);
+                    } else if (streamConfiguration.isEnabled() && (schedules != null && !schedules.isEmpty())) {
+                        scheduleManager.add(uid, new SchedulePicker(schedules), scheduleTask);
+                    } else {
+                        scheduleManager.add(uid, new NeverSchedule(), scheduleTask);
+                    }
+                });
+
+        SwingUtilities.invokeLater(() -> {
+            try {
+                UIManager.setLookAndFeel(new SubstanceNightShadeLookAndFeel());
+            } catch (Exception ex) {
+                // IGNORE
+            }
+
+            initGui();
+        });
     }
 
-    private static class DefaultConext extends BaseContext implements ManagerListener {
+    private void initGui() {
+        MainFrame mainFrame = new MainFrame();
+        mainFrame.initialize();
 
-        @Injected
-        public DefaultConext(System system) {
-            super(system);
-        }
+        JFrame.setDefaultLookAndFeelDecorated(true);
 
-        @Override
-        public void onManagerStart(Manager manager) {
-            java.lang.System.out.println("started");
-        }
+        GuiRepaintManager guiRepaintManager = context.getSystem().getManager(GuiRepaintManager.class);
+        guiRepaintManager.addComponent(mainFrame.contentPanel.streamTable);
+        guiRepaintManager.start();
 
-        @Override
-        public void onManagerStop(Manager manager) {
-            java.lang.System.out.println("stopped");
-        }
+        context.setGuiLogger((message) -> {
+            if (mainFrame.logTextArea.getLineCount() > 100) {
+                mainFrame.logTextArea.setText("");
+            }
 
-        @Override
-        public void onManagerExecutionException(Manager manager, String message, Throwable throwable) {
-
-        }
+            mainFrame.logTextArea.append(message);
+            mainFrame.logTextArea.append("\n");
+            mainFrame.logTextArea.setCaretPosition(mainFrame.logTextArea.getDocument().getLength());
+        });
     }
 
-    private static class DemoManager extends SingleThreadManager {
+    public static void main(String... args) throws Exception {
+        RunningPids.killAll();
 
-        @Injected
-        public DemoManager(Context context) {
-            super(context);
-        }
-
-        @Override
-        protected boolean doWork() throws Exception {
-            java.lang.System.out.println("test from manager");
-            java.lang.System.out.println(getWorkingDir());
-            return false;
-        }
-    }
-
-    private interface IFoo {
-
-        void sayHello();
-    }
-
-    private static class FooA implements IFoo {
-
-        public void sayHello() {
-            java.lang.System.out.println("hello from foo a");
-        }
-    }
-
-    private static class FooB implements IFoo {
-
-        public void sayHello() {
-            java.lang.System.out.println("hello from foo b");
-        }
+        new Main().start();
     }
 }

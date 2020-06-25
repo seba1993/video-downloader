@@ -6,17 +6,25 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="video-downloader-system" />
-        <module name="video-downloader-core" />
+        <module name="video-downloader-youtube-support" />
         <module name="video-downloader-app" />
-        <module name="video-downloader-manager" />
+        <module name="video-downloader-core" />
+        <module name="video-downloader-serializer-configuration-manager" />
+        <module name="video-downloader-ffmpeg-support" />
+        <module name="video-downloader-pluggable-support-manager" />
+        <module name="video-downloader-guice-system" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="swing-gui" target="1.9" />
       <module name="video-downloader-app" target="1.9" />
       <module name="video-downloader-core" target="1.9" />
-      <module name="video-downloader-manager" target="1.9" />
-      <module name="video-downloader-system" target="1.9" />
+      <module name="video-downloader-ffmpeg-support" target="1.9" />
+      <module name="video-downloader-guice-system" target="1.9" />
+      <module name="video-downloader-pluggable-support-manager" target="1.9" />
+      <module name="video-downloader-schedule-manager" target="1.9" />
+      <module name="video-downloader-serializer-configuration-manager" target="1.9" />
+      <module name="video-downloader-youtube-support" target="1.9" />
     </bytecodeTargetLevel>
   </component>
 </project>

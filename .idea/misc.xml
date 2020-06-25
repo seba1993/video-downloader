@@ -7,6 +7,14 @@
         <option value="$PROJECT_DIR$/manager/pom.xml" />
         <option value="$PROJECT_DIR$/app/pom.xml" />
         <option value="$PROJECT_DIR$/system/pom.xml" />
+        <option value="$PROJECT_DIR$/support/pom.xml" />
+        <option value="$PROJECT_DIR$/support-manager/pom.xml" />
+        <option value="$PROJECT_DIR$/configuration-manager/pom.xml" />
+        <option value="$PROJECT_DIR$/youtube-support/pom.xml" />
+        <option value="$PROJECT_DIR$/guice-system/pom.xml" />
+        <option value="$PROJECT_DIR$/pluggable-support-manager/pom.xml" />
+        <option value="$PROJECT_DIR$/serializer-configuration-manager/pom.xml" />
+        <option value="$PROJECT_DIR$/ffmpeg-support/pom.xml" />
       </list>
     </option>
   </component>

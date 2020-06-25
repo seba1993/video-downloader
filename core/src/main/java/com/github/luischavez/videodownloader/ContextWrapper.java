@@ -2,7 +2,9 @@ package com.github.luischavez.videodownloader;
 
 import com.github.luischavez.videodownloader.listener.InvalidListenerClassException;
 import com.github.luischavez.videodownloader.listener.Listenable;
+import com.github.luischavez.videodownloader.listener.Listener;
 import com.github.luischavez.videodownloader.system.System;
+import org.apache.commons.lang3.ClassUtils;
 
 import java.util.*;
 
@@ -10,6 +12,8 @@ public class ContextWrapper implements Context, Listenable {
 
     private final Context context;
     private final Map<Class<?>, List<Object>> listenersMap;
+
+    private Class<?>[] listenerClasses;
 
     public ContextWrapper(Context context) {
         this.context = context;
@@ -19,8 +23,40 @@ public class ContextWrapper implements Context, Listenable {
         verifyListeners();
     }
 
-    protected Class<?>[] getListenerClasses() {
+    protected final Context getWrappedContext() {
+        return context;
+    }
+
+    private Listener getListenerFromClass(Class<?> objectClass) {
+        if (objectClass.isAnnotationPresent(Listener.class)) {
+            return objectClass.getAnnotation(Listener.class);
+        }
+
         return null;
+    }
+
+    private Class<?>[] getListenerClasses() {
+        if (listenerClasses != null) return listenerClasses;
+
+        ArrayList<Class<?>> list = new ArrayList<>();
+
+        List<Class<?>> classes = ClassUtils.getAllSuperclasses(getClass());
+        List<Class<?>> interfaces = ClassUtils.getAllInterfaces(getClass());
+
+        for (Class<?> objectClass : classes) {
+            Listener listener = getListenerFromClass(objectClass);
+
+            if (listener != null && !list.contains(listener.value())) list.add(listener.value());
+        }
+        for (Class<?> objectClass : interfaces) {
+            Listener listener = getListenerFromClass(objectClass);
+
+            if (listener != null && !list.contains(listener.value())) list.add(listener.value());
+        }
+
+        listenerClasses = list.toArray(new Class[0]);
+
+        return listenerClasses;
     }
 
     private final void verifyListeners() {
@@ -33,12 +69,22 @@ public class ContextWrapper implements Context, Listenable {
         }
     }
 
+    public System getSystem() {
+        return context.getSystem();
+    }
+
     public String getWorkingDir() {
         return context.getWorkingDir();
     }
 
-    public System getSystem() {
-        return context.getSystem();
+    @Override
+    public String getFileSeparator() {
+        return context.getFileSeparator();
+    }
+
+    @Override
+    public String buildPath(String... elements) {
+        return context.buildPath(elements);
     }
 
     @Override

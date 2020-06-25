@@ -4,7 +4,12 @@ import java.util.function.Supplier;
 
 public interface DependencyRegister {
 
-    <T, E extends T> void single(Class<T> baseClass, Class<E> specificClass);
-    <T, E extends T> void bind(Class<T> baseClass, E instance);
-    <T, E extends T> void factory(Class<T> baseClass, Supplier<E> instanceSupplier);
+    <T> DependencyBinder<T> bindClass(Class<T> baseClass);
+
+    interface DependencyBinder<T> {
+
+        <E extends T>void toClass(Class<E> specificClass);
+        <E extends T> void toInstance(E instance);
+        <E extends T> void toFactory(Supplier<E> instanceSupplier);
+    }
 }
