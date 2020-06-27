@@ -4,15 +4,15 @@ new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class com.jgoodies.forms.layout.FormLayout ) {
-			"$columnSpecs": "default, labelcompgap, left:default, labelcompgap, default:grow, labelcompgap, default, labelcompgap, default"
-			"$rowSpecs": "default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, pref, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default"
+			"$columnSpecs": "default, labelcompgap, left:default, labelcompgap, default, labelcompgap, center:max(min;4dlu), labelcompgap, default, labelcompgap, default:grow, labelcompgap, default, labelcompgap, default"
+			"$rowSpecs": "default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, pref, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default"
 		} ) {
 			name: "this"
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.VSpacer" ) {
 				name: "vSpacer1"
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 3
-				"gridWidth": 5
+				"gridWidth": 11
 			} )
 			add( new FormComponent( "javax.swing.JCheckBox" ) {
 				name: "enableCheckBox"
@@ -24,20 +24,20 @@ new FormModel {
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 3
 				"gridY": 3
-				"gridWidth": 3
+				"gridWidth": 9
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.HSpacer" ) {
 				name: "hSpacer1"
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridY": 2
-				"gridHeight": 29
+				"gridHeight": 33
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.HSpacer" ) {
 				name: "hSpacer2"
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-				"gridX": 9
+				"gridX": 15
 				"gridY": 2
-				"gridHeight": 29
+				"gridHeight": 33
 			} )
 			add( new FormComponent( "javax.swing.JButton" ) {
 				name: "saveButton"
@@ -46,7 +46,7 @@ new FormModel {
 					"JavaCodeGenerator.variableModifiers": 1
 				}
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-				"gridX": 7
+				"gridX": 13
 				"gridY": 3
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
@@ -69,7 +69,7 @@ new FormModel {
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 5
 				"gridY": 5
-				"gridWidth": 3
+				"gridWidth": 9
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label1"
@@ -86,7 +86,7 @@ new FormModel {
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 5
 				"gridY": 7
-				"gridWidth": 3
+				"gridWidth": 9
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label2"
@@ -103,7 +103,7 @@ new FormModel {
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 5
 				"gridY": 9
-				"gridWidth": 3
+				"gridWidth": 9
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label3"
@@ -120,7 +120,7 @@ new FormModel {
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 5
 				"gridY": 11
-				"gridWidth": 3
+				"gridWidth": 9
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label13"
@@ -142,6 +142,7 @@ new FormModel {
 				"gridX": 5
 				"gridY": 13
 				"hAlign": sfield com.jgoodies.forms.layout.CellConstraints LEFT
+				"gridWidth": 7
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label5"
@@ -158,7 +159,7 @@ new FormModel {
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 5
 				"gridY": 15
-				"gridWidth": 3
+				"gridWidth": 9
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label6"
@@ -176,6 +177,7 @@ new FormModel {
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 5
 				"gridY": 17
+				"gridWidth": 7
 			} )
 			add( new FormComponent( "javax.swing.JButton" ) {
 				name: "destinationButton"
@@ -184,7 +186,7 @@ new FormModel {
 					"JavaCodeGenerator.variableModifiers": 1
 				}
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-				"gridX": 7
+				"gridX": 13
 				"gridY": 17
 			} )
 			add( new FormComponent( "javax.swing.JCheckBox" ) {
@@ -196,7 +198,7 @@ new FormModel {
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 3
 				"gridY": 19
-				"gridWidth": 3
+				"gridWidth": 9
 			} )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class com.jgoodies.forms.layout.FormLayout ) {
 				"$columnSpecs": "default, labelcompgap, default, labelcompgap, default, labelcompgap, default, labelcompgap, default, labelcompgap, default, labelcompgap, center:max(min;4dlu), labelcompgap, default, labelcompgap, default, labelcompgap, default, labelcompgap, default, labelcompgap, left:default, labelcompgap, default, labelcompgap, default, labelcompgap, default:grow, labelcompgap, default"
@@ -355,7 +357,7 @@ new FormModel {
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 3
 				"gridY": 21
-				"gridWidth": 5
+				"gridWidth": 11
 			} )
 			add( new FormComponent( "javax.swing.JCheckBox" ) {
 				name: "concatenateCheckBox"
@@ -366,14 +368,49 @@ new FormModel {
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 3
 				"gridY": 23
-				"gridWidth": 3
+				"gridWidth": 9
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label15"
+				"text": "Start At"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 3
+				"gridY": 25
+			} )
+			add( new FormComponent( "javax.swing.JSpinner" ) {
+				name: "concatenateHourSpinner"
+				"model": new javax.swing.SpinnerNumberModel( 0, 0, 23, 1 )
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 5
+				"gridY": 25
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label16"
+				"text": ":"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 7
+				"gridY": 25
+				"hAlign": sfield com.jgoodies.forms.layout.CellConstraints CENTER
+			} )
+			add( new FormComponent( "javax.swing.JSpinner" ) {
+				name: "concatenateMinuteSpinner"
+				"model": new javax.swing.SpinnerNumberModel( 0, 0, 59, 1 )
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 9
+				"gridY": 25
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label12"
 				"text": "Destination"
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 3
-				"gridY": 25
+				"gridY": 27
 			} )
 			add( new FormComponent( "javax.swing.JTextField" ) {
 				name: "concatenateTextField"
@@ -383,7 +420,8 @@ new FormModel {
 				}
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 5
-				"gridY": 25
+				"gridY": 27
+				"gridWidth": 7
 			} )
 			add( new FormComponent( "javax.swing.JButton" ) {
 				name: "concatenateDestinationButton"
@@ -392,8 +430,8 @@ new FormModel {
 					"JavaCodeGenerator.variableModifiers": 1
 				}
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-				"gridX": 7
-				"gridY": 25
+				"gridX": 13
+				"gridY": 27
 			} )
 			add( new FormComponent( "javax.swing.JCheckBox" ) {
 				name: "subCheckBox"
@@ -403,18 +441,44 @@ new FormModel {
 				}
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 3
-				"gridY": 27
-				"gridWidth": 3
+				"gridY": 29
+				"gridWidth": 9
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label14"
+				"text": "Language"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 3
+				"gridY": 31
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "languageComboBox"
+				"model": new javax.swing.DefaultComboBoxModel {
+					selectedItem: "Spanish"
+					addElement( "Spanish" )
+					addElement( "English" )
+					addElement( "French" )
+					addElement( "Portuguese" )
+				}
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 5
+				"gridY": 31
+				"hAlign": sfield com.jgoodies.forms.layout.CellConstraints LEFT
+				"gridWidth": 7
 			} )
 			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 				name: "scrollPane2"
+				"visible": false
 				add( new FormComponent( "javax.swing.JList" ) {
 					name: "subList"
 					"model": new javax.swing.DefaultListModel {
 						addElement( "Spanish" )
 						addElement( "English" )
 						addElement( "French" )
-						addElement( "Italian" )
+						addElement( "Portuguese" )
 					}
 					auxiliary() {
 						"JavaCodeGenerator.variableModifiers": 1
@@ -422,14 +486,14 @@ new FormModel {
 				} )
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 3
-				"gridY": 29
-				"gridWidth": 5
+				"gridY": 33
+				"gridWidth": 11
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.VSpacer" ) {
 				name: "vSpacer2"
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-				"gridY": 31
-				"gridWidth": 5
+				"gridY": 35
+				"gridWidth": 11
 				"gridX": 3
 			} )
 		}, new FormLayoutConstraints( null ) {
@@ -441,6 +505,10 @@ new FormModel {
 			addBinding( new FormBinding( "scheduleCheckBox", "${!selected}", "panel1", "visible" ) )
 			addBinding( new FormBinding( "concatenateCheckBox", "selected", "concatenateDestinationButton", "enabled" ) )
 			addBinding( new FormBinding( "subCheckBox", "selected", "subList", "enabled" ) )
+			addBinding( new FormBinding( "concatenateCheckBox", "selected", "concatenateHourSpinner", "enabled" ) {
+				"updateStrategy": enum org.jdesktop.beansbinding.AutoBinding$UpdateStrategy READ
+			} )
+			addBinding( new FormBinding( "concatenateCheckBox", "selected", "concatenateMinuteSpinner", "enabled" ) )
 		} )
 	}
 }

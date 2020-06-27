@@ -36,6 +36,6 @@ public interface Validation {
             return Map.class.cast(object).isEmpty();
         }
 
-        return String.class.cast(object).trim().isEmpty();
+        return object.toString().trim().isEmpty();
     }
 }

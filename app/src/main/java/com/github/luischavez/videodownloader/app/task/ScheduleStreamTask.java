@@ -22,7 +22,7 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
     private final long tag;
 
     private StreamConfiguration streamConfiguration;
-    private Task streamTask;
+    private Task task;
 
     public ScheduleStreamTask(Context context, long tag) {
         super(context);
@@ -30,12 +30,12 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
         this.tag = tag;
 
         streamConfiguration = (StreamConfiguration) getSystem().getManager(ConfigurationManager.class).find(tag);
-        streamTask = getSystem().getManager(TaskManager.class).get(tag);
+        task = getSystem().getManager(TaskManager.class).get(tag);
     }
 
-    private void generateTask() {
-        if (streamTask != null) {
-            if (streamTask.isFresh() || streamTask.isRunning()) {
+    private void generateTask() throws Exception {
+        if (task != null) {
+            if (task.isFresh() || task.isRunning()) {
                 return;
             }
         }
@@ -77,11 +77,11 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
 
             String baseFileName = streamConfiguration.getBaseFileName() + "_" + now.format(FILE_NAME_FORMATTER);
 
-            streamTask = support.generateTask(selectedMedia,
+            task = support.generateTask(selectedMedia,
                     Map.of("base_file_name", baseFileName,
                             "destination_path", destinationPath));
 
-            getSystem().getManager(TaskManager.class).add(tag, streamTask);
+            getSystem().getManager(TaskManager.class).add(tag, task);
         }
     }
 
@@ -92,11 +92,11 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
 
     @Override
     protected void doDisable() throws Exception {
-        streamTask.kill();
+        task.kill();
     }
 
     @Override
     public boolean isRunning() {
-        return streamTask != null && streamTask.isRunning();
+        return task != null && task.isRunning();
     }
 }

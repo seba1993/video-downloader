@@ -13,21 +13,33 @@ import java.util.stream.Collectors;
 public class FFMPEGVideoTask extends LocalProcessTask {
 
     private final Media media;
-    private final String baseFileName;
+    private final String fileName;
     private final String destinationPath;
     private final String[] headers;
 
     public FFMPEGVideoTask(Context context, Media media,
-                           String baseFileName, String destinationPath,
+                           String fileName, String destinationPath,
                            String... headers) {
         super(context);
 
         this.media = media;
 
-        this.baseFileName = baseFileName;
+        this.fileName = fileName;
         this.destinationPath = destinationPath;
 
         this.headers = headers;
+    }
+
+    public Media getMedia() {
+        return media;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public String getDestinationPath() {
+        return destinationPath;
     }
 
     @Override
@@ -41,7 +53,7 @@ public class FFMPEGVideoTask extends LocalProcessTask {
         final String url = media.getUrl();
 
         final String fileExtension = isVideo ? "mkv" : "mp3";
-        final String fileName = String.format("%s.%s", baseFileName, fileExtension);
+        final String fileName = String.format("%s.%s", this.fileName, fileExtension);
         final String filePath = buildPath(destinationPath, fileName);
 
         File folderFile = new File(destinationPath);

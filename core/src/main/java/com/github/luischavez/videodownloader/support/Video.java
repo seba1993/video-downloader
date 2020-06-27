@@ -73,7 +73,7 @@ public class Video implements Media {
         @Override
         public int compareTo(Quality quality) {
             if (quality instanceof VideoQuality) {
-                return Integer.compare(getHeight(), VideoQuality.class.cast(quality).getHeight());
+                return Integer.compare(getBandwidth(), VideoQuality.class.cast(quality).getBandwidth());
             }
 
             return quality.compareTo(this);

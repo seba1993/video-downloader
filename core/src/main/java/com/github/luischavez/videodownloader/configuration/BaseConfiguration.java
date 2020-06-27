@@ -11,7 +11,7 @@ public class BaseConfiguration implements Configuration {
     }
 
     public BaseConfiguration() {
-        this(System.nanoTime());
+        this(System.nanoTime() / 2);
     }
 
     @Override

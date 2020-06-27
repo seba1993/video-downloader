@@ -36,8 +36,9 @@ public class GuiRepaintManager extends BaseManager {
                     SwingUtilities.invokeLater(() -> {
                         if (component instanceof JTable) {
                             ((AbstractTableModel) JTable.class.cast(component).getModel()).fireTableDataChanged();
+                        } else {
+                            component.repaint();
                         }
-                        component.repaint();
                     });
                 });
 

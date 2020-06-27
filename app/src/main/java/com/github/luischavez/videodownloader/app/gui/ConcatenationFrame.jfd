@@ -1,0 +1,186 @@
+JFDML JFormDesigner: "7.0.1.0.272" Java: "11.0.6" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class com.jgoodies.forms.layout.FormLayout ) {
+			"$columnSpecs": "default, labelcompgap, default, labelcompgap, default, labelcompgap, default, labelcompgap, default, labelcompgap, default:grow, labelcompgap, default, labelcompgap, default"
+			"$rowSpecs": "default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, 47dlu:grow, linegap, default"
+		} ) {
+			name: "this"
+			"$sizePolicy": 1
+			"resizable": false
+			"defaultCloseOperation": 3
+			add( new FormComponent( "com.jformdesigner.designer.wrapper.VSpacer" ) {
+				name: "vSpacer1"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 3
+				"gridWidth": 11
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label4"
+				"text": "Action"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 3
+				"gridY": 3
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "actionComboBox"
+				"model": new javax.swing.DefaultComboBoxModel {
+					selectedItem: "Concatenate & Sub"
+					addElement( "Concatenate & Sub" )
+					addElement( "Concatenate" )
+					addElement( "Sub" )
+				}
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 5
+				"gridY": 3
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label5"
+				"text": "Type"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 3
+				"gridY": 5
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "typeComboBox"
+				"model": new javax.swing.DefaultComboBoxModel {
+					selectedItem: "mkv"
+					addElement( "mkv" )
+					addElement( "mp3" )
+				}
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 5
+				"gridY": 5
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label1"
+				"text": "Source"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 3
+				"gridY": 7
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "sourceTextField"
+				"editable": false
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 5
+				"gridY": 7
+				"gridWidth": 7
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "sourceBrowseButton"
+				"text": "Browse"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 13
+				"gridY": 7
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label2"
+				"text": "Destination"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 3
+				"gridY": 9
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "destinationTextField"
+				"editable": false
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 5
+				"gridY": 9
+				"gridWidth": 7
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "destinationBrowseButton"
+				"text": "Browse"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 13
+				"gridY": 9
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label3"
+				"text": "Sub"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 3
+				"gridY": 11
+			} )
+			add( new FormComponent( "com.jformdesigner.designer.wrapper.HSpacer" ) {
+				name: "hSpacer1"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 15
+				"gridY": 9
+				"gridHeight": 7
+			} )
+			add( new FormComponent( "com.jformdesigner.designer.wrapper.HSpacer" ) {
+				name: "hSpacer2"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridY": 9
+				"gridHeight": 7
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "subComboBox"
+				"model": new javax.swing.DefaultComboBoxModel {
+					selectedItem: "Spanish"
+					addElement( "Spanish" )
+					addElement( "English" )
+					addElement( "French" )
+					addElement( "Portuguese" )
+				}
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 5
+				"gridY": 11
+			} )
+			add( new FormComponent( "javax.swing.JSeparator" ) {
+				name: "separator1"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridY": 13
+				"gridWidth": 11
+				"gridX": 3
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "actionButton"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 5
+				"gridY": 15
+				"gridWidth": 7
+			} )
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "scrollPane2"
+				add( new FormComponent( "javax.swing.JTextArea" ) {
+					name: "logTextArea"
+					"editable": false
+				} )
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 3
+				"gridY": 17
+				"gridWidth": 11
+				"hAlign": sfield com.jgoodies.forms.layout.CellConstraints FILL
+				"vAlign": sfield com.jgoodies.forms.layout.CellConstraints FILL
+			} )
+			add( new FormComponent( "com.jformdesigner.designer.wrapper.VSpacer" ) {
+				name: "vSpacer2"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 3
+				"gridY": 19
+				"gridWidth": 11
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 655, 610 )
+		} )
+		addBindingGroup( new FormBindingGroup( class org.jdesktop.beansbinding.BindingGroup ) {
+			"name": "bindingGroup"
+			addBinding( new FormBinding( "actionComboBox", "selectedItem", "actionButton", "text" ) )
+			addBinding( new FormBinding( "actionComboBox", "${selectedItem == \"Concatenate & Sub\" || selectedItem == \"Sub\"}", "label3", "visible" ) )
+			addBinding( new FormBinding( "actionComboBox", "selectedItem", "this", "title" ) )
+			addBinding( new FormBinding( "destinationTextField", "${text != \"\"}", "actionButton", "enabled" ) {
+				"updateStrategy": enum org.jdesktop.beansbinding.AutoBinding$UpdateStrategy READ
+			} )
+			addBinding( new FormBinding( "sourceTextField", "${text != \"\"}", "destinationBrowseButton", "enabled" ) {
+				"updateStrategy": enum org.jdesktop.beansbinding.AutoBinding$UpdateStrategy READ
+			} )
+			addBinding( new FormBinding( "actionComboBox", "${selectedItem == \"Concatenate & Sub\" || selectedItem == \"Sub\"}", "subComboBox", "visible" ) )
+		} )
+	}
+}

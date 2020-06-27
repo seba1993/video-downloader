@@ -25,7 +25,7 @@ public class DefaultTaskManager extends BaseTaskManager {
                     continue;
                 }
                 try {
-                    task.start();
+                    if (task.isFresh()) task.start();
                 } catch (Exception ex) {
                     getListeners(TaskListener.class).stream()
                             .forEach(taskListener -> taskListener.onTaskException(task, ex));

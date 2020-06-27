@@ -100,6 +100,7 @@ public class StreamTableModel extends AbstractTableModel {
     protected String buildTimeString(StreamConfiguration streamConfiguration, ScheduleManager.ScheduleEntry scheduleEntry, Task task) {
         if (!streamConfiguration.isEnabled()) return "";
         if (task != null && task.isRunning() && streamConfiguration.isScheduleWhenAvailable()) return "∞";
+        if (scheduleEntry == null) return "";
 
         final Schedule schedule = scheduleEntry.getSchedule();
 
@@ -119,6 +120,7 @@ public class StreamTableModel extends AbstractTableModel {
     protected float calculateProgress(StreamConfiguration streamConfiguration, ScheduleManager.ScheduleEntry scheduleEntry, Task task) {
         if (task == null || !task.isRunning()) return 0f;
         if (streamConfiguration.isScheduleWhenAvailable()) return -1f;
+        if (scheduleEntry == null) return 0f;
 
         final Schedule schedule = scheduleEntry.getSchedule();
         final Schedule.ScheduleRange scheduleRange = schedule.calculateScheduleRange();

@@ -5,6 +5,7 @@ import com.github.luischavez.videodownloader.configuration.BaseConfiguration;
 import com.github.luischavez.videodownloader.configuration.validation.*;
 import com.github.luischavez.videodownloader.schedule.Schedule;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,24 +45,30 @@ public class StreamConfiguration extends BaseConfiguration {
 
     private boolean concatenate;
 
+    @Validable(value = NotEmptyValidation.class, name = "Concatenate At", params = {"concatenate", "true"})
+    private LocalTime concatenateAt;
+
     @Validable(value = NotEmptyValidation.class, name = "Concatenation Destination", params = {"concatenate", "true"})
     private String concatenationPath;
 
+    @Validable(value = NotEmptyValidation.class, name = "Language")
+    private String language;
+
     private boolean sub;
 
-    @Validable(value = NotEmptyValidation.class, name = "Languages", params = {"sub", "true"})
-    private List<String> languages;
+    //@Validable(value = NotEmptyValidation.class, name = "Translations", params = {"sub", "true"})
+    private List<String> translations;
 
     public StreamConfiguration(long uid) {
         super(uid);
         schedules = new ArrayList<>();
-        languages = new ArrayList<>();
+        translations = new ArrayList<>();
     }
 
     public StreamConfiguration() {
         super();
         schedules = new ArrayList<>();
-        languages = new ArrayList<>();
+        translations = new ArrayList<>();
     }
 
     public boolean isEnabled() {
@@ -152,6 +159,14 @@ public class StreamConfiguration extends BaseConfiguration {
         this.concatenate = concatenate;
     }
 
+    public LocalTime getConcatenateAt() {
+        return concatenateAt;
+    }
+
+    public void setConcatenateAt(LocalTime concatenateAt) {
+        this.concatenateAt = concatenateAt;
+    }
+
     public String getConcatenationPath() {
         return concatenationPath;
     }
@@ -168,12 +183,20 @@ public class StreamConfiguration extends BaseConfiguration {
         this.sub = sub;
     }
 
-    public List<String> getLanguages() {
-        return languages;
+    public String getLanguage() {
+        return language;
     }
 
-    public void setLanguages(List<String> languages) {
-        this.languages = languages;
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public List<String> getTranslations() {
+        return translations;
+    }
+
+    public void setTranslations(List<String> translations) {
+        this.translations = translations;
     }
 
     public void copy(StreamConfiguration streamConfiguration) {
@@ -188,8 +211,10 @@ public class StreamConfiguration extends BaseConfiguration {
         setScheduleWhenAvailable(streamConfiguration.isScheduleWhenAvailable());
         setSchedules(streamConfiguration.getSchedules());
         setConcatenate(streamConfiguration.isConcatenate());
+        setConcatenateAt(streamConfiguration.getConcatenateAt());
         setConcatenationPath(streamConfiguration.getConcatenationPath());
         setSub(streamConfiguration.isSub());
-        setLanguages(streamConfiguration.getLanguages());
+        setLanguage(streamConfiguration.getLanguage());
+        setTranslations(streamConfiguration.getTranslations());
     }
 }

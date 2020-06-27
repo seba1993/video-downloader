@@ -44,13 +44,13 @@ public abstract class LocalProcessTask extends ContextWrapper implements Task {
     public void start() throws Exception {
         if (isRunning()) return;
 
+        starting.set(true);
+
         process = buildCommand()
                 .redirectError(ProcessBuilder.Redirect.DISCARD)
                 //.redirectInput(ProcessBuilder.Redirect.DISCARD)
                 .redirectOutput(ProcessBuilder.Redirect.DISCARD)
                 .start();
-
-        starting.set(true);
 
         getListeners(TaskStateListener.class).stream()
                 .forEach(taskStateListener -> taskStateListener.onTaskStart(this));

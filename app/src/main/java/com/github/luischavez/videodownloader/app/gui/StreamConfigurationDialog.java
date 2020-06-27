@@ -102,14 +102,18 @@ public class StreamConfigurationDialog extends JDialog {
         destinationTextField.setText(streamConfiguration.getDestinationPath());
         scheduleCheckBox.setSelected(streamConfiguration.isScheduleWhenAvailable());
         concatenateCheckBox.setSelected(streamConfiguration.isConcatenate());
+        concatenateHourSpinner.setValue(streamConfiguration.getConcatenateAt().getHour());
+        concatenateMinuteSpinner.setValue(streamConfiguration.getConcatenateAt().getMinute());
+        concatenateTextField.setText(streamConfiguration.getConcatenationPath());
         subCheckBox.setSelected(streamConfiguration.isSub());
+        languageComboBox.setSelectedItem(streamConfiguration.getLanguage());
 
         streamConfiguration.getSchedules().stream().forEach(scheduleTableModel::addSchedule);
 
         ArrayList<Integer> selectedSubs = new ArrayList<>();
         ListModel<String> subListModel = subList.getModel();
         for (int i = 0; i < subListModel.getSize(); i++) {
-            if (streamConfiguration.getLanguages().contains(subListModel.getElementAt(i))) {
+            if (streamConfiguration.getTranslations().contains(subListModel.getElementAt(i))) {
                 selectedSubs.add(i);
             }
         }
@@ -167,10 +171,16 @@ public class StreamConfigurationDialog extends JDialog {
         scheduleTable = new JTable();
         vSpacer4 = new JPanel(null);
         concatenateCheckBox = new JCheckBox();
+        label15 = new JLabel();
+        concatenateHourSpinner = new JSpinner();
+        label16 = new JLabel();
+        concatenateMinuteSpinner = new JSpinner();
         label12 = new JLabel();
         concatenateTextField = new JTextField();
         concatenateDestinationButton = new JButton();
         subCheckBox = new JCheckBox();
+        label14 = new JLabel();
+        languageComboBox = new JComboBox<>();
         scrollPane2 = new JScrollPane();
         subList = new JList<>();
         vSpacer2 = new JPanel(null);
@@ -178,20 +188,20 @@ public class StreamConfigurationDialog extends JDialog {
         //======== this ========
         Container contentPane = getContentPane();
         contentPane.setLayout(new FormLayout(
-            "default, $lcgap, left:default, $lcgap, default:grow, 2*($lcgap, default)",
-            "10*(default, $lgap), pref, 5*($lgap, default)"));
-        contentPane.add(vSpacer1, CC.xywh(3, 1, 5, 1));
+            "default, $lcgap, left:default, $lcgap, default, $lcgap, center:[4dlu,min], $lcgap, default, $lcgap, default:grow, 2*($lcgap, default)",
+            "10*(default, $lgap), pref, 7*($lgap, default)"));
+        contentPane.add(vSpacer1, CC.xywh(3, 1, 11, 1));
 
         //---- enableCheckBox ----
         enableCheckBox.setText("Enable");
         enableCheckBox.setSelected(true);
-        contentPane.add(enableCheckBox, CC.xywh(3, 3, 3, 1));
-        contentPane.add(hSpacer1, CC.xywh(1, 2, 1, 29));
-        contentPane.add(hSpacer2, CC.xywh(9, 2, 1, 29));
+        contentPane.add(enableCheckBox, CC.xywh(3, 3, 9, 1));
+        contentPane.add(hSpacer1, CC.xywh(1, 2, 1, 33));
+        contentPane.add(hSpacer2, CC.xywh(15, 2, 1, 33));
 
         //---- saveButton ----
         saveButton.setText("Save");
-        contentPane.add(saveButton, CC.xy(7, 3));
+        contentPane.add(saveButton, CC.xy(13, 3));
 
         //---- label4 ----
         label4.setText("Type");
@@ -202,22 +212,22 @@ public class StreamConfigurationDialog extends JDialog {
             "Video",
             "Audio"
         }));
-        contentPane.add(typeComboBox, CC.xywh(5, 5, 3, 1));
+        contentPane.add(typeComboBox, CC.xywh(5, 5, 9, 1));
 
         //---- label1 ----
         label1.setText("Alias");
         contentPane.add(label1, CC.xy(3, 7));
-        contentPane.add(aliasTextField, CC.xywh(5, 7, 3, 1));
+        contentPane.add(aliasTextField, CC.xywh(5, 7, 9, 1));
 
         //---- label2 ----
         label2.setText("Country");
         contentPane.add(label2, CC.xy(3, 9));
-        contentPane.add(countryTextField, CC.xywh(5, 9, 3, 1));
+        contentPane.add(countryTextField, CC.xywh(5, 9, 9, 1));
 
         //---- label3 ----
         label3.setText("URL");
         contentPane.add(label3, CC.xy(3, 11));
-        contentPane.add(urlTextField, CC.xywh(5, 11, 3, 1));
+        contentPane.add(urlTextField, CC.xywh(5, 11, 9, 1));
 
         //---- label13 ----
         label13.setText("Quality >=");
@@ -225,12 +235,12 @@ public class StreamConfigurationDialog extends JDialog {
 
         //---- qualitySpinner ----
         qualitySpinner.setModel(new SpinnerNumberModel(720, 480, null, 1));
-        contentPane.add(qualitySpinner, CC.xy(5, 13, CC.LEFT, CC.DEFAULT));
+        contentPane.add(qualitySpinner, CC.xywh(5, 13, 7, 1, CC.LEFT, CC.DEFAULT));
 
         //---- label5 ----
         label5.setText("File Name");
         contentPane.add(label5, CC.xy(3, 15));
-        contentPane.add(fileNameTextField, CC.xywh(5, 15, 3, 1));
+        contentPane.add(fileNameTextField, CC.xywh(5, 15, 9, 1));
 
         //---- label6 ----
         label6.setText("Destination");
@@ -238,21 +248,22 @@ public class StreamConfigurationDialog extends JDialog {
 
         //---- destinationTextField ----
         destinationTextField.setEditable(false);
-        contentPane.add(destinationTextField, CC.xy(5, 17));
+        contentPane.add(destinationTextField, CC.xywh(5, 17, 7, 1));
 
         //---- destinationButton ----
         destinationButton.setText("Browse");
-        contentPane.add(destinationButton, CC.xy(7, 17));
+        contentPane.add(destinationButton, CC.xy(13, 17));
 
         //---- scheduleCheckBox ----
         scheduleCheckBox.setText("Schedule When Available");
-        contentPane.add(scheduleCheckBox, CC.xywh(3, 19, 3, 1));
+        contentPane.add(scheduleCheckBox, CC.xywh(3, 19, 9, 1));
 
         //======== panel1 ========
         {
-            panel1. addPropertyChangeListener(new java.beans.PropertyChangeListener(){@Override public void propertyChange(java.beans.PropertyChangeEvent e
-            ){if("borde\u0072".equals(e.getPropertyName()))throw new RuntimeException();}})
-            ;
+            panel1.addPropertyChangeListener(
+            new java. beans .PropertyChangeListener ( ){ @Override public void propertyChange (java . beans. PropertyChangeEvent e
+            ) { if( "\u0062or\u0064er" .equals ( e. getPropertyName () ) )throw new RuntimeException( )
+            ;} } );
             panel1.setLayout(new FormLayout(
                 "6*(default, $lcgap), center:[4dlu,min], 4*($lcgap, default), $lcgap, left:default, 2*($lcgap, default), $lcgap, default:grow, $lcgap, default",
                 "2*(default, $lgap), 84dlu, $lgap, default"));
@@ -340,30 +351,60 @@ public class StreamConfigurationDialog extends JDialog {
             panel1.add(scrollPane1, CC.xywh(3, 5, 27, 1));
             panel1.add(vSpacer4, CC.xywh(3, 7, 27, 1));
         }
-        contentPane.add(panel1, CC.xywh(3, 21, 5, 1));
+        contentPane.add(panel1, CC.xywh(3, 21, 11, 1));
 
         //---- concatenateCheckBox ----
         concatenateCheckBox.setText("Concatenate");
-        contentPane.add(concatenateCheckBox, CC.xywh(3, 23, 3, 1));
+        contentPane.add(concatenateCheckBox, CC.xywh(3, 23, 9, 1));
+
+        //---- label15 ----
+        label15.setText("Start At");
+        contentPane.add(label15, CC.xy(3, 25));
+
+        //---- concatenateHourSpinner ----
+        concatenateHourSpinner.setModel(new SpinnerNumberModel(0, 0, 23, 1));
+        contentPane.add(concatenateHourSpinner, CC.xy(5, 25));
+
+        //---- label16 ----
+        label16.setText(":");
+        contentPane.add(label16, CC.xy(7, 25, CC.CENTER, CC.DEFAULT));
+
+        //---- concatenateMinuteSpinner ----
+        concatenateMinuteSpinner.setModel(new SpinnerNumberModel(0, 0, 59, 1));
+        contentPane.add(concatenateMinuteSpinner, CC.xy(9, 25));
 
         //---- label12 ----
         label12.setText("Destination");
-        contentPane.add(label12, CC.xy(3, 25));
+        contentPane.add(label12, CC.xy(3, 27));
 
         //---- concatenateTextField ----
         concatenateTextField.setEditable(false);
-        contentPane.add(concatenateTextField, CC.xy(5, 25));
+        contentPane.add(concatenateTextField, CC.xywh(5, 27, 7, 1));
 
         //---- concatenateDestinationButton ----
         concatenateDestinationButton.setText("Browse");
-        contentPane.add(concatenateDestinationButton, CC.xy(7, 25));
+        contentPane.add(concatenateDestinationButton, CC.xy(13, 27));
 
         //---- subCheckBox ----
         subCheckBox.setText("Sub");
-        contentPane.add(subCheckBox, CC.xywh(3, 27, 3, 1));
+        contentPane.add(subCheckBox, CC.xywh(3, 29, 9, 1));
+
+        //---- label14 ----
+        label14.setText("Language");
+        contentPane.add(label14, CC.xy(3, 31));
+
+        //---- languageComboBox ----
+        languageComboBox.setModel(new DefaultComboBoxModel<>(new String[] {
+            "Spanish",
+            "English",
+            "French",
+            "Portuguese"
+        }));
+        contentPane.add(languageComboBox, CC.xywh(5, 31, 7, 1, CC.LEFT, CC.DEFAULT));
 
         //======== scrollPane2 ========
         {
+            scrollPane2.setVisible(false);
 
             //---- subList ----
             subList.setModel(new AbstractListModel<String>() {
@@ -371,7 +412,7 @@ public class StreamConfigurationDialog extends JDialog {
                     "Spanish",
                     "English",
                     "French",
-                    "Italian"
+                    "Portuguese"
                 };
                 @Override
                 public int getSize() { return values.length; }
@@ -380,8 +421,8 @@ public class StreamConfigurationDialog extends JDialog {
             });
             scrollPane2.setViewportView(subList);
         }
-        contentPane.add(scrollPane2, CC.xywh(3, 29, 5, 1));
-        contentPane.add(vSpacer2, CC.xywh(3, 31, 5, 1));
+        contentPane.add(scrollPane2, CC.xywh(3, 33, 11, 1));
+        contentPane.add(vSpacer2, CC.xywh(3, 35, 11, 1));
         pack();
         setLocationRelativeTo(getOwner());
 
@@ -396,6 +437,12 @@ public class StreamConfigurationDialog extends JDialog {
         bindingGroup.addBinding(Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
             subCheckBox, BeanProperty.create("selected"),
             subList, BeanProperty.create("enabled")));
+        bindingGroup.addBinding(Bindings.createAutoBinding(UpdateStrategy.READ,
+            concatenateCheckBox, BeanProperty.create("selected"),
+            concatenateHourSpinner, BeanProperty.create("enabled")));
+        bindingGroup.addBinding(Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
+            concatenateCheckBox, BeanProperty.create("selected"),
+            concatenateMinuteSpinner, BeanProperty.create("enabled")));
         bindingGroup.bind();
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
@@ -444,10 +491,16 @@ public class StreamConfigurationDialog extends JDialog {
     public JTable scheduleTable;
     private JPanel vSpacer4;
     public JCheckBox concatenateCheckBox;
+    private JLabel label15;
+    public JSpinner concatenateHourSpinner;
+    private JLabel label16;
+    public JSpinner concatenateMinuteSpinner;
     private JLabel label12;
     public JTextField concatenateTextField;
     public JButton concatenateDestinationButton;
     public JCheckBox subCheckBox;
+    private JLabel label14;
+    public JComboBox<String> languageComboBox;
     private JScrollPane scrollPane2;
     public JList<String> subList;
     private JPanel vSpacer2;

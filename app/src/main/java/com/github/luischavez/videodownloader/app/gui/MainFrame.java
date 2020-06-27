@@ -7,6 +7,7 @@ package com.github.luischavez.videodownloader.app.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,6 +17,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableColumnModel;
 
 import com.github.luischavez.videodownloader.app.AppContext;
+import com.github.luischavez.videodownloader.app.configuration.AppConfiguration;
 import com.github.luischavez.videodownloader.app.configuration.BundleStreamConfiguration;
 import com.github.luischavez.videodownloader.app.configuration.StreamConfiguration;
 import com.github.luischavez.videodownloader.app.gui.model.ScheduleTableModel;
@@ -27,6 +29,7 @@ import com.github.luischavez.videodownloader.configuration.ConfigurationManager;
 import com.github.luischavez.videodownloader.configuration.validation.ValidationResult;
 import com.github.luischavez.videodownloader.configuration.validation.ValidationResults;
 import com.github.luischavez.videodownloader.schedule.Schedule;
+import com.github.luischavez.videodownloader.util.CryptoUtils;
 import com.github.luischavez.videodownloader.util.PlatformUtils;
 import com.jgoodies.forms.factories.*;
 import com.jgoodies.forms.layout.*;
@@ -42,6 +45,7 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
 
     private TrayIcon trayIcon;
 
+    private AppConfigurationDialog appConfigurationDialog;
     private StreamConfigurationDialog streamConfigurationDialog;
     private LoadingDialog loadingDialog;
 
@@ -96,7 +100,7 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == contentPanel.addButton) {
-            streamConfigurationDialog.open(null);
+            SwingUtilities.invokeLater(() -> streamConfigurationDialog.open(null));
         } else if (e.getSource() == contentPanel.enableAllButton) {
             SwingUtilities.invokeLater(() -> {
                 int option = JOptionPane.showConfirmDialog(MainFrame.this, "are you sure?", "Enable all streams", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -113,6 +117,49 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
                     changeStreamsStatus(false);
                 }
             });
+        } else if (e.getSource() == appConfigurationDialog.saveButton) {
+            final ConfigurationManager configurationManager = AppContext.instance().getSystem().getManager(ConfigurationManager.class);
+
+            AppConfiguration appConfiguration = new AppConfiguration();
+
+            appConfiguration.setEmail(appConfigurationDialog.emailTextField.getText());
+            appConfiguration.setPassword(CryptoUtils.base64Encode(new String(appConfigurationDialog.passwordField.getPassword())));
+            appConfiguration.setDistributionList(appConfigurationDialog.toTextField.getText().split(","));
+            appConfiguration.setAutosubPath(appConfigurationDialog.autosubTextField.getText());
+
+            new Thread(() -> {
+                SwingUtilities.invokeLater(() -> {
+                    loadingDialog.setLocationRelativeTo(null);
+                    loadingDialog.setVisible(true);
+                });
+
+                try {
+                    final ValidationResults validationResults = configurationManager.validate(appConfiguration);
+
+                    if (validationResults.fails()) {
+                        SwingUtilities.invokeLater(() -> {
+                            JPanel validationPanel = new JPanel();
+                            validationPanel.setLayout(new BoxLayout(validationPanel, BoxLayout.Y_AXIS));
+
+                            for (ValidationResult validationResult : validationResults) {
+                                validationPanel.add(new JLabel(validationResult.getMessage()));
+                            }
+
+                            loadingDialog.setVisible(false);
+                            JOptionPane.showMessageDialog(appConfigurationDialog, validationPanel, "ERROR!", JOptionPane.ERROR_MESSAGE);
+                        });
+                    } else {
+                        configurationManager.add(appConfiguration);
+
+                        SwingUtilities.invokeLater(() -> {
+                            loadingDialog.setVisible(false);
+                            appConfigurationDialog.setVisible(false);
+                        });
+                    }
+                } finally {
+                    SwingUtilities.invokeLater(() -> loadingDialog.setVisible(false));
+                }
+            }).start();
         } else if (e.getSource() == streamConfigurationDialog.saveButton) {
             final StreamConfiguration streamConfiguration =
                     streamConfigurationDialog.streamConfiguration == null
@@ -130,9 +177,14 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
             streamConfiguration.setScheduleWhenAvailable(streamConfigurationDialog.scheduleCheckBox.isSelected());
             streamConfiguration.setSchedules(new ArrayList<>(streamConfigurationDialog.scheduleTableModel.getSchedules()));
             streamConfiguration.setConcatenate(streamConfigurationDialog.concatenateCheckBox.isSelected());
+            streamConfiguration.setConcatenateAt(
+                    LocalTime.of(
+                            Integer.valueOf(streamConfigurationDialog.concatenateHourSpinner.getValue().toString()),
+                            Integer.valueOf(streamConfigurationDialog.concatenateMinuteSpinner.getValue().toString())));
             streamConfiguration.setConcatenationPath(streamConfigurationDialog.concatenateTextField.getText());
             streamConfiguration.setSub(streamConfigurationDialog.subCheckBox.isSelected());
-            streamConfiguration.setLanguages(streamConfigurationDialog.subList.getSelectedValuesList());
+            streamConfiguration.setLanguage(streamConfigurationDialog.languageComboBox.getSelectedItem().toString());
+            streamConfiguration.setTranslations(streamConfigurationDialog.subList.getSelectedValuesList());
 
             final ConfigurationManager configurationManager = AppContext.instance().getSystem().getManager(ConfigurationManager.class);
 
@@ -243,6 +295,8 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
                     }
                 }).start();
             }
+        } else if (e.getSource() == configurationMenuItem) {
+            SwingUtilities.invokeLater(() -> appConfigurationDialog.open(AppContext.instance()));
         }
     }
 
@@ -368,6 +422,7 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
                     loadingDialog.setVisible(true);
                 });
 
+                AppContext.exiting.set(true);
                 AppContext.instance().getSystem().stopAllManagers(true);
 
                 List<Long> pids = new ArrayList<>(RunningPids.load().pids());
@@ -389,12 +444,14 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
     public void initialize() {
         addWindowListener(this);
 
+        setTitle(TITLE);
         setAutoRequestFocus(true);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setVisible(true);
 
+        appConfigurationDialog = new AppConfigurationDialog(this);
         streamConfigurationDialog = new StreamConfigurationDialog(this);
         loadingDialog = new LoadingDialog(this);
 
@@ -444,9 +501,9 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
         new ButtonColumn(contentPanel.streamTable, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String alias = contentPanel.streamTable.getValueAt(Integer.valueOf(e.getActionCommand()), 1).toString();
+                final String alias = contentPanel.streamTable.getValueAt(Integer.valueOf(e.getActionCommand()), 1).toString();
 
-                streamConfigurationDialog.open(alias);
+                SwingUtilities.invokeLater(() -> streamConfigurationDialog.open(alias));
             }
         }, 5);
 
@@ -477,6 +534,7 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
             }
         }, 7);
 
+        appConfigurationDialog.saveButton.addActionListener(this);
         streamConfigurationDialog.saveButton.addActionListener(this);
 
         exitMenuItem.addActionListener(this);
@@ -507,6 +565,7 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
                 }
             }
         });
+
     }
 
     private void initComponents() {
