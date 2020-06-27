@@ -4,14 +4,19 @@ import com.github.luischavez.videodownloader.Context;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 
+import javax.net.ssl.SSLContext;
 import java.io.IOException;
 
 public abstract class ApacheHttpClientSupport<M extends Media> extends BaseSupport<M> {
 
-    private HttpClient httpClient;
+    protected HttpClient httpClient;
 
     public ApacheHttpClientSupport(Context context) {
         super(context);
@@ -20,7 +25,21 @@ public abstract class ApacheHttpClientSupport<M extends Media> extends BaseSuppo
     }
 
     protected HttpClient buildHttpClient() {
-        return HttpClientBuilder.create().build();
+        try {
+            SSLContext sslContext = SSLContexts.custom()
+                    .loadTrustMaterial((chain, authType) -> true).build();
+
+            SSLConnectionSocketFactory sslConnectionSocketFactory =
+                    new SSLConnectionSocketFactory(sslContext, new String[]
+                            {"SSLv2Hello", "SSLv3", "TLSv1","TLSv1.1", "TLSv1.2" }, null,
+                            NoopHostnameVerifier.INSTANCE);
+
+            return HttpClients.custom()
+                    .setSSLSocketFactory(sslConnectionSocketFactory)
+                    .build();
+        } catch (Exception ex) {
+            return HttpClientBuilder.create().build();
+        }
     }
 
     protected HttpGet buildGet(String location) {

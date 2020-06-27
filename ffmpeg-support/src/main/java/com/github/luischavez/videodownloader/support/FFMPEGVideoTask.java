@@ -74,7 +74,7 @@ public class FFMPEGVideoTask extends LocalProcessTask {
         ArrayList<String> command = new ArrayList<>();
         command.add(PlatformUtils.isWindowsHost() ? "cmd.exe" : "sh");
         command.add(PlatformUtils.isWindowsHost() ? "/c" : "-c");
-        command.add(subCommand);
+        command.add(String.format("'%s'", subCommand));
 
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(command.toArray(new String[0]));

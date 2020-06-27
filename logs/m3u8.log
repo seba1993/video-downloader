@@ -10213,3 +10213,1705 @@ javax.mail.AuthenticationFailedException: 535-5.7.8 Username and Password not ac
 2020-06-27 10:52:42 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.MediaResolver loaded with current classloader
 2020-06-27 10:52:42 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.Map loaded with current classloader
 2020-06-27 10:52:42 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.FFMPEGVideoTask loaded with current classloader
+2020-06-27 12:33:45 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 12:33:45 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 12:33:45 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 12:33:45 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 12:33:45 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 12:33:45 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 12:33:45 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 12:33:45 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 12:33:45 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 12:33:45 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 12:33:45 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 12:33:45 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 12:33:45 ERROR AppContext:121 - manager class com.github.luischavez.videodownloader.manager.support.PluggableSupportManager error exception in thread execution Unexpected internal error near index 1
+\
+ ^
+java.util.regex.PatternSyntaxException: Unexpected internal error near index 1
+\
+ ^
+	at java.base/java.util.regex.Pattern.error(Pattern.java:2010)
+	at java.base/java.util.regex.Pattern.compile(Pattern.java:1779)
+	at java.base/java.util.regex.Pattern.<init>(Pattern.java:1422)
+	at java.base/java.util.regex.Pattern.compile(Pattern.java:1082)
+	at java.base/java.lang.String.split(String.java:2319)
+	at java.base/java.lang.String.split(String.java:2366)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.getSupportClassName(PluggableSupportManager.java:83)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.loadSupport(PluggableSupportManager.java:101)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.loadJars(PluggableSupportManager.java:120)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.doWork(PluggableSupportManager.java:131)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:33:46 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 12:33:46 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 12:33:46 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 12:33:46 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 12:33:46 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 12:33:46 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 12:33:46 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 12:33:46 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 12:33:46 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 12:33:46 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 12:33:46 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 12:33:46 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 12:33:46 ERROR AppContext:121 - manager class com.github.luischavez.videodownloader.manager.support.PluggableSupportManager error exception in thread execution Unexpected internal error near index 1
+\
+ ^
+java.util.regex.PatternSyntaxException: Unexpected internal error near index 1
+\
+ ^
+	at java.base/java.util.regex.Pattern.error(Pattern.java:2010)
+	at java.base/java.util.regex.Pattern.compile(Pattern.java:1779)
+	at java.base/java.util.regex.Pattern.<init>(Pattern.java:1422)
+	at java.base/java.util.regex.Pattern.compile(Pattern.java:1082)
+	at java.base/java.lang.String.split(String.java:2319)
+	at java.base/java.lang.String.split(String.java:2366)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.getSupportClassName(PluggableSupportManager.java:83)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.loadSupport(PluggableSupportManager.java:101)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.loadJars(PluggableSupportManager.java:120)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.doWork(PluggableSupportManager.java:131)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:33:47 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 12:33:47 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 12:33:47 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 12:33:47 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 12:33:47 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 12:33:47 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 12:33:47 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 12:33:47 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 12:33:47 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 12:33:47 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 12:33:47 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 12:33:47 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 12:33:47 ERROR AppContext:121 - manager class com.github.luischavez.videodownloader.manager.support.PluggableSupportManager error exception in thread execution Unexpected internal error near index 1
+\
+ ^
+java.util.regex.PatternSyntaxException: Unexpected internal error near index 1
+\
+ ^
+	at java.base/java.util.regex.Pattern.error(Pattern.java:2010)
+	at java.base/java.util.regex.Pattern.compile(Pattern.java:1779)
+	at java.base/java.util.regex.Pattern.<init>(Pattern.java:1422)
+	at java.base/java.util.regex.Pattern.compile(Pattern.java:1082)
+	at java.base/java.lang.String.split(String.java:2319)
+	at java.base/java.lang.String.split(String.java:2366)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.getSupportClassName(PluggableSupportManager.java:83)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.loadSupport(PluggableSupportManager.java:101)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.loadJars(PluggableSupportManager.java:120)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.doWork(PluggableSupportManager.java:131)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:33:48 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 12:33:48 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 12:33:48 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 12:33:48 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 12:33:48 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 12:33:48 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 12:33:48 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 12:33:48 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 12:33:48 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 12:33:48 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 12:33:48 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 12:33:48 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 12:33:48 ERROR AppContext:121 - manager class com.github.luischavez.videodownloader.manager.support.PluggableSupportManager error exception in thread execution Unexpected internal error near index 1
+\
+ ^
+java.util.regex.PatternSyntaxException: Unexpected internal error near index 1
+\
+ ^
+	at java.base/java.util.regex.Pattern.error(Pattern.java:2010)
+	at java.base/java.util.regex.Pattern.compile(Pattern.java:1779)
+	at java.base/java.util.regex.Pattern.<init>(Pattern.java:1422)
+	at java.base/java.util.regex.Pattern.compile(Pattern.java:1082)
+	at java.base/java.lang.String.split(String.java:2319)
+	at java.base/java.lang.String.split(String.java:2366)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.getSupportClassName(PluggableSupportManager.java:83)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.loadSupport(PluggableSupportManager.java:101)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.loadJars(PluggableSupportManager.java:120)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.doWork(PluggableSupportManager.java:131)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:33:49 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 12:33:49 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 12:33:49 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 12:33:49 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 12:33:49 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 12:33:49 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 12:33:49 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 12:33:49 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 12:33:49 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 12:33:49 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 12:33:49 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 12:33:49 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 12:33:49 ERROR AppContext:121 - manager class com.github.luischavez.videodownloader.manager.support.PluggableSupportManager error exception in thread execution Unexpected internal error near index 1
+\
+ ^
+java.util.regex.PatternSyntaxException: Unexpected internal error near index 1
+\
+ ^
+	at java.base/java.util.regex.Pattern.error(Pattern.java:2010)
+	at java.base/java.util.regex.Pattern.compile(Pattern.java:1779)
+	at java.base/java.util.regex.Pattern.<init>(Pattern.java:1422)
+	at java.base/java.util.regex.Pattern.compile(Pattern.java:1082)
+	at java.base/java.lang.String.split(String.java:2319)
+	at java.base/java.lang.String.split(String.java:2366)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.getSupportClassName(PluggableSupportManager.java:83)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.loadSupport(PluggableSupportManager.java:101)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.loadJars(PluggableSupportManager.java:120)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.doWork(PluggableSupportManager.java:131)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:33:50 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 12:33:50 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 12:33:50 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 12:33:50 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 12:33:50 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 12:33:50 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 12:33:50 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 12:33:50 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 12:33:50 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 12:33:50 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 12:33:50 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 12:33:50 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 12:33:50 ERROR AppContext:121 - manager class com.github.luischavez.videodownloader.manager.support.PluggableSupportManager error exception in thread execution Unexpected internal error near index 1
+\
+ ^
+java.util.regex.PatternSyntaxException: Unexpected internal error near index 1
+\
+ ^
+	at java.base/java.util.regex.Pattern.error(Pattern.java:2010)
+	at java.base/java.util.regex.Pattern.compile(Pattern.java:1779)
+	at java.base/java.util.regex.Pattern.<init>(Pattern.java:1422)
+	at java.base/java.util.regex.Pattern.compile(Pattern.java:1082)
+	at java.base/java.lang.String.split(String.java:2319)
+	at java.base/java.lang.String.split(String.java:2366)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.getSupportClassName(PluggableSupportManager.java:83)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.loadSupport(PluggableSupportManager.java:101)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.loadJars(PluggableSupportManager.java:120)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.doWork(PluggableSupportManager.java:131)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:33:51 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 12:33:51 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 12:33:51 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 12:33:51 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 12:33:51 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 12:33:51 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 12:33:51 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 12:33:51 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 12:33:51 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 12:33:51 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 12:33:51 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 12:33:51 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 12:33:51 ERROR AppContext:121 - manager class com.github.luischavez.videodownloader.manager.support.PluggableSupportManager error exception in thread execution Unexpected internal error near index 1
+\
+ ^
+java.util.regex.PatternSyntaxException: Unexpected internal error near index 1
+\
+ ^
+	at java.base/java.util.regex.Pattern.error(Pattern.java:2010)
+	at java.base/java.util.regex.Pattern.compile(Pattern.java:1779)
+	at java.base/java.util.regex.Pattern.<init>(Pattern.java:1422)
+	at java.base/java.util.regex.Pattern.compile(Pattern.java:1082)
+	at java.base/java.lang.String.split(String.java:2319)
+	at java.base/java.lang.String.split(String.java:2366)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.getSupportClassName(PluggableSupportManager.java:83)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.loadSupport(PluggableSupportManager.java:101)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.loadJars(PluggableSupportManager.java:120)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.doWork(PluggableSupportManager.java:131)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:33:52 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 12:33:52 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 12:33:52 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 12:33:52 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 12:33:52 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 12:33:52 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 12:33:52 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 12:33:52 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 12:33:52 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 12:33:52 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 12:33:52 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 12:33:52 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 12:33:52 ERROR AppContext:121 - manager class com.github.luischavez.videodownloader.manager.support.PluggableSupportManager error exception in thread execution Unexpected internal error near index 1
+\
+ ^
+java.util.regex.PatternSyntaxException: Unexpected internal error near index 1
+\
+ ^
+	at java.base/java.util.regex.Pattern.error(Pattern.java:2010)
+	at java.base/java.util.regex.Pattern.compile(Pattern.java:1779)
+	at java.base/java.util.regex.Pattern.<init>(Pattern.java:1422)
+	at java.base/java.util.regex.Pattern.compile(Pattern.java:1082)
+	at java.base/java.lang.String.split(String.java:2319)
+	at java.base/java.lang.String.split(String.java:2366)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.getSupportClassName(PluggableSupportManager.java:83)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.loadSupport(PluggableSupportManager.java:101)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.loadJars(PluggableSupportManager.java:120)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.doWork(PluggableSupportManager.java:131)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:33:53 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 12:33:53 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 12:33:53 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 12:33:53 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 12:33:53 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 12:33:53 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 12:33:53 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 12:33:53 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 12:33:53 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 12:33:53 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 12:33:53 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 12:33:53 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 12:33:53 ERROR AppContext:121 - manager class com.github.luischavez.videodownloader.manager.support.PluggableSupportManager error exception in thread execution Unexpected internal error near index 1
+\
+ ^
+java.util.regex.PatternSyntaxException: Unexpected internal error near index 1
+\
+ ^
+	at java.base/java.util.regex.Pattern.error(Pattern.java:2010)
+	at java.base/java.util.regex.Pattern.compile(Pattern.java:1779)
+	at java.base/java.util.regex.Pattern.<init>(Pattern.java:1422)
+	at java.base/java.util.regex.Pattern.compile(Pattern.java:1082)
+	at java.base/java.lang.String.split(String.java:2319)
+	at java.base/java.lang.String.split(String.java:2366)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.getSupportClassName(PluggableSupportManager.java:83)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.loadSupport(PluggableSupportManager.java:101)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.loadJars(PluggableSupportManager.java:120)
+	at com.github.luischavez.videodownloader.manager.support.PluggableSupportManager.doWork(PluggableSupportManager.java:131)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:36:14 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 12:36:14 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 12:36:14 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 12:36:14 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 12:36:14 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 12:36:14 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 12:36:14 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 12:36:14 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 12:36:14 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 12:36:14 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 12:36:14 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 12:36:14 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 12:36:14 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.ApacheHttpClientSupport loaded with current classloader
+2020-06-27 12:36:14 DEBUG JarClassLoader$LocalLoader:269 - Return new local loaded class YouTubeSupport
+2020-06-27 12:36:14 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.CharSequence loaded with current classloader
+2020-06-27 12:36:14 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.Object loaded with current classloader
+2020-06-27 12:36:14 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.task.Task loaded with current classloader
+2020-06-27 12:36:14 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.Context loaded with current classloader
+2020-06-27 12:36:14 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.regex.Pattern loaded with current classloader
+2020-06-27 12:37:36 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: request failed, may be the site is offline or you don't have internet connection https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:44)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+Caused by: javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.ssl.Alerts.getSSLException(Alerts.java:198)
+	at java.base/sun.security.ssl.SSLSocketImpl.fatal(SSLSocketImpl.java:1969)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:345)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:339)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1968)
+	at java.base/sun.security.ssl.ClientHandshaker.serverCertificate(ClientHandshaker.java:1777)
+	at java.base/sun.security.ssl.ClientHandshaker.processMessage(ClientHandshaker.java:264)
+	at java.base/sun.security.ssl.Handshaker.processLoop(Handshaker.java:1092)
+	at java.base/sun.security.ssl.Handshaker.processRecord(Handshaker.java:1026)
+	at java.base/sun.security.ssl.SSLSocketImpl.processInputRecord(SSLSocketImpl.java:1137)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:1074)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:973)
+	at java.base/sun.security.ssl.SSLSocketImpl.performInitialHandshake(SSLSocketImpl.java:1402)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1429)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1413)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.createLayeredSocket(SSLConnectionSocketFactory.java:436)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.connectSocket(SSLConnectionSocketFactory.java:384)
+	at org.apache.http.impl.conn.DefaultHttpClientConnectionOperator.connect(DefaultHttpClientConnectionOperator.java:142)
+	at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.connect(PoolingHttpClientConnectionManager.java:376)
+	at org.apache.http.impl.execchain.MainClientExec.establishRoute(MainClientExec.java:393)
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:236)
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:186)
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:89)
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:110)
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:83)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:108)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:56)
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:35)
+	... 9 more
+Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:385)
+	at java.base/sun.security.validator.PKIXValidator.engineValidate(PKIXValidator.java:290)
+	at java.base/sun.security.validator.Validator.validate(Validator.java:264)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.validate(X509TrustManagerImpl.java:343)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:226)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:133)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1947)
+	... 33 more
+Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.build(SunCertPathBuilder.java:141)
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.engineBuild(SunCertPathBuilder.java:126)
+	at java.base/java.security.cert.CertPathBuilder.build(CertPathBuilder.java:297)
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:380)
+	... 39 more
+2020-06-27 12:37:58 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: request failed, may be the site is offline or you don't have internet connection https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:44)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+Caused by: javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.ssl.Alerts.getSSLException(Alerts.java:198)
+	at java.base/sun.security.ssl.SSLSocketImpl.fatal(SSLSocketImpl.java:1969)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:345)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:339)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1968)
+	at java.base/sun.security.ssl.ClientHandshaker.serverCertificate(ClientHandshaker.java:1777)
+	at java.base/sun.security.ssl.ClientHandshaker.processMessage(ClientHandshaker.java:264)
+	at java.base/sun.security.ssl.Handshaker.processLoop(Handshaker.java:1092)
+	at java.base/sun.security.ssl.Handshaker.processRecord(Handshaker.java:1026)
+	at java.base/sun.security.ssl.SSLSocketImpl.processInputRecord(SSLSocketImpl.java:1137)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:1074)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:973)
+	at java.base/sun.security.ssl.SSLSocketImpl.performInitialHandshake(SSLSocketImpl.java:1402)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1429)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1413)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.createLayeredSocket(SSLConnectionSocketFactory.java:436)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.connectSocket(SSLConnectionSocketFactory.java:384)
+	at org.apache.http.impl.conn.DefaultHttpClientConnectionOperator.connect(DefaultHttpClientConnectionOperator.java:142)
+	at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.connect(PoolingHttpClientConnectionManager.java:376)
+	at org.apache.http.impl.execchain.MainClientExec.establishRoute(MainClientExec.java:393)
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:236)
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:186)
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:89)
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:110)
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:83)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:108)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:56)
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:35)
+	... 9 more
+Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:385)
+	at java.base/sun.security.validator.PKIXValidator.engineValidate(PKIXValidator.java:290)
+	at java.base/sun.security.validator.Validator.validate(Validator.java:264)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.validate(X509TrustManagerImpl.java:343)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:226)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:133)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1947)
+	... 33 more
+Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.build(SunCertPathBuilder.java:141)
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.engineBuild(SunCertPathBuilder.java:126)
+	at java.base/java.security.cert.CertPathBuilder.build(CertPathBuilder.java:297)
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:380)
+	... 39 more
+2020-06-27 12:43:14 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 12:43:14 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 12:43:14 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 12:43:14 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 12:43:14 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 12:43:14 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 12:43:14 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 12:43:14 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 12:43:14 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 12:43:14 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 12:43:14 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 12:43:14 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 12:43:14 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.ApacheHttpClientSupport loaded with current classloader
+2020-06-27 12:43:14 DEBUG JarClassLoader$LocalLoader:269 - Return new local loaded class YouTubeSupport
+2020-06-27 12:43:14 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.CharSequence loaded with current classloader
+2020-06-27 12:43:14 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.Object loaded with current classloader
+2020-06-27 12:43:14 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.task.Task loaded with current classloader
+2020-06-27 12:43:14 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.Context loaded with current classloader
+2020-06-27 12:43:14 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.regex.Pattern loaded with current classloader
+2020-06-27 12:43:16 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: request failed, may be the site is offline or you don't have internet connection https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:59)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+Caused by: javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.ssl.Alerts.getSSLException(Alerts.java:198)
+	at java.base/sun.security.ssl.SSLSocketImpl.fatal(SSLSocketImpl.java:1969)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:345)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:339)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1968)
+	at java.base/sun.security.ssl.ClientHandshaker.serverCertificate(ClientHandshaker.java:1777)
+	at java.base/sun.security.ssl.ClientHandshaker.processMessage(ClientHandshaker.java:264)
+	at java.base/sun.security.ssl.Handshaker.processLoop(Handshaker.java:1092)
+	at java.base/sun.security.ssl.Handshaker.processRecord(Handshaker.java:1026)
+	at java.base/sun.security.ssl.SSLSocketImpl.processInputRecord(SSLSocketImpl.java:1137)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:1074)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:973)
+	at java.base/sun.security.ssl.SSLSocketImpl.performInitialHandshake(SSLSocketImpl.java:1402)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1429)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1413)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.createLayeredSocket(SSLConnectionSocketFactory.java:436)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.connectSocket(SSLConnectionSocketFactory.java:384)
+	at org.apache.http.impl.conn.DefaultHttpClientConnectionOperator.connect(DefaultHttpClientConnectionOperator.java:142)
+	at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.connect(PoolingHttpClientConnectionManager.java:376)
+	at org.apache.http.impl.execchain.MainClientExec.establishRoute(MainClientExec.java:393)
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:236)
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:186)
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:89)
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:110)
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:83)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:108)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:56)
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:50)
+	... 9 more
+Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:385)
+	at java.base/sun.security.validator.PKIXValidator.engineValidate(PKIXValidator.java:290)
+	at java.base/sun.security.validator.Validator.validate(Validator.java:264)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.validate(X509TrustManagerImpl.java:343)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:242)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:114)
+	at org.apache.http.ssl.SSLContextBuilder$TrustManagerDelegate.checkServerTrusted(SSLContextBuilder.java:416)
+	at java.base/sun.security.ssl.AbstractTrustManagerWrapper.checkServerTrusted(SSLContextImpl.java:1381)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1947)
+	... 33 more
+Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.build(SunCertPathBuilder.java:141)
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.engineBuild(SunCertPathBuilder.java:126)
+	at java.base/java.security.cert.CertPathBuilder.build(CertPathBuilder.java:297)
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:380)
+	... 41 more
+2020-06-27 12:47:20 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 12:47:20 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 12:47:20 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 12:47:20 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 12:47:20 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 12:47:20 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 12:47:20 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 12:47:20 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 12:47:20 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 12:47:20 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 12:47:20 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 12:47:20 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 12:47:20 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.ApacheHttpClientSupport loaded with current classloader
+2020-06-27 12:47:20 DEBUG JarClassLoader$LocalLoader:269 - Return new local loaded class YouTubeSupport
+2020-06-27 12:47:20 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.CharSequence loaded with current classloader
+2020-06-27 12:47:20 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.Object loaded with current classloader
+2020-06-27 12:47:20 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.task.Task loaded with current classloader
+2020-06-27 12:47:20 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.Context loaded with current classloader
+2020-06-27 12:47:20 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.regex.Pattern loaded with current classloader
+2020-06-27 12:47:42 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: request failed, may be the site is offline or you don't have internet connection https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:57)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+Caused by: javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.ssl.Alerts.getSSLException(Alerts.java:198)
+	at java.base/sun.security.ssl.SSLSocketImpl.fatal(SSLSocketImpl.java:1969)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:345)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:339)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1968)
+	at java.base/sun.security.ssl.ClientHandshaker.serverCertificate(ClientHandshaker.java:1777)
+	at java.base/sun.security.ssl.ClientHandshaker.processMessage(ClientHandshaker.java:264)
+	at java.base/sun.security.ssl.Handshaker.processLoop(Handshaker.java:1092)
+	at java.base/sun.security.ssl.Handshaker.processRecord(Handshaker.java:1026)
+	at java.base/sun.security.ssl.SSLSocketImpl.processInputRecord(SSLSocketImpl.java:1137)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:1074)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:973)
+	at java.base/sun.security.ssl.SSLSocketImpl.performInitialHandshake(SSLSocketImpl.java:1402)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1429)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1413)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.createLayeredSocket(SSLConnectionSocketFactory.java:436)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.connectSocket(SSLConnectionSocketFactory.java:384)
+	at org.apache.http.impl.conn.DefaultHttpClientConnectionOperator.connect(DefaultHttpClientConnectionOperator.java:142)
+	at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.connect(PoolingHttpClientConnectionManager.java:376)
+	at org.apache.http.impl.execchain.MainClientExec.establishRoute(MainClientExec.java:393)
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:236)
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:186)
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:89)
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:110)
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:83)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:108)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:56)
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:48)
+	... 9 more
+Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:385)
+	at java.base/sun.security.validator.PKIXValidator.engineValidate(PKIXValidator.java:290)
+	at java.base/sun.security.validator.Validator.validate(Validator.java:264)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.validate(X509TrustManagerImpl.java:343)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:242)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:114)
+	at org.apache.http.ssl.SSLContextBuilder$TrustManagerDelegate.checkServerTrusted(SSLContextBuilder.java:416)
+	at java.base/sun.security.ssl.AbstractTrustManagerWrapper.checkServerTrusted(SSLContextImpl.java:1381)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1947)
+	... 33 more
+Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.build(SunCertPathBuilder.java:141)
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.engineBuild(SunCertPathBuilder.java:126)
+	at java.base/java.security.cert.CertPathBuilder.build(CertPathBuilder.java:297)
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:380)
+	... 41 more
+2020-06-27 12:48:04 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: request failed, may be the site is offline or you don't have internet connection https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:57)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+Caused by: javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.ssl.Alerts.getSSLException(Alerts.java:198)
+	at java.base/sun.security.ssl.SSLSocketImpl.fatal(SSLSocketImpl.java:1969)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:345)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:339)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1968)
+	at java.base/sun.security.ssl.ClientHandshaker.serverCertificate(ClientHandshaker.java:1777)
+	at java.base/sun.security.ssl.ClientHandshaker.processMessage(ClientHandshaker.java:264)
+	at java.base/sun.security.ssl.Handshaker.processLoop(Handshaker.java:1092)
+	at java.base/sun.security.ssl.Handshaker.processRecord(Handshaker.java:1026)
+	at java.base/sun.security.ssl.SSLSocketImpl.processInputRecord(SSLSocketImpl.java:1137)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:1074)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:973)
+	at java.base/sun.security.ssl.SSLSocketImpl.performInitialHandshake(SSLSocketImpl.java:1402)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1429)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1413)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.createLayeredSocket(SSLConnectionSocketFactory.java:436)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.connectSocket(SSLConnectionSocketFactory.java:384)
+	at org.apache.http.impl.conn.DefaultHttpClientConnectionOperator.connect(DefaultHttpClientConnectionOperator.java:142)
+	at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.connect(PoolingHttpClientConnectionManager.java:376)
+	at org.apache.http.impl.execchain.MainClientExec.establishRoute(MainClientExec.java:393)
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:236)
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:186)
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:89)
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:110)
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:83)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:108)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:56)
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:48)
+	... 9 more
+Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:385)
+	at java.base/sun.security.validator.PKIXValidator.engineValidate(PKIXValidator.java:290)
+	at java.base/sun.security.validator.Validator.validate(Validator.java:264)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.validate(X509TrustManagerImpl.java:343)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:242)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:114)
+	at org.apache.http.ssl.SSLContextBuilder$TrustManagerDelegate.checkServerTrusted(SSLContextBuilder.java:416)
+	at java.base/sun.security.ssl.AbstractTrustManagerWrapper.checkServerTrusted(SSLContextImpl.java:1381)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1947)
+	... 33 more
+Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.build(SunCertPathBuilder.java:141)
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.engineBuild(SunCertPathBuilder.java:126)
+	at java.base/java.security.cert.CertPathBuilder.build(CertPathBuilder.java:297)
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:380)
+	... 41 more
+2020-06-27 12:48:24 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: request failed, may be the site is offline or you don't have internet connection https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:57)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+Caused by: javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.ssl.Alerts.getSSLException(Alerts.java:198)
+	at java.base/sun.security.ssl.SSLSocketImpl.fatal(SSLSocketImpl.java:1969)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:345)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:339)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1968)
+	at java.base/sun.security.ssl.ClientHandshaker.serverCertificate(ClientHandshaker.java:1777)
+	at java.base/sun.security.ssl.ClientHandshaker.processMessage(ClientHandshaker.java:264)
+	at java.base/sun.security.ssl.Handshaker.processLoop(Handshaker.java:1092)
+	at java.base/sun.security.ssl.Handshaker.processRecord(Handshaker.java:1026)
+	at java.base/sun.security.ssl.SSLSocketImpl.processInputRecord(SSLSocketImpl.java:1137)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:1074)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:973)
+	at java.base/sun.security.ssl.SSLSocketImpl.performInitialHandshake(SSLSocketImpl.java:1402)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1429)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1413)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.createLayeredSocket(SSLConnectionSocketFactory.java:436)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.connectSocket(SSLConnectionSocketFactory.java:384)
+	at org.apache.http.impl.conn.DefaultHttpClientConnectionOperator.connect(DefaultHttpClientConnectionOperator.java:142)
+	at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.connect(PoolingHttpClientConnectionManager.java:376)
+	at org.apache.http.impl.execchain.MainClientExec.establishRoute(MainClientExec.java:393)
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:236)
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:186)
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:89)
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:110)
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:83)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:108)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:56)
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:48)
+	... 9 more
+Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:385)
+	at java.base/sun.security.validator.PKIXValidator.engineValidate(PKIXValidator.java:290)
+	at java.base/sun.security.validator.Validator.validate(Validator.java:264)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.validate(X509TrustManagerImpl.java:343)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:242)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:114)
+	at org.apache.http.ssl.SSLContextBuilder$TrustManagerDelegate.checkServerTrusted(SSLContextBuilder.java:416)
+	at java.base/sun.security.ssl.AbstractTrustManagerWrapper.checkServerTrusted(SSLContextImpl.java:1381)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1947)
+	... 33 more
+Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.build(SunCertPathBuilder.java:141)
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.engineBuild(SunCertPathBuilder.java:126)
+	at java.base/java.security.cert.CertPathBuilder.build(CertPathBuilder.java:297)
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:380)
+	... 41 more
+2020-06-27 12:48:44 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: request failed, may be the site is offline or you don't have internet connection https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:57)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+Caused by: javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.ssl.Alerts.getSSLException(Alerts.java:198)
+	at java.base/sun.security.ssl.SSLSocketImpl.fatal(SSLSocketImpl.java:1969)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:345)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:339)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1968)
+	at java.base/sun.security.ssl.ClientHandshaker.serverCertificate(ClientHandshaker.java:1777)
+	at java.base/sun.security.ssl.ClientHandshaker.processMessage(ClientHandshaker.java:264)
+	at java.base/sun.security.ssl.Handshaker.processLoop(Handshaker.java:1092)
+	at java.base/sun.security.ssl.Handshaker.processRecord(Handshaker.java:1026)
+	at java.base/sun.security.ssl.SSLSocketImpl.processInputRecord(SSLSocketImpl.java:1137)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:1074)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:973)
+	at java.base/sun.security.ssl.SSLSocketImpl.performInitialHandshake(SSLSocketImpl.java:1402)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1429)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1413)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.createLayeredSocket(SSLConnectionSocketFactory.java:436)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.connectSocket(SSLConnectionSocketFactory.java:384)
+	at org.apache.http.impl.conn.DefaultHttpClientConnectionOperator.connect(DefaultHttpClientConnectionOperator.java:142)
+	at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.connect(PoolingHttpClientConnectionManager.java:376)
+	at org.apache.http.impl.execchain.MainClientExec.establishRoute(MainClientExec.java:393)
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:236)
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:186)
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:89)
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:110)
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:83)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:108)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:56)
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:48)
+	... 9 more
+Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:385)
+	at java.base/sun.security.validator.PKIXValidator.engineValidate(PKIXValidator.java:290)
+	at java.base/sun.security.validator.Validator.validate(Validator.java:264)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.validate(X509TrustManagerImpl.java:343)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:242)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:114)
+	at org.apache.http.ssl.SSLContextBuilder$TrustManagerDelegate.checkServerTrusted(SSLContextBuilder.java:416)
+	at java.base/sun.security.ssl.AbstractTrustManagerWrapper.checkServerTrusted(SSLContextImpl.java:1381)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1947)
+	... 33 more
+Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.build(SunCertPathBuilder.java:141)
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.engineBuild(SunCertPathBuilder.java:126)
+	at java.base/java.security.cert.CertPathBuilder.build(CertPathBuilder.java:297)
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:380)
+	... 41 more
+2020-06-27 12:49:04 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: request failed, may be the site is offline or you don't have internet connection https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:57)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+Caused by: javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.ssl.Alerts.getSSLException(Alerts.java:198)
+	at java.base/sun.security.ssl.SSLSocketImpl.fatal(SSLSocketImpl.java:1969)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:345)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:339)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1968)
+	at java.base/sun.security.ssl.ClientHandshaker.serverCertificate(ClientHandshaker.java:1777)
+	at java.base/sun.security.ssl.ClientHandshaker.processMessage(ClientHandshaker.java:264)
+	at java.base/sun.security.ssl.Handshaker.processLoop(Handshaker.java:1092)
+	at java.base/sun.security.ssl.Handshaker.processRecord(Handshaker.java:1026)
+	at java.base/sun.security.ssl.SSLSocketImpl.processInputRecord(SSLSocketImpl.java:1137)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:1074)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:973)
+	at java.base/sun.security.ssl.SSLSocketImpl.performInitialHandshake(SSLSocketImpl.java:1402)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1429)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1413)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.createLayeredSocket(SSLConnectionSocketFactory.java:436)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.connectSocket(SSLConnectionSocketFactory.java:384)
+	at org.apache.http.impl.conn.DefaultHttpClientConnectionOperator.connect(DefaultHttpClientConnectionOperator.java:142)
+	at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.connect(PoolingHttpClientConnectionManager.java:376)
+	at org.apache.http.impl.execchain.MainClientExec.establishRoute(MainClientExec.java:393)
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:236)
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:186)
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:89)
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:110)
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:83)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:108)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:56)
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:48)
+	... 9 more
+Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:385)
+	at java.base/sun.security.validator.PKIXValidator.engineValidate(PKIXValidator.java:290)
+	at java.base/sun.security.validator.Validator.validate(Validator.java:264)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.validate(X509TrustManagerImpl.java:343)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:242)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:114)
+	at org.apache.http.ssl.SSLContextBuilder$TrustManagerDelegate.checkServerTrusted(SSLContextBuilder.java:416)
+	at java.base/sun.security.ssl.AbstractTrustManagerWrapper.checkServerTrusted(SSLContextImpl.java:1381)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1947)
+	... 33 more
+Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.build(SunCertPathBuilder.java:141)
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.engineBuild(SunCertPathBuilder.java:126)
+	at java.base/java.security.cert.CertPathBuilder.build(CertPathBuilder.java:297)
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:380)
+	... 41 more
+2020-06-27 12:49:44 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 12:49:44 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 12:49:44 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 12:49:44 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 12:49:44 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 12:49:44 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 12:49:44 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 12:49:44 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 12:49:44 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 12:49:44 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 12:49:44 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 12:49:44 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 12:49:44 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.ApacheHttpClientSupport loaded with current classloader
+2020-06-27 12:49:44 DEBUG JarClassLoader$LocalLoader:269 - Return new local loaded class YouTubeSupport
+2020-06-27 12:49:44 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.CharSequence loaded with current classloader
+2020-06-27 12:49:44 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.Object loaded with current classloader
+2020-06-27 12:49:44 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.task.Task loaded with current classloader
+2020-06-27 12:49:44 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.Context loaded with current classloader
+2020-06-27 12:49:44 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.regex.Pattern loaded with current classloader
+2020-06-27 12:49:46 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: request failed, may be the site is offline or you don't have internet connection https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:58)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+Caused by: javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.ssl.Alerts.getSSLException(Alerts.java:198)
+	at java.base/sun.security.ssl.SSLSocketImpl.fatal(SSLSocketImpl.java:1969)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:345)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:339)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1968)
+	at java.base/sun.security.ssl.ClientHandshaker.serverCertificate(ClientHandshaker.java:1777)
+	at java.base/sun.security.ssl.ClientHandshaker.processMessage(ClientHandshaker.java:264)
+	at java.base/sun.security.ssl.Handshaker.processLoop(Handshaker.java:1092)
+	at java.base/sun.security.ssl.Handshaker.processRecord(Handshaker.java:1026)
+	at java.base/sun.security.ssl.SSLSocketImpl.processInputRecord(SSLSocketImpl.java:1137)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:1074)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:973)
+	at java.base/sun.security.ssl.SSLSocketImpl.performInitialHandshake(SSLSocketImpl.java:1402)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1429)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1413)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.createLayeredSocket(SSLConnectionSocketFactory.java:436)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.connectSocket(SSLConnectionSocketFactory.java:384)
+	at org.apache.http.impl.conn.DefaultHttpClientConnectionOperator.connect(DefaultHttpClientConnectionOperator.java:142)
+	at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.connect(PoolingHttpClientConnectionManager.java:376)
+	at org.apache.http.impl.execchain.MainClientExec.establishRoute(MainClientExec.java:393)
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:236)
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:186)
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:89)
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:110)
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:83)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:108)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:56)
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:49)
+	... 9 more
+Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:385)
+	at java.base/sun.security.validator.PKIXValidator.engineValidate(PKIXValidator.java:290)
+	at java.base/sun.security.validator.Validator.validate(Validator.java:264)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.validate(X509TrustManagerImpl.java:343)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:242)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:114)
+	at org.apache.http.ssl.SSLContextBuilder$TrustManagerDelegate.checkServerTrusted(SSLContextBuilder.java:416)
+	at java.base/sun.security.ssl.AbstractTrustManagerWrapper.checkServerTrusted(SSLContextImpl.java:1381)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1947)
+	... 33 more
+Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.build(SunCertPathBuilder.java:141)
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.engineBuild(SunCertPathBuilder.java:126)
+	at java.base/java.security.cert.CertPathBuilder.build(CertPathBuilder.java:297)
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:380)
+	... 41 more
+2020-06-27 12:50:08 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: request failed, may be the site is offline or you don't have internet connection https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:58)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+Caused by: javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.ssl.Alerts.getSSLException(Alerts.java:198)
+	at java.base/sun.security.ssl.SSLSocketImpl.fatal(SSLSocketImpl.java:1969)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:345)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:339)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1968)
+	at java.base/sun.security.ssl.ClientHandshaker.serverCertificate(ClientHandshaker.java:1777)
+	at java.base/sun.security.ssl.ClientHandshaker.processMessage(ClientHandshaker.java:264)
+	at java.base/sun.security.ssl.Handshaker.processLoop(Handshaker.java:1092)
+	at java.base/sun.security.ssl.Handshaker.processRecord(Handshaker.java:1026)
+	at java.base/sun.security.ssl.SSLSocketImpl.processInputRecord(SSLSocketImpl.java:1137)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:1074)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:973)
+	at java.base/sun.security.ssl.SSLSocketImpl.performInitialHandshake(SSLSocketImpl.java:1402)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1429)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1413)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.createLayeredSocket(SSLConnectionSocketFactory.java:436)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.connectSocket(SSLConnectionSocketFactory.java:384)
+	at org.apache.http.impl.conn.DefaultHttpClientConnectionOperator.connect(DefaultHttpClientConnectionOperator.java:142)
+	at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.connect(PoolingHttpClientConnectionManager.java:376)
+	at org.apache.http.impl.execchain.MainClientExec.establishRoute(MainClientExec.java:393)
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:236)
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:186)
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:89)
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:110)
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:83)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:108)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:56)
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:49)
+	... 9 more
+Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:385)
+	at java.base/sun.security.validator.PKIXValidator.engineValidate(PKIXValidator.java:290)
+	at java.base/sun.security.validator.Validator.validate(Validator.java:264)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.validate(X509TrustManagerImpl.java:343)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:242)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:114)
+	at org.apache.http.ssl.SSLContextBuilder$TrustManagerDelegate.checkServerTrusted(SSLContextBuilder.java:416)
+	at java.base/sun.security.ssl.AbstractTrustManagerWrapper.checkServerTrusted(SSLContextImpl.java:1381)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1947)
+	... 33 more
+Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.build(SunCertPathBuilder.java:141)
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.engineBuild(SunCertPathBuilder.java:126)
+	at java.base/java.security.cert.CertPathBuilder.build(CertPathBuilder.java:297)
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:380)
+	... 41 more
+2020-06-27 12:50:28 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: request failed, may be the site is offline or you don't have internet connection https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:58)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+Caused by: javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.ssl.Alerts.getSSLException(Alerts.java:198)
+	at java.base/sun.security.ssl.SSLSocketImpl.fatal(SSLSocketImpl.java:1969)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:345)
+	at java.base/sun.security.ssl.Handshaker.fatalSE(Handshaker.java:339)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1968)
+	at java.base/sun.security.ssl.ClientHandshaker.serverCertificate(ClientHandshaker.java:1777)
+	at java.base/sun.security.ssl.ClientHandshaker.processMessage(ClientHandshaker.java:264)
+	at java.base/sun.security.ssl.Handshaker.processLoop(Handshaker.java:1092)
+	at java.base/sun.security.ssl.Handshaker.processRecord(Handshaker.java:1026)
+	at java.base/sun.security.ssl.SSLSocketImpl.processInputRecord(SSLSocketImpl.java:1137)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:1074)
+	at java.base/sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:973)
+	at java.base/sun.security.ssl.SSLSocketImpl.performInitialHandshake(SSLSocketImpl.java:1402)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1429)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1413)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.createLayeredSocket(SSLConnectionSocketFactory.java:436)
+	at org.apache.http.conn.ssl.SSLConnectionSocketFactory.connectSocket(SSLConnectionSocketFactory.java:384)
+	at org.apache.http.impl.conn.DefaultHttpClientConnectionOperator.connect(DefaultHttpClientConnectionOperator.java:142)
+	at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.connect(PoolingHttpClientConnectionManager.java:376)
+	at org.apache.http.impl.execchain.MainClientExec.establishRoute(MainClientExec.java:393)
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:236)
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:186)
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:89)
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:110)
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:83)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:108)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:56)
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:49)
+	... 9 more
+Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:385)
+	at java.base/sun.security.validator.PKIXValidator.engineValidate(PKIXValidator.java:290)
+	at java.base/sun.security.validator.Validator.validate(Validator.java:264)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.validate(X509TrustManagerImpl.java:343)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:242)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:114)
+	at org.apache.http.ssl.SSLContextBuilder$TrustManagerDelegate.checkServerTrusted(SSLContextBuilder.java:416)
+	at java.base/sun.security.ssl.AbstractTrustManagerWrapper.checkServerTrusted(SSLContextImpl.java:1381)
+	at java.base/sun.security.ssl.ClientHandshaker.checkServerCerts(ClientHandshaker.java:1947)
+	... 33 more
+Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.build(SunCertPathBuilder.java:141)
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.engineBuild(SunCertPathBuilder.java:126)
+	at java.base/java.security.cert.CertPathBuilder.build(CertPathBuilder.java:297)
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:380)
+	... 41 more
+2020-06-27 12:51:08 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 12:51:08 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 12:51:08 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 12:51:08 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 12:51:08 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 12:51:08 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 12:51:08 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 12:51:08 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 12:51:08 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 12:51:08 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 12:51:08 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 12:51:08 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 12:51:08 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.ApacheHttpClientSupport loaded with current classloader
+2020-06-27 12:51:08 DEBUG JarClassLoader$LocalLoader:269 - Return new local loaded class YouTubeSupport
+2020-06-27 12:51:08 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.CharSequence loaded with current classloader
+2020-06-27 12:51:08 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.Object loaded with current classloader
+2020-06-27 12:51:08 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.task.Task loaded with current classloader
+2020-06-27 12:51:08 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.Context loaded with current classloader
+2020-06-27 12:51:08 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.regex.Pattern loaded with current classloader
+2020-06-27 12:53:52 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 12:53:52 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 12:53:52 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 12:53:52 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 12:53:52 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 12:53:52 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 12:53:52 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 12:53:52 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 12:53:52 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 12:53:52 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 12:53:52 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 12:53:52 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 12:53:52 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.ApacheHttpClientSupport loaded with current classloader
+2020-06-27 12:53:52 DEBUG JarClassLoader$LocalLoader:269 - Return new local loaded class YouTubeSupport
+2020-06-27 12:53:52 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.CharSequence loaded with current classloader
+2020-06-27 12:53:52 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.Object loaded with current classloader
+2020-06-27 12:53:52 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.task.Task loaded with current classloader
+2020-06-27 12:53:52 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.Context loaded with current classloader
+2020-06-27 12:53:52 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.regex.Pattern loaded with current classloader
+2020-06-27 12:54:14 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:65)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:54:37 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:65)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:54:57 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:65)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:55:18 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:65)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:55:38 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:65)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:55:58 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:65)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:56:19 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:65)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:56:39 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class jdk.internal.reflect.ConstructorAccessorImpl loaded with current classloader
+2020-06-27 12:56:39 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:65)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:56:59 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:65)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:58:19 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 12:58:19 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 12:58:19 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 12:58:19 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 12:58:19 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 12:58:19 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 12:58:19 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 12:58:19 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 12:58:19 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 12:58:19 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 12:58:19 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 12:58:19 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 12:58:19 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.ApacheHttpClientSupport loaded with current classloader
+2020-06-27 12:58:19 DEBUG JarClassLoader$LocalLoader:269 - Return new local loaded class YouTubeSupport
+2020-06-27 12:58:19 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.CharSequence loaded with current classloader
+2020-06-27 12:58:19 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.Object loaded with current classloader
+2020-06-27 12:58:19 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.task.Task loaded with current classloader
+2020-06-27 12:58:19 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.Context loaded with current classloader
+2020-06-27 12:58:19 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.regex.Pattern loaded with current classloader
+2020-06-27 12:58:41 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:52)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:59:02 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:52)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:59:23 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:52)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 12:59:43 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:52)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:00:03 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:52)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:00:24 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:52)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:00:44 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:52)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:01:04 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class jdk.internal.reflect.ConstructorAccessorImpl loaded with current classloader
+2020-06-27 13:01:04 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:52)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:01:25 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:52)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:01:45 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:52)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:02:05 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:52)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:02:26 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:52)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:02:46 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:52)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:03:06 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:52)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:03:27 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:52)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:03:46 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 13:03:46 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 13:03:46 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 13:03:46 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 13:03:46 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 13:03:46 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 13:03:46 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 13:03:46 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 13:03:46 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 13:03:46 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 13:03:46 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 13:03:46 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 13:03:46 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.ApacheHttpClientSupport loaded with current classloader
+2020-06-27 13:03:46 DEBUG JarClassLoader$LocalLoader:269 - Return new local loaded class YouTubeSupport
+2020-06-27 13:03:46 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.Object loaded with current classloader
+2020-06-27 13:03:46 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.task.Task loaded with current classloader
+2020-06-27 13:03:46 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.CharSequence loaded with current classloader
+2020-06-27 13:03:46 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.Context loaded with current classloader
+2020-06-27 13:03:46 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.regex.Pattern loaded with current classloader
+2020-06-27 13:04:08 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:56)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:04:30 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:56)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:04:50 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:56)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:05:11 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:56)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:05:31 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:56)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:05:51 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:56)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:06:12 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:56)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:06:32 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class jdk.internal.reflect.ConstructorAccessorImpl loaded with current classloader
+2020-06-27 13:06:32 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:56)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:06:52 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:56)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:07:13 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:56)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:07:33 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:56)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:07:53 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:56)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:08:13 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:56)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:08:34 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:56)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:08:54 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:56)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:09:14 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:56)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:09:36 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:56)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:14:42 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 13:14:42 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 13:14:42 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 13:14:42 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 13:14:42 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 13:14:42 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 13:14:42 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 13:14:42 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 13:14:42 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 13:14:42 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 13:14:42 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 13:14:42 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 13:14:42 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.ApacheHttpClientSupport loaded with current classloader
+2020-06-27 13:14:42 DEBUG JarClassLoader$LocalLoader:269 - Return new local loaded class YouTubeSupport
+2020-06-27 13:14:42 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.Object loaded with current classloader
+2020-06-27 13:14:42 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.task.Task loaded with current classloader
+2020-06-27 13:14:42 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.CharSequence loaded with current classloader
+2020-06-27 13:14:42 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.Context loaded with current classloader
+2020-06-27 13:14:42 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.regex.Pattern loaded with current classloader
+2020-06-27 13:15:04 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+com.github.luischavez.videodownloader.support.MediaOfflineException: invalid request https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg status 403
+	at com.github.luischavez.videodownloader.support.ApacheHttpClientSupport.getContent(ApacheHttpClientSupport.java:49)
+	at YouTubeSupport.getContent(YouTubeSupport.java:30)
+	at com.github.luischavez.videodownloader.support.Support.getMedia(Support.java:25)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
+2020-06-27 13:18:35 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 13:18:35 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 13:18:35 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 13:18:35 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 13:18:35 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 13:18:35 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 13:18:35 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 13:18:35 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 13:18:35 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 13:18:35 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 13:18:35 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 13:18:35 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 13:18:35 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.ApacheHttpClientSupport loaded with current classloader
+2020-06-27 13:18:35 DEBUG JarClassLoader$LocalLoader:269 - Return new local loaded class YouTubeSupport
+2020-06-27 13:18:35 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.CharSequence loaded with current classloader
+2020-06-27 13:18:35 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.Object loaded with current classloader
+2020-06-27 13:18:35 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.task.Task loaded with current classloader
+2020-06-27 13:18:35 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.Context loaded with current classloader
+2020-06-27 13:18:35 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.regex.Pattern loaded with current classloader
+2020-06-27 13:18:57 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.regex.Matcher loaded with current classloader
+2020-06-27 13:18:57 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.String loaded with current classloader
+2020-06-27 13:18:58 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.List loaded with current classloader
+2020-06-27 13:18:58 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.system.System loaded with current classloader
+2020-06-27 13:18:58 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.M3U8VideoResolver loaded with current classloader
+2020-06-27 13:18:58 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.system.DependencyInjection loaded with current classloader
+2020-06-27 13:18:58 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.MediaResolver loaded with current classloader
+2020-06-27 13:18:58 ERROR AppContext:124 - media not found for location https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+2020-06-27 13:19:22 ERROR AppContext:124 - media not found for location https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+2020-06-27 13:19:45 ERROR AppContext:124 - media not found for location https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+2020-06-27 13:20:07 ERROR AppContext:124 - media not found for location https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+2020-06-27 13:20:28 ERROR AppContext:124 - media not found for location https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+2020-06-27 13:20:50 ERROR AppContext:124 - media not found for location https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+2020-06-27 13:21:12 ERROR AppContext:124 - media not found for location https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+2020-06-27 13:21:32 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class jdk.internal.reflect.ConstructorAccessorImpl loaded with current classloader
+2020-06-27 13:21:35 ERROR AppContext:124 - media not found for location https://www.youtube.com/channel/UCFxHplbcoJK9m70c4VyTIxg
+2020-06-27 13:21:57 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.util.CryptoUtils loaded with current classloader
+2020-06-27 13:21:57 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.Map loaded with current classloader
+2020-06-27 13:21:57 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.FFMPEGVideoTask loaded with current classloader
+2020-06-27 13:22:20 ERROR AppContext:124 - media not found for location https://www.youtube.com/channel/UCnmlCrWnJZ-YdDFcVKOnjhA
+2020-06-27 13:22:43 ERROR AppContext:124 - media not found for location https://www.youtube.com/channel/UCnmlCrWnJZ-YdDFcVKOnjhA
+2020-06-27 13:24:40 ERROR AppContext:124 - media not found for location https://www.youtube.com/channel/UCnmlCrWnJZ-YdDFcVKOnjhA
+2020-06-27 13:25:01 ERROR AppContext:124 - media not found for location https://www.youtube.com/channel/UCnmlCrWnJZ-YdDFcVKOnjhA
+2020-06-27 13:25:23 ERROR AppContext:124 - media not found for location https://www.youtube.com/channel/UCnmlCrWnJZ-YdDFcVKOnjhA
+2020-06-27 13:25:45 ERROR AppContext:124 - media not found for location https://www.youtube.com/channel/UCnmlCrWnJZ-YdDFcVKOnjhA
+2020-06-27 13:26:06 ERROR AppContext:124 - media not found for location https://www.youtube.com/channel/UCnmlCrWnJZ-YdDFcVKOnjhA
+2020-06-27 13:28:21 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 13:28:21 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 13:28:21 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 13:28:21 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 13:28:21 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 13:28:21 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 13:28:21 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 13:28:21 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 13:28:21 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 13:28:21 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 13:28:21 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 13:28:21 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 13:28:21 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.ApacheHttpClientSupport loaded with current classloader
+2020-06-27 13:28:21 DEBUG JarClassLoader$LocalLoader:269 - Return new local loaded class YouTubeSupport
+2020-06-27 13:28:21 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.CharSequence loaded with current classloader
+2020-06-27 13:28:21 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.Object loaded with current classloader
+2020-06-27 13:28:21 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.task.Task loaded with current classloader
+2020-06-27 13:28:21 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.Context loaded with current classloader
+2020-06-27 13:28:21 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.regex.Pattern loaded with current classloader
+2020-06-27 13:28:43 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.regex.Matcher loaded with current classloader
+2020-06-27 13:28:43 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.system.System loaded with current classloader
+2020-06-27 13:28:43 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.M3U8VideoResolver loaded with current classloader
+2020-06-27 13:28:43 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.system.DependencyInjection loaded with current classloader
+2020-06-27 13:28:43 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.MediaResolver loaded with current classloader
+2020-06-27 13:28:43 ERROR AppContext:124 - media not found for location https://www.youtube.com/channel/UCnmlCrWnJZ-YdDFcVKOnjhA
+2020-06-27 13:29:06 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.String loaded with current classloader
+2020-06-27 13:29:07 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.List loaded with current classloader
+2020-06-27 13:29:07 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.util.CryptoUtils loaded with current classloader
+2020-06-27 13:29:07 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.Map loaded with current classloader
+2020-06-27 13:29:07 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.FFMPEGVideoTask loaded with current classloader
+2020-06-27 13:30:10 DEBUG JarResources:182 - f defalted YouTubeSupport.class	4578/1839
+2020-06-27 13:30:10 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 4578
+2020-06-27 13:30:10 DEBUG JarResources:213 - YouTubeSupport.class: size=4578, csize=1839
+2020-06-27 13:30:10 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-27 13:30:10 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-27 13:30:10 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-27 13:30:10 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	862/342
+2020-06-27 13:30:10 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 862
+2020-06-27 13:30:10 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=862, csize=342
+2020-06-27 13:30:10 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	141/129
+2020-06-27 13:30:10 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 141
+2020-06-27 13:30:10 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=141, csize=129
+2020-06-27 13:30:10 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.ApacheHttpClientSupport loaded with current classloader
+2020-06-27 13:30:10 DEBUG JarClassLoader$LocalLoader:269 - Return new local loaded class YouTubeSupport
+2020-06-27 13:30:10 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.CharSequence loaded with current classloader
+2020-06-27 13:30:10 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.Object loaded with current classloader
+2020-06-27 13:30:10 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.task.Task loaded with current classloader
+2020-06-27 13:30:10 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.Context loaded with current classloader
+2020-06-27 13:30:10 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.regex.Pattern loaded with current classloader
+2020-06-27 13:30:35 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.regex.Matcher loaded with current classloader
+2020-06-27 13:30:35 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.String loaded with current classloader
+2020-06-27 13:30:36 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.List loaded with current classloader
+2020-06-27 13:30:36 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.util.CryptoUtils loaded with current classloader
+2020-06-27 13:30:36 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.system.System loaded with current classloader
+2020-06-27 13:30:36 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.M3U8VideoResolver loaded with current classloader
+2020-06-27 13:30:36 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.system.DependencyInjection loaded with current classloader
+2020-06-27 13:30:36 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.MediaResolver loaded with current classloader
+2020-06-27 13:30:36 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.Map loaded with current classloader
+2020-06-27 13:30:36 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.FFMPEGVideoTask loaded with current classloader
+2020-06-27 13:31:27 ERROR AppContext:124 - media not found for location https://www.youtube.com/channel/UCnmlCrWnJZ-YdDFcVKOnjhA
+2020-06-27 13:31:50 ERROR AppContext:124 - media not found for location https://www.youtube.com/channel/UCnmlCrWnJZ-YdDFcVKOnjhA
+2020-06-27 13:32:11 ERROR AppContext:124 - media not found for location https://www.youtube.com/channel/UCnmlCrWnJZ-YdDFcVKOnjhA

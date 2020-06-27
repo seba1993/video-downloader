@@ -80,9 +80,9 @@ public class PluggableSupportManager extends BaseSupportManager {
     }
 
     private String getSupportClassName(String jarFilePath) {
-        String[] filePathParts = jarFilePath.split(getFileSeparator());
+        String fileName = new File(jarFilePath).getName();
 
-        return filePathParts[filePathParts.length - 1].replace(".jar", "");
+        return fileName.replace(".jar", "");
     }
 
     private Support newInstance(Class<?> supportClass) throws Exception {
