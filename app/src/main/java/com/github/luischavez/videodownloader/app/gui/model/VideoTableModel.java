@@ -30,6 +30,8 @@ public class VideoTableModel extends AbstractTableModel {
     }
 
     public File getFileAt(int row) {
+        if (files.size() - 1 < row) return null;
+
         return files.get(row);
     }
 
