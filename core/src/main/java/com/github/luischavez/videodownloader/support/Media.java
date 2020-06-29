@@ -9,4 +9,6 @@ public interface Media extends Comparable<Media> {
     Quality getQuality();
 
     String getCodec();
+
+    boolean isMain();
 }

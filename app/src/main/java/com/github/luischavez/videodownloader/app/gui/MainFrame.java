@@ -39,7 +39,7 @@ import com.jgoodies.forms.layout.*;
  */
 public class MainFrame extends JFrame implements ActionListener, WindowListener {
 
-    public static final String VERSION = "v2.0.0";
+    public static final String VERSION = "v2.0.1";
     public static final String JAVA_VERSION = System.getProperty("java.version");
     public static final String TITLE = String.format("M3U8 Downloader %s [Runtime %s]", VERSION, JAVA_VERSION);
 

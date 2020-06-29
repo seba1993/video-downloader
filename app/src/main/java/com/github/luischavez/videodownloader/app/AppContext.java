@@ -13,7 +13,7 @@ import com.github.luischavez.videodownloader.configuration.ConfigurationManager;
 import com.github.luischavez.videodownloader.manager.Manager;
 import com.github.luischavez.videodownloader.manager.ManagerListener;
 import com.github.luischavez.videodownloader.schedule.*;
-import com.github.luischavez.videodownloader.support.FFMPEGVideoTask;
+import com.github.luischavez.videodownloader.support.FFMPEGTask;
 import com.github.luischavez.videodownloader.support.Media;
 import com.github.luischavez.videodownloader.support.Support;
 import com.github.luischavez.videodownloader.support.SupportListener;
@@ -223,6 +223,10 @@ public class AppContext extends BaseContext implements ManagerListener,
     @Override
     public void onTaskAdded(Task task) {
         debug(AppContext.class, String.format("task added %s", task.getClass()));
+
+        if (task instanceof FFMPEGTask) {
+            debug(AppContext.class, ((FFMPEGTask) task).getCommand());
+        }
     }
 
     @Override
@@ -230,7 +234,7 @@ public class AppContext extends BaseContext implements ManagerListener,
         debug(AppContext.class, String.format("task removed %s", task.getClass()));
     }
 
-    private void sendTaskDetailMail(FFMPEGVideoTask videoTask, boolean started) {
+    private void sendTaskDetailMail(FFMPEGTask videoTask, boolean started) {
         final Media media = videoTask.getMedia();
         final String fileName = videoTask.getFileName();
         final String destinationPath = videoTask.getDestinationPath();
@@ -269,8 +273,8 @@ public class AppContext extends BaseContext implements ManagerListener,
         debug(AppContext.class, String.format("task started %s pid %d", task.getClass(), task.pid()));
         RunningPids.load().add(task.pid());
 
-        if (task instanceof FFMPEGVideoTask) {
-            sendTaskDetailMail(FFMPEGVideoTask.class.cast(task), true);
+        if (task instanceof FFMPEGTask) {
+            sendTaskDetailMail(FFMPEGTask.class.cast(task), true);
         } else if (task instanceof ThreadedConcatenationTask) {
             sendConcatenationTaskMail(ThreadedConcatenationTask.class.cast(task), true);
         }
@@ -281,8 +285,8 @@ public class AppContext extends BaseContext implements ManagerListener,
         debug(AppContext.class, String.format("task stopped %s pid %d", task.getClass(), task.pid()));
         RunningPids.load().remove(task.pid());
 
-        if (task instanceof FFMPEGVideoTask) {
-            sendTaskDetailMail(FFMPEGVideoTask.class.cast(task), false);
+        if (task instanceof FFMPEGTask) {
+            sendTaskDetailMail(FFMPEGTask.class.cast(task), false);
         } else if (task instanceof ThreadedConcatenationTask) {
             sendConcatenationTaskMail(ThreadedConcatenationTask.class.cast(task), false);
         }

@@ -1,15 +1,14 @@
 import com.github.luischavez.videodownloader.Context;
 import com.github.luischavez.videodownloader.support.*;
 import com.github.luischavez.videodownloader.system.Injected;
-import com.github.luischavez.videodownloader.task.Task;
 import com.github.luischavez.videodownloader.util.CryptoUtils;
 
-import java.util.List;
-import java.util.Map;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-public class YouTubeSupport extends ApacheHttpClientSupport<Video> {
+public class YouTubeSupport extends FFMPEGSupport {
 
     private static final Pattern YOUTUBE_VIDEO_ID_PATTERN = Pattern.compile("data-video-ids=\\\"(?<id>.[^\\\"]+)\\\"");
 
@@ -21,44 +20,44 @@ public class YouTubeSupport extends ApacheHttpClientSupport<Video> {
     }
 
     @Override
-    public Pattern[] getPatterns() {
+    protected Pattern[] getLocationPatterns() {
         return patterns(Pattern.compile("^https?://.*youtube.com.*$"));
     }
 
     @Override
-    public String getContent(String location) throws MediaOfflineException {
-        String content = super.getContent(location);
+    protected MediaResolver[] getMediaResolvers() {
+        return resolvers(new M3U8VideoResolver(getWrappedContext()));
+    }
+
+    @Override
+    protected String[] getLinks(String location) throws MediaOfflineException {
+        String[] links = super.getLinks(location);
+
+        return Arrays.asList(links).stream()
+                .map(link -> {
+                    link = link.replaceAll("\\\\/", "/");
+                    link = CryptoUtils.decodeUrl(link);
+
+                    return link;
+                })
+                .collect(Collectors.toList())
+                .toArray(new String[0]);
+    }
+
+    @Override
+    protected String resolveContent(String location) throws MediaOfflineException {
+        String content = getContent(location);
+
         Matcher matcher = YOUTUBE_VIDEO_ID_PATTERN.matcher(content);
         if (matcher.find()) {
             String videoId = matcher.group("id");
             String streamLink = String.format(YOUTUBE_LINK, videoId);
 
-            content = super.getContent(streamLink);
+            content = getContent(streamLink);
 
-            List<String> links = findLinks(content, DEFAULT_M3U8_LINK_PATTERN);
-
-            if (links.isEmpty()) return "";
-
-            String link = links.get(0);
-            link = link.replaceAll("\\\\/", "/");
-            link = CryptoUtils.decodeUrl(link);
-
-            return super.getContent(link);
+            return content;
         }
 
         return "";
-    }
-
-    @Override
-    public MediaResolver<Video> getMediaResolver() {
-        return getSystem().getDependencyInjection().make(M3U8VideoResolver.class);
-    }
-
-    @Override
-    public Task generateTask(Media media, Map<String, Object> params) {
-        String baseFileName = params.get("base_file_name").toString();
-        String destinationPath = params.get("destination_path").toString();
-
-        return new FFMPEGVideoTask(getWrappedContext(), media, baseFileName, destinationPath);
     }
 }

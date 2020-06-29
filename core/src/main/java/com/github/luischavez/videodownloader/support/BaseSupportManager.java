@@ -5,7 +5,6 @@ import com.github.luischavez.videodownloader.manager.BaseManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public abstract class BaseSupportManager extends BaseManager implements SupportManager {
 
@@ -32,15 +31,7 @@ public abstract class BaseSupportManager extends BaseManager implements SupportM
     @Override
     public Support get(String location) {
         return supports.stream()
-                .filter(support -> {
-                    Pattern[] patterns = support.getPatterns();
-                    for (Pattern pattern : patterns) {
-                        if (pattern.matcher(location).matches()) {
-                            return true;
-                        }
-                    }
-                    return false;
-                })
+                .filter(support -> support.canHandle(location))
                 .findFirst()
                 .orElse(null);
     }

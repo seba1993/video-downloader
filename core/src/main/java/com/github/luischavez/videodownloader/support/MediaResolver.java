@@ -1,9 +1,10 @@
 package com.github.luischavez.videodownloader.support;
 
+import com.github.luischavez.videodownloader.Context;
+
 import java.util.List;
 
-public interface MediaResolver<M extends Media> {
+public interface MediaResolver extends Context {
 
-    boolean hasMedia(String content);
-    List<M> resolve(String content);
+    List<Media> findMedia(String location, String parentLink, String content, MediaLinkBuilder mediaLinkBuilder);
 }

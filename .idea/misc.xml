@@ -15,6 +15,8 @@
         <option value="$PROJECT_DIR$/pluggable-support-manager/pom.xml" />
         <option value="$PROJECT_DIR$/serializer-configuration-manager/pom.xml" />
         <option value="$PROJECT_DIR$/ffmpeg-support/pom.xml" />
+        <option value="$PROJECT_DIR$/webrad-support/pom.xml" />
+        <option value="$PROJECT_DIR$/abcnews-support/pom.xml" />
       </list>
     </option>
   </component>

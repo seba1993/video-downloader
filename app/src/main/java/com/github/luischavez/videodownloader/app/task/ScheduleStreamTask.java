@@ -40,7 +40,7 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
             }
         }
 
-        Support<? extends Media> support = getSystem().getManager(SupportManager.class).get(streamConfiguration.getUrl());
+        Support support = getSystem().getManager(SupportManager.class).get(streamConfiguration.getUrl());
         List<Media> medias = getSystem().getManager(SupportManager.class).media(streamConfiguration.getUrl());
 
         if (!medias.isEmpty()) {
@@ -73,11 +73,11 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
                 }
             }
 
-            if (selectedMedia == null) medias.get(medias.size() - 1);
+            if (selectedMedia == null) selectedMedia = medias.get(medias.size() - 1);
 
             String baseFileName = streamConfiguration.getBaseFileName() + "_" + now.format(FILE_NAME_FORMATTER);
 
-            task = support.generateTask(selectedMedia,
+            task = support.generateTask(streamConfiguration.getUrl(), selectedMedia,
                     Map.of("base_file_name", baseFileName,
                             "destination_path", destinationPath));
 

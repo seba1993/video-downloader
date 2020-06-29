@@ -8,6 +8,7 @@ import org.xeustechnologies.jcl.JarClassLoader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class PluggableSupportManager extends BaseSupportManager {
@@ -38,7 +39,7 @@ public class PluggableSupportManager extends BaseSupportManager {
         if (support == null) return null;
 
         try {
-            return newInstance(support.getClass());
+            return (Support) newInstance(support.getClass());
         } catch (Exception ex) {
             return null;
         }
@@ -85,24 +86,38 @@ public class PluggableSupportManager extends BaseSupportManager {
         return fileName.replace(".jar", "");
     }
 
-    private Support newInstance(Class<?> supportClass) throws Exception {
+    private Object newInstance(Class<?> supportClass) throws Exception {
         if (Support.class.isAssignableFrom(supportClass)) {
-            Constructor  constructor = supportClass.getDeclaredConstructor(Context.class);
+            Constructor constructor = supportClass.getDeclaredConstructor(Context.class);
 
             Support support = (Support) constructor.newInstance(getWrappedContext());
 
             return support;
-        }
+        } else {
+            Constructor<?> constructor = supportClass.getDeclaredConstructor();
 
-        return null;
+            return constructor.newInstance();
+        }
+    }
+
+    private void executeLoader(Object loader) throws Exception {
+        Method loadMethod = loader.getClass().getDeclaredMethod("load");
+        Class<?>[] classes = (Class<?>[]) loadMethod.invoke(loader);
+        for (Class<?> clazz : classes) {
+            classLoader.loadClass(clazz.getName());
+        }
     }
 
     private void loadSupport(String jarFilePath) throws Exception {
         String supportClassName = getSupportClassName(jarFilePath);
 
         Class supportClass = classLoader.loadClass(supportClassName);
+        Class loaderClass = classLoader.loadClass(supportClassName + "Loader");
 
-        Support support = newInstance(supportClass);
+        Object loader = newInstance(loaderClass);
+        executeLoader(loader);
+
+        Support support = (Support) newInstance(supportClass);
         if (support != null) {
             add(support);
 

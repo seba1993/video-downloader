@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/abcnews-support/abcnews-support.iml" filepath="$PROJECT_DIR$/abcnews-support/abcnews-support.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/video-downloader-app.iml" filepath="$PROJECT_DIR$/app/video-downloader-app.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/video-downloader-core.iml" filepath="$PROJECT_DIR$/core/video-downloader-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/ffmpeg-support/video-downloader-ffmpeg-support.iml" filepath="$PROJECT_DIR$/ffmpeg-support/video-downloader-ffmpeg-support.iml" />
@@ -9,6 +10,7 @@
       <module fileurl="file://$PROJECT_DIR$/pluggable-support-manager/video-downloader-pluggable-support-manager.iml" filepath="$PROJECT_DIR$/pluggable-support-manager/video-downloader-pluggable-support-manager.iml" />
       <module fileurl="file://$PROJECT_DIR$/serializer-configuration-manager/video-downloader-serializer-configuration-manager.iml" filepath="$PROJECT_DIR$/serializer-configuration-manager/video-downloader-serializer-configuration-manager.iml" />
       <module fileurl="file://$PROJECT_DIR$/youtube-support/video-downloader-youtube-support.iml" filepath="$PROJECT_DIR$/youtube-support/video-downloader-youtube-support.iml" />
+      <module fileurl="file://$PROJECT_DIR$/webrad-support/webrad-support.iml" filepath="$PROJECT_DIR$/webrad-support/webrad-support.iml" />
     </modules>
   </component>
 </project>

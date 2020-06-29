@@ -6,12 +6,14 @@ public class Audio implements Media {
     private final String url;
     private final AudioQuality quality;
     private final String codec;
+    private final boolean main;
 
-    public Audio(String info, String url, AudioQuality quality, String codec) {
+    public Audio(String info, String url, AudioQuality quality, String codec, boolean main) {
         this.info = info;
         this.url = url;
         this.quality = quality;
         this.codec = codec;
+        this.main = main;
     }
 
     @Override
@@ -35,8 +37,24 @@ public class Audio implements Media {
     }
 
     @Override
+    public boolean isMain() {
+        return main;
+    }
+
+    @Override
     public int compareTo(Media media) {
         return quality.compareTo(media.getQuality());
+    }
+
+    @Override
+    public String toString() {
+        return "Audio{" +
+               "info='" + info + '\'' +
+               ", url='" + url + '\'' +
+               ", quality=" + quality +
+               ", codec='" + codec + '\'' +
+               ", main=" + main +
+               '}';
     }
 
     public static class AudioQuality implements Quality {

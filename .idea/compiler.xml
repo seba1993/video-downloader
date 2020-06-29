@@ -7,7 +7,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="video-downloader-youtube-support" />
+        <module name="abcnews-support" />
         <module name="video-downloader-app" />
+        <module name="webrad-support" />
         <module name="video-downloader-core" />
         <module name="video-downloader-serializer-configuration-manager" />
         <module name="video-downloader-ffmpeg-support" />
@@ -16,6 +18,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="abcnews-support" target="1.9" />
       <module name="swing-gui" target="1.9" />
       <module name="video-downloader-app" target="1.9" />
       <module name="video-downloader-core" target="1.9" />
@@ -25,6 +28,7 @@
       <module name="video-downloader-schedule-manager" target="1.9" />
       <module name="video-downloader-serializer-configuration-manager" target="1.9" />
       <module name="video-downloader-youtube-support" target="1.9" />
+      <module name="webrad-support" target="1.9" />
     </bytecodeTargetLevel>
   </component>
 </project>
