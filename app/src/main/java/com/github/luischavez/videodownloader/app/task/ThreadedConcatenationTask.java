@@ -137,7 +137,7 @@ public class ThreadedConcatenationTask extends ThreadProcessTask {
                 ? destination.getPath().replace("." + extension, ".srt")
                 : destination.getPath();
 
-        return String.format("\"%s\" -S %s -D %s \"%s\" -o \"%s\"",
+        return String.format("python \"%s\" -S %s -D %s \"%s\" -o \"%s\"",
                 appConfiguration.getAutosubPath(), languageCode, languageCode,
                 source, output);
     }

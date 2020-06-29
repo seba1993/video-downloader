@@ -62,6 +62,11 @@ public class ClipFrame extends JFrame implements
 
     private boolean timeSliding;
 
+    private long lastTimeLeftArrowIncremented;
+    private long lastTimeRightArrowIncremented;
+
+    private long velocity;
+
     public ClipFrame(Context context) {
         this.context = context;
 
@@ -216,6 +221,52 @@ public class ClipFrame extends JFrame implements
         clipButton.setEnabled(false);
 
         currentFile = null;
+    }
+
+    private void handleArrowKey(boolean pressed, boolean right) {
+        if (currentFile == null) return;
+
+        if (!pressed) {
+            velocity = 0;
+            lastTimeRightArrowIncremented = 0;
+            lastTimeLeftArrowIncremented = 0;
+
+            if (!mediaPlayer.status().isPlaying()) mediaPlayer.controls().play();
+
+            return;
+        }
+
+        if (mediaPlayer.status().isPlaying()) mediaPlayer.controls().pause();
+
+        long now = System.currentTimeMillis();
+        boolean increment = false;
+
+        if (right) {
+            if (lastTimeRightArrowIncremented == 0 || (now - lastTimeRightArrowIncremented) >= 1_000L) {
+                lastTimeRightArrowIncremented = now;
+                increment = true;
+            }
+        } else {
+            if (lastTimeLeftArrowIncremented == 0 || (now - lastTimeLeftArrowIncremented) >= 1_000L) {
+                lastTimeLeftArrowIncremented = now;
+                increment = true;
+            }
+        }
+
+        if (increment) {
+            velocity += 500L;
+        }
+
+        mediaPlayer.controls().skipTime(velocity * (right ? 1 : -1));
+        handleTimeChanged(mediaPlayer.status().time());
+    }
+
+    private void handleRightArrowKey(boolean pressed) {
+        handleArrowKey(pressed, true);
+    }
+
+    private void handleLeftArrowKey(boolean pressed) {
+        handleArrowKey(pressed, false);
     }
 
     private void handleVideoRemove(int row) {
@@ -471,7 +522,10 @@ public class ClipFrame extends JFrame implements
             }
 
             mediaPlayer.controls().setTime(timeSlider.getValue());
-            //mediaPlayer.controls().start();
+
+            if (!mediaPlayer.status().isPlaying()) {
+                mediaPlayer.controls().start();
+            }
         }
     }
 
@@ -479,9 +533,9 @@ public class ClipFrame extends JFrame implements
     public void mousePressed(MouseEvent e) {
         if (e.getSource() == timeSlider) {
             timeSliding = true;
-            /*if (mediaPlayer.status().isPlaying()) {
+            if (mediaPlayer.status().isPlaying()) {
                 mediaPlayer.controls().pause();
-            }*/
+            }
         }
     }
 
@@ -560,17 +614,38 @@ public class ClipFrame extends JFrame implements
         if (event instanceof KeyEvent) {
             KeyEvent keyEvent = KeyEvent.class.cast(event);
 
-            if (!keyEvent.paramString().contains("KEY_RELEASED")) return;
+            if (keyEvent.paramString().contains("KEY_RELEASED")) {
+                switch (keyEvent.getKeyCode()) {
+                    case KeyEvent.VK_SPACE:
+                        keyEvent.consume();
+                        if (clipButton.isEnabled()) handleToggleClip();
+                        break;
+                    case KeyEvent.VK_X:
+                        keyEvent.consume();
+                        if (!clipStarted) handleStartClipping();
+                        break;
+                    case KeyEvent.VK_RIGHT:
+                        keyEvent.consume();
+                        handleRightArrowKey(false);
+                        break;
+                    case KeyEvent.VK_LEFT:
+                        keyEvent.consume();
+                        handleLeftArrowKey(false);
+                        break;
+                }
+            }
 
-            switch (keyEvent.getKeyCode()) {
-                case KeyEvent.VK_SPACE:
-                    keyEvent.consume();
-                    if (clipButton.isEnabled()) handleToggleClip();
-                    break;
-                case KeyEvent.VK_X:
-                    keyEvent.consume();
-                    if (!clipStarted) handleStartClipping();
-                    break;
+            if (keyEvent.paramString().contains("KEY_PRESSED")) {
+                switch (keyEvent.getKeyCode()) {
+                    case KeyEvent.VK_RIGHT:
+                        keyEvent.consume();
+                        handleRightArrowKey(true);
+                        break;
+                    case KeyEvent.VK_LEFT:
+                        keyEvent.consume();
+                        handleLeftArrowKey(true);
+                        break;
+                }
             }
         }
     }

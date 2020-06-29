@@ -17754,3 +17754,90 @@ com.github.luischavez.videodownloader.support.MediaOfflineException: media offli
 	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
 	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
 2020-06-29 12:41:02 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.util.CryptoUtils loaded with current classloader
+2020-06-29 15:58:22 DEBUG JarResources:182 - f defalted WebRadAudioResolver$Stream.class	1517/683
+2020-06-29 15:58:22 DEBUG JarResources:197 - Entry Name: WebRadAudioResolver$Stream.class, Entry Size: 1517
+2020-06-29 15:58:22 DEBUG JarResources:213 - WebRadAudioResolver$Stream.class: size=1517, csize=683
+2020-06-29 15:58:22 DEBUG JarResources:182 - f defalted WebRadSupport.class	3065/1460
+2020-06-29 15:58:22 DEBUG JarResources:197 - Entry Name: WebRadSupport.class, Entry Size: 3065
+2020-06-29 15:58:22 DEBUG JarResources:213 - WebRadSupport.class: size=3065, csize=1460
+2020-06-29 15:58:22 DEBUG JarResources:182 - f defalted WebRadAudioResolver.class	3839/1532
+2020-06-29 15:58:22 DEBUG JarResources:197 - Entry Name: WebRadAudioResolver.class, Entry Size: 3839
+2020-06-29 15:58:22 DEBUG JarResources:213 - WebRadAudioResolver.class: size=3839, csize=1532
+2020-06-29 15:58:22 DEBUG JarResources:182 - f defalted WebRadSupportLoader.class	470/296
+2020-06-29 15:58:22 DEBUG JarResources:197 - Entry Name: WebRadSupportLoader.class, Entry Size: 470
+2020-06-29 15:58:22 DEBUG JarResources:213 - WebRadSupportLoader.class: size=470, csize=296
+2020-06-29 15:58:22 DEBUG JarResources:182 - f defalted WebRadAudioResolver$1.class	737/415
+2020-06-29 15:58:22 DEBUG JarResources:197 - Entry Name: WebRadAudioResolver$1.class, Entry Size: 737
+2020-06-29 15:58:22 DEBUG JarResources:213 - WebRadAudioResolver$1.class: size=737, csize=415
+2020-06-29 15:58:22 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-29 15:58:22 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-29 15:58:22 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-webrad-support/	0
+2020-06-29 15:58:22 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-webrad-support/pom.xml	839/336
+2020-06-29 15:58:22 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-webrad-support/pom.xml, Entry Size: 839
+2020-06-29 15:58:22 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-webrad-support/pom.xml: size=839, csize=336
+2020-06-29 15:58:22 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-webrad-support/pom.properties	135/124
+2020-06-29 15:58:22 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-webrad-support/pom.properties, Entry Size: 135
+2020-06-29 15:58:22 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-webrad-support/pom.properties: size=135, csize=124
+2020-06-29 15:58:22 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.FFMPEGSupport loaded with current classloader
+2020-06-29 15:58:22 DEBUG JarClassLoader$LocalLoader:269 - Return new local loaded class WebRadSupport
+2020-06-29 15:58:22 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.Object loaded with current classloader
+2020-06-29 15:58:22 DEBUG JarClassLoader$LocalLoader:269 - Return new local loaded class WebRadSupportLoader
+2020-06-29 15:58:22 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.Class loaded with current classloader
+2020-06-29 15:58:22 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.support.BaseMediaResolver loaded with current classloader
+2020-06-29 15:58:22 DEBUG JarClassLoader$LocalLoader:269 - Return new local loaded class WebRadAudioResolver
+2020-06-29 15:58:22 DEBUG JarClassLoader$LocalLoader:241 - Returning local loaded class [WebRadAudioResolver] from cache
+2020-06-29 15:58:22 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.CharSequence loaded with current classloader
+2020-06-29 15:58:22 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class com.github.luischavez.videodownloader.Context loaded with current classloader
+2020-06-29 15:58:22 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.regex.Pattern loaded with current classloader
+2020-06-29 15:58:23 DEBUG JarResources:182 - f defalted ABCNewsSupport.class	4204/1858
+2020-06-29 15:58:23 DEBUG JarResources:197 - Entry Name: ABCNewsSupport.class, Entry Size: 4204
+2020-06-29 15:58:23 DEBUG JarResources:213 - ABCNewsSupport.class: size=4204, csize=1858
+2020-06-29 15:58:23 DEBUG JarResources:182 - f defalted ABCNewsSupportLoader.class	443/269
+2020-06-29 15:58:23 DEBUG JarResources:197 - Entry Name: ABCNewsSupportLoader.class, Entry Size: 443
+2020-06-29 15:58:23 DEBUG JarResources:213 - ABCNewsSupportLoader.class: size=443, csize=269
+2020-06-29 15:58:23 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-29 15:58:23 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-29 15:58:23 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-abcnews-support/	0
+2020-06-29 15:58:23 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-abcnews-support/pom.xml	840/337
+2020-06-29 15:58:23 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-abcnews-support/pom.xml, Entry Size: 840
+2020-06-29 15:58:23 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-abcnews-support/pom.xml: size=840, csize=337
+2020-06-29 15:58:23 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-abcnews-support/pom.properties	136/125
+2020-06-29 15:58:23 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-abcnews-support/pom.properties, Entry Size: 136
+2020-06-29 15:58:23 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-abcnews-support/pom.properties: size=136, csize=125
+2020-06-29 15:58:23 DEBUG JarClassLoader$LocalLoader:269 - Return new local loaded class ABCNewsSupport
+2020-06-29 15:58:23 DEBUG JarClassLoader$LocalLoader:269 - Return new local loaded class ABCNewsSupportLoader
+2020-06-29 15:58:23 DEBUG JarResources:182 - f defalted YouTubeSupport.class	3994/1771
+2020-06-29 15:58:23 DEBUG JarResources:197 - Entry Name: YouTubeSupport.class, Entry Size: 3994
+2020-06-29 15:58:23 DEBUG JarResources:213 - YouTubeSupport.class: size=3994, csize=1771
+2020-06-29 15:58:23 DEBUG JarResources:182 - f defalted YouTubeSupportLoader.class	443/268
+2020-06-29 15:58:23 DEBUG JarResources:197 - Entry Name: YouTubeSupportLoader.class, Entry Size: 443
+2020-06-29 15:58:23 DEBUG JarResources:213 - YouTubeSupportLoader.class: size=443, csize=268
+2020-06-29 15:58:23 DEBUG JarResources:182 - d stored   META-INF/maven/	0
+2020-06-29 15:58:23 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/	0
+2020-06-29 15:58:23 DEBUG JarResources:182 - d stored   META-INF/maven/com.github.luischavez/video-downloader-youtube-support/	0
+2020-06-29 15:58:23 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml	840/338
+2020-06-29 15:58:23 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml, Entry Size: 840
+2020-06-29 15:58:23 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.xml: size=840, csize=338
+2020-06-29 15:58:23 DEBUG JarResources:182 - f defalted META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties	136/126
+2020-06-29 15:58:23 DEBUG JarResources:197 - Entry Name: META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties, Entry Size: 136
+2020-06-29 15:58:23 DEBUG JarResources:213 - META-INF/maven/com.github.luischavez/video-downloader-youtube-support/pom.properties: size=136, csize=126
+2020-06-29 15:58:23 DEBUG JarClassLoader$LocalLoader:269 - Return new local loaded class YouTubeSupport
+2020-06-29 15:58:23 DEBUG JarClassLoader$LocalLoader:269 - Return new local loaded class YouTubeSupportLoader
+2020-06-29 15:58:26 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.regex.Matcher loaded with current classloader
+2020-06-29 15:58:26 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.String loaded with current classloader
+2020-06-29 15:58:27 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.Arrays loaded with current classloader
+2020-06-29 15:58:27 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.List loaded with current classloader
+2020-06-29 15:58:27 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.lang.invoke.LambdaMetafactory loaded with current classloader
+2020-06-29 15:58:27 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.function.Function loaded with current classloader
+2020-06-29 15:58:27 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.stream.Stream loaded with current classloader
+2020-06-29 15:58:27 DEBUG AbstractClassLoader$CurrentLoader:374 - Returning class java.util.stream.Collectors loaded with current classloader
+2020-06-29 15:58:27 ERROR AppContext:121 - media location offline https://www.youtube.com/channel/UCr4UN5cBn0Bo5bQdBOaBX_A
+com.github.luischavez.videodownloader.support.MediaOfflineException: media offline or connection issue https://www.youtube.com/channel/UCr4UN5cBn0Bo5bQdBOaBX_A
+	at com.github.luischavez.videodownloader.support.BaseSupport.getMedia(BaseSupport.java:87)
+	at com.github.luischavez.videodownloader.support.SupportManager.media(SupportManager.java:25)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.generateTask(ScheduleStreamTask.java:44)
+	at com.github.luischavez.videodownloader.app.task.ScheduleStreamTask.doTask(ScheduleStreamTask.java:90)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleTask.run(BaseScheduleTask.java:51)
+	at com.github.luischavez.videodownloader.schedule.BaseScheduleManager.runScheduleTasks(BaseScheduleManager.java:75)
+	at com.github.luischavez.videodownloader.schedule.DefaultScheduleManager.doWork(DefaultScheduleManager.java:20)
+	at com.github.luischavez.videodownloader.manager.BaseManager$ManagerThread.run(BaseManager.java:96)
