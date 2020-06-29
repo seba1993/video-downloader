@@ -322,7 +322,7 @@ public class ClipFrame extends JFrame implements
     }
 
     private void handleVideoSelection(int row) {
-        if (!videoTable.isEnabled()) return;
+        if (!videoTable.isEnabled() || row == -1) return;
 
         File file = videoTableModel.getFileAt(row);
 
