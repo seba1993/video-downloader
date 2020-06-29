@@ -41,7 +41,7 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
  * @author unknown
  */
 public class ClipFrame extends JFrame implements
-        ActionListener, ListSelectionListener, MouseListener, ChangeListener,
+        ActionListener, ListSelectionListener, MouseListener, MouseMotionListener, ChangeListener,
         WindowListener, AWTEventListener, MediaEventListener, MediaPlayerEventListener {
 
     private final Context context;
@@ -59,6 +59,8 @@ public class ClipFrame extends JFrame implements
     private boolean clipStarted;
     private long clipStartAt;
     private long clipStopAt;
+
+    private boolean timeSliding;
 
     public ClipFrame(Context context) {
         this.context = context;
@@ -103,6 +105,7 @@ public class ClipFrame extends JFrame implements
         startClipButton.addActionListener(this);
         mediaPlayer.events().addMediaPlayerEventListener(this);
         timeSlider.addMouseListener(this);
+        timeSlider.addMouseMotionListener(this);
         timeSlider.addChangeListener(this);
 
         videoTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -459,6 +462,7 @@ public class ClipFrame extends JFrame implements
     @Override
     public void mouseReleased(MouseEvent e) {
         if (e.getSource() == timeSlider) {
+            timeSliding = false;
             if (clipStarted) {
                 int currentTime = timeSlider.getValue();
                 if (currentTime < clipStartAt) {
@@ -467,16 +471,17 @@ public class ClipFrame extends JFrame implements
             }
 
             mediaPlayer.controls().setTime(timeSlider.getValue());
-            mediaPlayer.controls().start();
+            //mediaPlayer.controls().start();
         }
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
         if (e.getSource() == timeSlider) {
-            if (mediaPlayer.status().isPlaying()) {
+            timeSliding = true;
+            /*if (mediaPlayer.status().isPlaying()) {
                 mediaPlayer.controls().pause();
-            }
+            }*/
         }
     }
 
@@ -492,6 +497,19 @@ public class ClipFrame extends JFrame implements
 
     @Override
     public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        if (e.getSource() == timeSlider && timeSliding) {
+            mediaPlayer.controls().setTime(timeSlider.getValue());
+            //mediaPlayer.controls().start();
+        }
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
 
     }
 
