@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/abcnews-support/abcnews-support.iml" filepath="$PROJECT_DIR$/abcnews-support/abcnews-support.iml" />
+      <module fileurl="file://$PROJECT_DIR$/brightcove-support/brightcove-support.iml" filepath="$PROJECT_DIR$/brightcove-support/brightcove-support.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/video-downloader-app.iml" filepath="$PROJECT_DIR$/app/video-downloader-app.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/video-downloader-core.iml" filepath="$PROJECT_DIR$/core/video-downloader-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/ffmpeg-support/video-downloader-ffmpeg-support.iml" filepath="$PROJECT_DIR$/ffmpeg-support/video-downloader-ffmpeg-support.iml" />

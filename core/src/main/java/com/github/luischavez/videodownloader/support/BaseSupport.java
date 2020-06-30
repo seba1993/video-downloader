@@ -11,6 +11,7 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public abstract class BaseSupport extends ContextWrapper implements Support, MediaLinkBuilder {
@@ -31,9 +32,14 @@ public abstract class BaseSupport extends ContextWrapper implements Support, Med
         return new HttpGet(location);
     }
 
-    protected String getContent(String url) throws MediaOfflineException {
+    protected String getContent(String url, Map<String, String> headers) throws MediaOfflineException {
         try {
             HttpGet httpGet = buildGet(url);
+
+            if (headers != null) {
+                headers.entrySet().stream()
+                        .forEach(entry -> httpGet.addHeader(entry.getKey(), entry.getValue()));
+            }
 
             HttpResponse httpResponse = httpClient.execute(httpGet);
             int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -46,6 +52,10 @@ public abstract class BaseSupport extends ContextWrapper implements Support, Med
         } catch (IOException ex) {
             throw new MediaOfflineException("request failed, may be the site is offline or you don't have internet connection " + url, ex);
         }
+    }
+
+    protected String getContent(String url) throws MediaOfflineException {
+        return getContent(url, null);
     }
 
     protected abstract Pattern[] getLocationPatterns();

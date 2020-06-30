@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="video-downloader-youtube-support" />
         <module name="abcnews-support" />
+        <module name="brightcove-support" />
         <module name="video-downloader-app" />
         <module name="webrad-support" />
         <module name="video-downloader-core" />
@@ -19,6 +20,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="abcnews-support" target="1.9" />
+      <module name="brightcove-support" target="1.9" />
       <module name="swing-gui" target="1.9" />
       <module name="video-downloader-app" target="1.9" />
       <module name="video-downloader-core" target="1.9" />

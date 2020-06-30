@@ -17,6 +17,7 @@
         <option value="$PROJECT_DIR$/ffmpeg-support/pom.xml" />
         <option value="$PROJECT_DIR$/webrad-support/pom.xml" />
         <option value="$PROJECT_DIR$/abcnews-support/pom.xml" />
+        <option value="$PROJECT_DIR$/brightcove-support/pom.xml" />
       </list>
     </option>
   </component>
