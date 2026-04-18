@@ -4,6 +4,7 @@ import com.github.luischavez.videodownloader.Context;
 import com.github.luischavez.videodownloader.task.Task;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 
 public abstract class FFMPEGSupport extends BaseSupport {
 
-    private static final Pattern DEFAULT_M3U8_LINK_PATTERN = Pattern.compile("(?<link>https?(.[^\\\"]*)m3u8)");
+    private static final Pattern LINK_PATTERN = Pattern.compile("(?<link>(https?):\\\\?\\/\\\\?\\/[-a-zA-Z0-9+&@#\\/%?=~_|!:,.\\*;\\[\\]\\\\]*[-a-zA-Z0-9+&@#\\/%=~_|\\[\\]\\\\\\*])");
 
     public FFMPEGSupport(Context context) {
         super(context);
@@ -22,7 +23,7 @@ public abstract class FFMPEGSupport extends BaseSupport {
     }
 
     protected Map<String, String> getHeaders(String location) {
-        return Map.of("Referer", location);
+        return Map.of("Referer", LocationRequestUtils.sanitize(location));
     }
 
     protected String getVideoCopyCodec(Media media) {
@@ -46,15 +47,19 @@ public abstract class FFMPEGSupport extends BaseSupport {
     }
 
     protected String generateCommand(String location, Media media, String outputFile) {
+        final Map<String, String> commandHeaders = new HashMap<>();
+        commandHeaders.putAll(getHeaders(location));
+        commandHeaders.putAll(LocationRequestUtils.extractHeaders(location));
+
         final String options = getOptions(media).entrySet().stream()
                 .map(entry -> String.format("-%s %s", entry.getKey(), entry.getValue()))
                 .collect(Collectors.joining(" "));
 
-        final String headers = getHeaders(location).entrySet().stream()
+        final String headers = commandHeaders.entrySet().stream()
                 .map(entry -> String.format("-headers \"%s: %s\"", entry.getKey(), entry.getValue()))
                 .collect(Collectors.joining(" "));
 
-        final String url = media.getUrl();
+        final String url = LocationRequestUtils.sanitize(media.getUrl());
 
         final String videoCopyCodec = getVideoCopyCodec(media);
         final String audioCopyCodec = getAudioCopyCodec(media);
@@ -65,19 +70,29 @@ public abstract class FFMPEGSupport extends BaseSupport {
 
     protected abstract String resolveContent(String location) throws MediaOfflineException;
 
+    protected boolean isValidLink(String link) {
+        return link.toUpperCase().contains(".M3U8");
+    }
+
     @Override
     protected String[] getLinks(String location) throws MediaOfflineException {
+        if (isValidLink(location)) {
+            return new String[]{location};
+        }
+
         final String content = resolveContent(location);
 
         ArrayList<String> links = new ArrayList<>();
 
-        Matcher matcher = DEFAULT_M3U8_LINK_PATTERN.matcher(content);
+        Matcher matcher = LINK_PATTERN.matcher(content);
         while (matcher.find()) {
             String link = matcher.group("link");
 
             if (link.contains("\\/")) {
                 link = link.replaceAll("\\\\/", "/");
             }
+
+            if (!isValidLink(link)) continue;
 
             if (!links.contains(link)) {
                 links.add(link);
@@ -90,6 +105,10 @@ public abstract class FFMPEGSupport extends BaseSupport {
     @Override
     public String buildMediaLink(String location, String parentLink, String mediaLink) {
         if (!mediaLink.contains("http")) return null;
+
+        if (mediaLink.contains("\\/")) {
+            mediaLink = mediaLink.replaceAll("\\\\/", "/");
+        }
 
         return super.buildMediaLink(location, parentLink, mediaLink);
     }

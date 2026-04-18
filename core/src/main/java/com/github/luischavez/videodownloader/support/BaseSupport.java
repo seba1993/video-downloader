@@ -8,7 +8,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,15 +28,16 @@ public abstract class BaseSupport extends ContextWrapper implements Support, Med
     }
 
     protected HttpGet buildGet(String location) {
-        return new HttpGet(location);
+        return new HttpGet(LocationRequestUtils.sanitize(location));
     }
 
     protected String getContent(String url, Map<String, String> headers) throws MediaOfflineException {
         try {
             HttpGet httpGet = buildGet(url);
+            Map<String, String> mergedHeaders = LocationRequestUtils.mergeHeaders(headers, LocationRequestUtils.extractHeaders(url));
 
-            if (headers != null) {
-                headers.entrySet().stream()
+            if (mergedHeaders != null) {
+                mergedHeaders.entrySet().stream()
                         .forEach(entry -> httpGet.addHeader(entry.getKey(), entry.getValue()));
             }
 
@@ -49,7 +49,7 @@ public abstract class BaseSupport extends ContextWrapper implements Support, Med
             }
 
             return EntityUtils.toString(httpResponse.getEntity());
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             throw new MediaOfflineException("request failed, may be the site is offline or you don't have internet connection " + url, ex);
         }
     }
@@ -63,6 +63,10 @@ public abstract class BaseSupport extends ContextWrapper implements Support, Med
     protected abstract MediaResolver[] getMediaResolvers();
 
     protected abstract String[] getLinks(String location) throws MediaOfflineException;
+
+    protected Map<String, String> resolveLinkHeaders(String location, String link) {
+        return Map.of();
+    }
 
     @Override
     public String buildMediaLink(String location, String parentLink, String mediaLink) {
@@ -103,7 +107,10 @@ public abstract class BaseSupport extends ContextWrapper implements Support, Med
         ArrayList<Media> allMedias = new ArrayList<>();
 
         for (String link : links) {
-            final String content = getContent(link);
+            final Map<String, String> requestHeaders = LocationRequestUtils.mergeHeaders(
+                    resolveLinkHeaders(location, link),
+                    LocationRequestUtils.extractHeaders(location));
+            final String content = getContent(link, requestHeaders);
 
             for (MediaResolver mediaResolver : mediaResolvers) {
                 List<Media> medias = mediaResolver.findMedia(location, link, content, this::buildMediaLink);
