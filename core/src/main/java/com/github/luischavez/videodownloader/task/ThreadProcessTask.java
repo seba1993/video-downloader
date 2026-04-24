@@ -108,18 +108,24 @@ public abstract class ThreadProcessTask extends ContextWrapper implements Task {
             while (process.isAlive()) {
                 try {
                     if(inputStream.available() > 0) {
-                        int data = reader.read();
+                        StringBuilder buffer = new StringBuilder();
 
-                        if (data != -1) {
-                            StringBuilder buffer = new StringBuilder();
+                        int data;
 
-                            while (data != -1 && data != (int) '\n') {
-                                buffer.append((char) data);
-                                data = reader.read();
+                        int size = 100;
+                        int current = 0;
+
+                        do {
+                            data = reader.read();
+                            buffer.append((char) data);
+
+                            if (current++ > size) {
+                                break;
                             }
+                        } while (data != -1);
 
-                            String line = buffer.toString();
-                            onInput(line);
+                        if (buffer.length() > 0) {
+                            onInput(buffer.toString());
                         }
                     }
 

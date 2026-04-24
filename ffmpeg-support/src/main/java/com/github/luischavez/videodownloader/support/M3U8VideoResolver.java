@@ -1,7 +1,6 @@
 package com.github.luischavez.videodownloader.support;
 
 import com.github.luischavez.videodownloader.Context;
-import com.github.luischavez.videodownloader.system.Injected;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +19,6 @@ public class M3U8VideoResolver extends BaseMediaResolver {
 
     private static final Pattern M3U8_CODECS_PATTERN = Pattern.compile("#EXT.*CODECS=\\\"(?<codecs>.[^\\\"]+).*");
 
-    @Injected
     public M3U8VideoResolver(Context context) {
         super(context);
     }
@@ -60,7 +58,16 @@ public class M3U8VideoResolver extends BaseMediaResolver {
 
     @Override
     protected List<MediaDescriptor> getMediaDescriptors(String location, String parentLink, String content) {
-        if (content.toUpperCase().contains("#EXTINF")) return Collections.emptyList();
+        if (content.toUpperCase().contains("#EXTINF")) {
+            MediaDescriptor descriptor = new MediaDescriptor();
+            descriptor.put("info", "");
+            descriptor.put("m3u8", parentLink);
+            descriptor.put("bandwidth", "0");
+            descriptor.put("width", "0");
+            descriptor.put("height", "0");
+
+            return Collections.singletonList(descriptor);
+        }
 
         ArrayList<MediaDescriptor> descriptors = new ArrayList<>();
 

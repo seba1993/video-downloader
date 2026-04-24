@@ -100,6 +100,9 @@ public class AppContext extends BaseContext implements ManagerListener,
     }
 
     public void updateSchedules(StreamConfiguration streamConfiguration) {
+        updateStreamSchedule(streamConfiguration);
+        updateConcatenateSchedule(streamConfiguration);
+
         if (!streamConfiguration.isEnabled() || (!streamConfiguration.isScheduleWhenAvailable() && streamConfiguration.getSchedules().isEmpty())) {
             final TaskManager taskManager = getSystem().getManager(TaskManager.class);
             final Task task = taskManager.get(streamConfiguration.uid());
@@ -108,9 +111,6 @@ public class AppContext extends BaseContext implements ManagerListener,
                 taskManager.remove(streamConfiguration.uid());
             }
         }
-
-        updateStreamSchedule(streamConfiguration);
-        updateConcatenateSchedule(streamConfiguration);
     }
 
     @Override

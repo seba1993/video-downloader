@@ -6,7 +6,6 @@ import com.github.luischavez.videodownloader.configuration.ConfigurationManager;
 import com.github.luischavez.videodownloader.schedule.NeverSchedule;
 import com.github.luischavez.videodownloader.schedule.Schedule;
 import com.github.luischavez.videodownloader.schedule.ScheduleManager;
-import com.github.luischavez.videodownloader.system.Injected;
 import com.github.luischavez.videodownloader.task.Task;
 import com.github.luischavez.videodownloader.task.TaskManager;
 
@@ -22,10 +21,44 @@ public class StreamTableModel extends AbstractTableModel {
     private final JTextField searchTextField;
     private final String[] columns;
 
-    @Injected
+    private final List<Integer> selectionList;
+
     public StreamTableModel(JTextField searchTextField) {
         this.searchTextField = searchTextField;
-        columns = new String[]{"Country", "Alias", "Status", "Download", "Time", "", "", ""};
+        columns = new String[]{"", "Country", "Alias", "Status", "Download", "Time", "", "", ""};
+
+        selectionList = new ArrayList<>();
+    }
+
+    public void setSelected(Integer row, boolean selected) {
+        if (selected) {
+            if (!selectionList.contains(row)) selectionList.add(row);
+        } else {
+            if (selectionList.contains(row)) selectionList.remove(row);
+        }
+    }
+
+    public void toggleSelection(Integer row) {
+        boolean selected = selectionList.contains(row);
+        setSelected(row, !selected);
+    }
+
+    public void selectAll() {
+        for (int row = 0; row < getRowCount(); row++) {
+            if (!selectionList.contains(row)) selectionList.add(row);
+        }
+    }
+
+    public void deselectAll() {
+        selectionList.clear();
+    }
+
+    public List<Integer> getSelectionList() {
+        return selectionList;
+    }
+
+    public StreamConfiguration getConfigurationAt(int row) {
+        return getStreamConfigurations().get(row);
     }
 
     protected List<StreamConfiguration> getStreamConfigurations() {
@@ -125,9 +158,13 @@ public class StreamTableModel extends AbstractTableModel {
         final Schedule schedule = scheduleEntry.getSchedule();
         final Schedule.ScheduleRange scheduleRange = schedule.calculateScheduleRange();
 
+        final long durationInSeconds = schedule.getDuration() / 1_000L;
         final long secondsToStop = scheduleRange.timeToStop(ChronoUnit.SECONDS);
+        final long elapsedSeconds = durationInSeconds - secondsToStop;
 
-        return (secondsToStop * 100) / (schedule.getDuration() * 1_000f);
+        if (elapsedSeconds > durationInSeconds) return 100;
+
+        return (elapsedSeconds * 100) / durationInSeconds;
     }
 
     @Override
@@ -142,14 +179,15 @@ public class StreamTableModel extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        if (columnIndex == 3) return Float.class;
+        if (columnIndex == 0) return Boolean.class;
+        if (columnIndex == 4) return Float.class;
 
         return String.class;
     }
 
     @Override
     public boolean isCellEditable(int row, int column) {
-        return column == 5 || column == 6 || column == 7;
+        return column == 0 || column == 6 || column == 7 || column == 8;
     }
 
     @Override
@@ -175,20 +213,22 @@ public class StreamTableModel extends AbstractTableModel {
 
         switch (column) {
             case 0:
-                return country;
+                return selectionList.contains(row);
             case 1:
-                return alias;
+                return country;
             case 2:
-                return status;
+                return alias;
             case 3:
-                return progress;
+                return status;
             case 4:
-                return time;
+                return progress;
             case 5:
-                return "Configure";
+                return time;
             case 6:
-                return isEnabled ? "Disable" : "Enable";
+                return "Configure";
             case 7:
+                return isEnabled ? "Disable" : "Enable";
+            case 8:
                 return "Delete";
         }
 

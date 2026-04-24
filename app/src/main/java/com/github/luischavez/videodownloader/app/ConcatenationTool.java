@@ -1,7 +1,7 @@
 package com.github.luischavez.videodownloader.app;
 
 import com.github.luischavez.videodownloader.Context;
-import com.github.luischavez.videodownloader.app.configuration.AppConfiguration;
+import com.github.luischavez.videodownloader.app.configuration.PathConfiguration;
 import com.github.luischavez.videodownloader.app.gui.ConcatenationFrame;
 import com.github.luischavez.videodownloader.configuration.ConfigurationManager;
 import com.github.luischavez.videodownloader.manager.configuration.SerializerConfigurationManager;
@@ -36,8 +36,8 @@ public class ConcatenationTool {
 
         context.getSystem().getManager(ConfigurationManager.class).stop();
 
-        AppConfiguration appConfiguration = configurationManager.get(AppConfiguration.class);
-        if (appConfiguration == null) {
+        PathConfiguration configuration = configurationManager.get(PathConfiguration.class);
+        if (configuration == null) {
             SwingUtilities.invokeLater(() -> {
                 try {
                     UIManager.setLookAndFeel(new SubstanceNightShadeLookAndFeel());

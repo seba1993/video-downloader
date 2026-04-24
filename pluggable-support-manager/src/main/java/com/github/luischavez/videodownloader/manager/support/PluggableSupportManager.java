@@ -2,7 +2,7 @@ package com.github.luischavez.videodownloader.manager.support;
 
 import com.github.luischavez.videodownloader.Context;
 import com.github.luischavez.videodownloader.support.*;
-import com.github.luischavez.videodownloader.system.Injected;
+import com.google.inject.Inject;
 import org.xeustechnologies.jcl.JarClassLoader;
 
 import java.io.File;
@@ -22,7 +22,7 @@ public class PluggableSupportManager extends BaseSupportManager {
 
     private JarClassLoader classLoader;
 
-    @Injected
+    @Inject
     public PluggableSupportManager(Context context) {
         super(context);
 
@@ -130,7 +130,7 @@ public class PluggableSupportManager extends BaseSupportManager {
         classLoader = new JarClassLoader();
         clear();
 
-        for (String jarFilePath : newJars) {
+        for (String jarFilePath : jarFileMap.keySet()) {
             classLoader.add(new FileInputStream(jarFilePath));
             loadSupport(jarFilePath);
         }

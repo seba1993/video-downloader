@@ -2,7 +2,7 @@ package com.github.luischavez.videodownloader.app.manager;
 
 import com.github.luischavez.videodownloader.Context;
 import com.github.luischavez.videodownloader.manager.BaseManager;
-import com.github.luischavez.videodownloader.system.Injected;
+import com.google.inject.Inject;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -14,7 +14,7 @@ public class GuiRepaintManager extends BaseManager {
 
     private final List<Component> components;
 
-    @Injected
+    @Inject
     public GuiRepaintManager(Context context) {
         super(context);
 

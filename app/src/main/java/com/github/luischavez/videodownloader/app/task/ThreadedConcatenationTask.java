@@ -1,8 +1,7 @@
 package com.github.luischavez.videodownloader.app.task;
 
 import com.github.luischavez.videodownloader.Context;
-import com.github.luischavez.videodownloader.app.AppContext;
-import com.github.luischavez.videodownloader.app.configuration.AppConfiguration;
+import com.github.luischavez.videodownloader.app.configuration.PathConfiguration;
 import com.github.luischavez.videodownloader.configuration.ConfigurationManager;
 import com.github.luischavez.videodownloader.task.ThreadProcessTask;
 import com.github.luischavez.videodownloader.util.LanguageUtils;
@@ -20,6 +19,8 @@ public class ThreadedConcatenationTask extends ThreadProcessTask {
 
     private boolean concatenate;
     private boolean sub;
+    private boolean extractAudio;
+    private boolean cleanFiles;
 
     private String extension;
 
@@ -53,6 +54,22 @@ public class ThreadedConcatenationTask extends ThreadProcessTask {
 
     private void setSub(boolean sub) {
         this.sub = sub;
+    }
+
+    public boolean isExtractAudio() {
+        return extractAudio;
+    }
+
+    public void setExtractAudio(boolean extractAudio) {
+        this.extractAudio = extractAudio;
+    }
+
+    public boolean isCleanFiles() {
+        return cleanFiles;
+    }
+
+    public void setCleanFiles(boolean cleanFiles) {
+        this.cleanFiles = cleanFiles;
     }
 
     public String getExtension() {
@@ -109,8 +126,18 @@ public class ThreadedConcatenationTask extends ThreadProcessTask {
         filesToClean.add(concatenationListFile);
 
         List<String> listContent = Arrays.asList(sources).stream()
-                .map(file -> String.format("file '%s'", file.getPath()))
+                .map(file -> {
+                    String fileLine = String.format("file '%s'", file.getPath());
+
+                    filesToClean.add(file);
+
+                    return fileLine;
+                })
                 .collect(Collectors.toList());
+
+        if (sources.length > 0) {
+            filesToClean.add(sources[0].getParentFile());
+        }
 
         Files.write(concatenationListFile.toPath(), listContent);
 
@@ -124,8 +151,21 @@ public class ThreadedConcatenationTask extends ThreadProcessTask {
                 concatenationListFile.getPath(), destination.getPath());
     }
 
+    private String buildExtractAudioCommand() throws Exception {
+        String source = concatenate
+                ? destination.getPath()
+                : sources[0].getPath();
+
+        String output = concatenate
+                ? destination.getPath().replace("." + extension, ".mp3")
+                : destination.getPath();
+
+        return String.format("ffmpeg -i \"%s\" -f mp3 -ab 192000 -vn \"%s\"",
+                source, output);
+    }
+
     private String buildSubCommand() throws Exception {
-        AppConfiguration appConfiguration = AppContext.instance().getSystem().getManager(ConfigurationManager.class).get(AppConfiguration.class);
+        PathConfiguration appConfiguration = getSystem().getManager(ConfigurationManager.class).get(PathConfiguration.class);
 
         String languageCode = LanguageUtils.code(language);
 
@@ -133,12 +173,16 @@ public class ThreadedConcatenationTask extends ThreadProcessTask {
                 ? destination.getPath()
                 : sources[0].getPath();
 
-        String output = concatenate
-                ? destination.getPath().replace("." + extension, ".srt")
-                : destination.getPath();
+        String output = destination.getPath().replace("." + extension, ".srt");
 
-        return String.format("python \"%s\" -S %s -D %s \"%s\" -o \"%s\"",
-                appConfiguration.getAutosubPath(), languageCode, languageCode,
+        if (PlatformUtils.isWindowsHost()) {
+            return String.format("python \"%s\" -S %s -D %s \"%s\" -o \"%s\"",
+                    appConfiguration.getAutosubPath(), languageCode, languageCode,
+                    source, output);
+        }
+
+        return String.format("autosub -S %s -D %s \"%s\" -o \"%s\"",
+                languageCode, languageCode,
                 source, output);
     }
 
@@ -155,6 +199,7 @@ public class ThreadedConcatenationTask extends ThreadProcessTask {
 
         if (concatenate) commands.add(buildConcatenateCommand());
         if (sub) commands.add(buildSubCommand());
+        if ((extractAudio)) commands.add(buildExtractAudioCommand());
 
         String subCommand = commands.stream().collect(Collectors.joining(" && "));
 
@@ -172,7 +217,13 @@ public class ThreadedConcatenationTask extends ThreadProcessTask {
 
     @Override
     protected void onStop() {
-        filesToClean.stream().forEach(file -> file.delete());
+        if (cleanFiles) {
+            filesToClean.stream().forEach(file -> file.delete());
+        } else {
+            if (!filesToClean.isEmpty()) {
+                filesToClean.get(0).delete();
+            }
+        }
         if (onStop != null) onStop.run();
     }
 
@@ -196,6 +247,16 @@ public class ThreadedConcatenationTask extends ThreadProcessTask {
 
         public ConcatenationTaskBuilder sub() {
             threadedConcatenationTask.setSub(true);
+            return this;
+        }
+
+        public ConcatenationTaskBuilder extractAudio() {
+            threadedConcatenationTask.setExtractAudio(true);
+            return this;
+        }
+
+        public ConcatenationTaskBuilder cleanFiles() {
+            threadedConcatenationTask.setCleanFiles(true);
             return this;
         }
 

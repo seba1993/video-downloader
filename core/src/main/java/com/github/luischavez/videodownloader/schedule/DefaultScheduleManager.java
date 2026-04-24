@@ -1,13 +1,13 @@
 package com.github.luischavez.videodownloader.schedule;
 
 import com.github.luischavez.videodownloader.Context;
-import com.github.luischavez.videodownloader.system.Injected;
+import com.google.inject.Inject;
 
 import java.util.Map;
 
 public class DefaultScheduleManager extends BaseScheduleManager {
 
-    @Injected
+    @Inject
     public DefaultScheduleManager(Context context) {
         super(context);
     }

@@ -1,11 +1,11 @@
-JFDML JFormDesigner: "7.0.1.0.272" Java: "11.0.6" encoding: "UTF-8"
+JFDML JFormDesigner: "7.0.3.0.337" Java: "15.0.1" encoding: "UTF-8"
 
 new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class com.jgoodies.forms.layout.FormLayout ) {
-			"$columnSpecs": "default, labelcompgap, default, labelcompgap, default, labelcompgap, left:default, labelcompgap, default, labelcompgap, right:default:grow, labelcompgap, default:grow, labelcompgap, right:default:grow, labelcompgap, pref:grow, labelcompgap, default"
-			"$rowSpecs": "default, linegap, default, linegap, fill:default:grow, linegap, fill:25dlu"
+			"$columnSpecs": "default, labelcompgap, default, labelcompgap, default, labelcompgap, left:default, labelcompgap, default, labelcompgap, 51dlu, labelcompgap, right:default:grow, labelcompgap, default:grow, labelcompgap, right:default:grow, labelcompgap, pref:grow, labelcompgap, default"
+			"$rowSpecs": "default, linegap, default, linegap, default, linegap, fill:default:grow, linegap, fill:25dlu"
 		} ) {
 			name: "this"
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.VSpacer" ) {
@@ -50,11 +50,21 @@ new FormModel {
 				"gridX": 9
 				"gridY": 3
 			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "ytButton"
+				"text": "YouTube"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 15
+				"gridY": 3
+			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label1"
 				"text": "Search"
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-				"gridX": 15
+				"gridX": 17
 				"gridY": 3
 			} )
 			add( new FormComponent( "javax.swing.JTextField" ) {
@@ -63,14 +73,50 @@ new FormModel {
 					"JavaCodeGenerator.variableModifiers": 1
 				}
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-				"gridX": 17
+				"gridX": 19
 				"gridY": 3
+			} )
+			add( new FormComponent( "javax.swing.JCheckBox" ) {
+				name: "selectionCheckBox"
+				"text": "Toggle Selection"
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 3
+				"gridY": 5
+				"gridWidth": 5
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "configureSelectedButton"
+				"text": "Configure Selected"
+				"visible": false
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+				}
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 9
+				"gridY": 5
+				"gridWidth": 3
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "deleteDisabledButton"
+				"text": "Delete disabled"
+				"visible": false
+				auxiliary() {
+					"JavaCodeGenerator.variableModifiers": 1
+					"JavaCodeGenerator.variableName": "deleteDisabled"
+				}
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 13
+				"gridY": 5
+				"hAlign": sfield com.jgoodies.forms.layout.CellConstraints CENTER
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.HSpacer" ) {
 				name: "hSpacer1"
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 1
-				"gridY": 5
+				"gridY": 7
 			} )
 			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 				name: "streamScrollPane"
@@ -80,6 +126,7 @@ new FormModel {
 				add( new FormComponent( "javax.swing.JTable" ) {
 					name: "streamTable"
 					"model": new com.jformdesigner.model.SwingTableModel( new java.util.Vector, new java.util.Vector {
+						add( " " )
 						add( "Country" )
 						add( "Alias" )
 						add( "Status" )
@@ -97,7 +144,9 @@ new FormModel {
 						add( null )
 						add( null )
 						add( null )
+						add( null )
 					}, new java.util.Vector {
+						add( null )
 						add( false )
 						add( false )
 						add( false )
@@ -107,6 +156,7 @@ new FormModel {
 						add( null )
 						add( true )
 					}, new java.util.Vector {
+						add( new com.jformdesigner.model.SwingTableColumn( null, 50, 50, 0, true ) )
 						add( new com.jformdesigner.model.SwingTableColumn( null, 80, 80, 0, true ) )
 						add( new com.jformdesigner.model.SwingTableColumn( null, 100, 100, 0, true ) )
 						add( new com.jformdesigner.model.SwingTableColumn( null, 300, 300, 0, true ) )
@@ -122,15 +172,15 @@ new FormModel {
 					}
 				} )
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-				"gridY": 5
-				"gridWidth": 15
+				"gridY": 7
+				"gridWidth": 17
 				"gridX": 3
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.HSpacer" ) {
 				name: "hSpacer2"
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-				"gridX": 19
-				"gridY": 5
+				"gridX": 21
+				"gridY": 7
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )

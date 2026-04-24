@@ -1,6 +1,5 @@
 package com.github.luischavez.videodownloader;
 
-import com.github.luischavez.videodownloader.system.Injected;
 import com.github.luischavez.videodownloader.system.System;
 
 import java.util.Arrays;
@@ -10,7 +9,6 @@ public abstract class BaseContext implements Context {
 
     private final System system;
 
-    @Injected
     public BaseContext(System system) {
         this.system = system;
     }

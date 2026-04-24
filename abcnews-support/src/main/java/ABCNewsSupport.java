@@ -1,6 +1,5 @@
 import com.github.luischavez.videodownloader.Context;
 import com.github.luischavez.videodownloader.support.*;
-import com.github.luischavez.videodownloader.system.Injected;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -13,7 +12,6 @@ public class ABCNewsSupport extends FFMPEGSupport {
 
     private static final String ABC_LIVE_M3U8_ENDPOINT = "https://abcnews.go.com/video/itemfeed?id=%s&secure=true";
 
-    @Injected
     public ABCNewsSupport(Context context) {
         super(context);
     }

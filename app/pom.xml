@@ -26,11 +26,6 @@
         </dependency>
         <dependency>
             <groupId>com.github.luischavez</groupId>
-            <artifactId>video-downloader-guice-system</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.luischavez</groupId>
             <artifactId>video-downloader-ffmpeg-support</artifactId>
             <version>1.0</version>
         </dependency>
@@ -99,6 +94,11 @@
             <artifactId>javax.mail</artifactId>
             <version>1.6.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.dhatim</groupId>
+            <artifactId>fastexcel-reader</artifactId>
+            <version>0.12.2</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -159,6 +159,25 @@
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
                             <finalName>ConcatenationTool</finalName>
+                        </configuration>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>build-schedule-concatenation-tool</id>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <archive>
+                                <manifest>
+                                    <mainClass>com.github.luischavez.videodownloader.app.ScheduleConcatenationTool</mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <finalName>ScheduleConcatenationTool</finalName>
                         </configuration>
                         <phase>package</phase>
                         <goals>

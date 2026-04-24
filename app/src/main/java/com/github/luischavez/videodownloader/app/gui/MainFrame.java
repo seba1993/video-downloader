@@ -7,23 +7,27 @@ package com.github.luischavez.videodownloader.app.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableColumnModel;
 
 import com.github.luischavez.videodownloader.app.AppContext;
-import com.github.luischavez.videodownloader.app.configuration.AppConfiguration;
-import com.github.luischavez.videodownloader.app.configuration.BundleStreamConfiguration;
-import com.github.luischavez.videodownloader.app.configuration.StreamConfiguration;
+import com.github.luischavez.videodownloader.app.configuration.*;
 import com.github.luischavez.videodownloader.app.gui.model.ScheduleTableModel;
 import com.github.luischavez.videodownloader.app.gui.model.StreamTableModel;
 import com.github.luischavez.videodownloader.app.gui.renderer.TableCenterCellRenderer;
 import com.github.luischavez.videodownloader.app.gui.renderer.TableProgressCellRenderer;
+import com.github.luischavez.videodownloader.app.manager.YouTubeManager;
 import com.github.luischavez.videodownloader.app.task.RunningPids;
 import com.github.luischavez.videodownloader.configuration.ConfigurationManager;
 import com.github.luischavez.videodownloader.configuration.validation.ValidationResult;
@@ -39,18 +43,37 @@ import com.jgoodies.forms.layout.*;
  */
 public class MainFrame extends JFrame implements ActionListener, WindowListener {
 
-    public static final String VERSION = "v2.1.1";
+    public static final String VERSION = "v2.4.1";
     public static final String JAVA_VERSION = System.getProperty("java.version");
     public static final String TITLE = String.format("M3U8 Downloader %s [Runtime %s]", VERSION, JAVA_VERSION);
+    private static final String YT_DLP_CONFIG_NAME = "yt-dlp.conf";
+    private static final String YOUTUBE_DL_CONFIG_NAME = "youtube-dl.conf";
+    private static final String YT_DLP_CHANNELS_NAME = "yt-dlp-channels.txt";
+    private static final String YOUTUBE_DL_CHANNELS_NAME = "youtube-dl-channels.txt";
+    private static final String YT_DLP_ARCHIVE_NAME = "yt-dlp-archive.txt";
 
     private TrayIcon trayIcon;
 
     private AppConfigurationDialog appConfigurationDialog;
+    private PathConfigurationDialog pathConfigurationDialog;
     private StreamConfigurationDialog streamConfigurationDialog;
+    private MonitorConfigurationDialog monitorConfigurationDialog;
     private LoadingDialog loadingDialog;
+
+    private int firstSelectedRow;
+    private int lastSelectedRow;
+
+    public StreamTableModel streamTableModel;
 
     public MainFrame() {
         initComponents();
+    }
+
+    private File resolveYouTubeFile(String preferredName, String legacyName) {
+        File preferredFile = new File(AppContext.instance().buildPath(System.getProperty("user.dir"), "youtube", preferredName));
+        if (preferredFile.exists()) return preferredFile;
+
+        return new File(AppContext.instance().buildPath(System.getProperty("user.dir"), "youtube", legacyName));
     }
 
     private void changeStreamStatus(String alias, boolean enable) {
@@ -101,6 +124,96 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == contentPanel.addButton) {
             SwingUtilities.invokeLater(() -> streamConfigurationDialog.open(null));
+        } else if (e.getSource() == contentPanel.ytButton) {
+            YouTubeConfigurationPanel youTubeConfigurationPanel = new YouTubeConfigurationPanel();
+
+            File channelsFile = resolveYouTubeFile(YT_DLP_CHANNELS_NAME, YOUTUBE_DL_CHANNELS_NAME);
+            File confFile = resolveYouTubeFile(YT_DLP_CONFIG_NAME, YOUTUBE_DL_CONFIG_NAME);
+
+            if (confFile.exists()) {
+                try {
+                    Files.lines(confFile.toPath())
+                        .forEach(s -> {
+                            if (s.startsWith("-o")) {
+                                String dir = s.substring(4, s.indexOf("/%(uploader)s"));
+                                youTubeConfigurationPanel.directoryTextField.setText(dir);
+                            }
+                        });
+                } catch (Exception ex) {
+                    AppContext.instance().error(MainFrame.class, ex.getMessage(), ex);
+                }
+            }
+
+            if (channelsFile.exists()) {
+                try {
+                    String lines = Files.lines(channelsFile.toPath())
+                            .collect(Collectors.joining("\n"));
+                    youTubeConfigurationPanel.channelTextArea.setText(lines);
+                } catch (Exception ex) {
+                    AppContext.instance().error(MainFrame.class, ex.getMessage(), ex);
+                }
+            }
+
+            int option = JOptionPane.showConfirmDialog(
+                    this,
+                    youTubeConfigurationPanel,
+                    "YouTube",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+
+            if (option == JOptionPane.YES_OPTION) {
+                String conf = "-i\n" +
+                        "-o \"" + youTubeConfigurationPanel.directoryTextField.getText() + "/%(uploader)s (%(uploader_id)s)/%(upload_date)s - %(title)s - (%(duration)ss) [%(resolution)s] [%(id)s].%(ext)s\"\n" +
+                        "\n" +
+                        "# Archive Settings\n" +
+                        "--download-archive " + YT_DLP_ARCHIVE_NAME + "\n" +
+                        "-a " + YT_DLP_CHANNELS_NAME + "\n" +
+                        "\n" +
+                        "# Uniform Format\n" +
+                        "--prefer-ffmpeg\n" +
+                        "--merge-output-format mkv\n" +
+                        "\n" +
+                        "# Get All Subs to SRT\n" +
+                        "--write-sub\n" +
+                        "--all-subs\n" +
+                        "--convert-subs srt\n" +
+                        "\n" +
+                        "# Get metadata\n" +
+                        "--add-metadata\n" +
+                        "--write-description\n" +
+                        "--write-thumbnail\n" +
+                        "\n" +
+                        "# Debug\n" +
+                        "-v";
+
+                try {
+                    File youtubeDirectory = new File(AppContext.instance().buildPath(System.getProperty("user.dir"), "youtube"));
+                    if (!youtubeDirectory.exists()) youtubeDirectory.mkdirs();
+
+                    File newChannelsFile = new File(youtubeDirectory, YT_DLP_CHANNELS_NAME);
+                    File newConfFile = new File(youtubeDirectory, YT_DLP_CONFIG_NAME);
+
+                    if (newChannelsFile.exists()) newChannelsFile.delete();
+                    if (newConfFile.exists()) newConfFile.delete();
+
+                    Files.write(
+                            newChannelsFile.toPath(),
+                            youTubeConfigurationPanel.channelTextArea.getText().getBytes(StandardCharsets.UTF_8),
+                            StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+
+                    Files.write(
+                            newConfFile.toPath(),
+                            conf.getBytes(StandardCharsets.UTF_8),
+                            StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+
+                    AppContext.instance()
+                            .getSystem()
+                            .getManager(YouTubeManager.class)
+                            .restart();
+                } catch (Exception ex) {
+                    AppContext.instance().error(MainFrame.class, ex.getMessage(), ex);
+                }
+            }
         } else if (e.getSource() == contentPanel.enableAllButton) {
             SwingUtilities.invokeLater(() -> {
                 int option = JOptionPane.showConfirmDialog(MainFrame.this, "are you sure?", "Enable all streams", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -125,7 +238,6 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
             appConfiguration.setEmail(appConfigurationDialog.emailTextField.getText());
             appConfiguration.setPassword(CryptoUtils.base64Encode(new String(appConfigurationDialog.passwordField.getPassword())));
             appConfiguration.setDistributionList(appConfigurationDialog.toTextField.getText().split(","));
-            appConfiguration.setAutosubPath(appConfigurationDialog.autosubTextField.getText());
 
             new Thread(() -> {
                 SwingUtilities.invokeLater(() -> {
@@ -160,20 +272,69 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
                     SwingUtilities.invokeLater(() -> loadingDialog.setVisible(false));
                 }
             }).start();
+        } else if (e.getSource() == pathConfigurationDialog.saveButton) {
+            final ConfigurationManager configurationManager = AppContext.instance().getSystem().getManager(ConfigurationManager.class);
+
+            PathConfiguration pathConfiguration = new PathConfiguration();
+
+            pathConfiguration.setAutosubPath(pathConfigurationDialog.autosubTextField.getText());
+
+            new Thread(() -> {
+                SwingUtilities.invokeLater(() -> {
+                    loadingDialog.setLocationRelativeTo(null);
+                    loadingDialog.setVisible(true);
+                });
+
+                try {
+                    final ValidationResults validationResults = configurationManager.validate(pathConfiguration);
+
+                    if (validationResults.fails()) {
+                        SwingUtilities.invokeLater(() -> {
+                            JPanel validationPanel = new JPanel();
+                            validationPanel.setLayout(new BoxLayout(validationPanel, BoxLayout.Y_AXIS));
+
+                            for (ValidationResult validationResult : validationResults) {
+                                validationPanel.add(new JLabel(validationResult.getMessage()));
+                            }
+
+                            loadingDialog.setVisible(false);
+                            JOptionPane.showMessageDialog(pathConfigurationDialog, validationPanel, "ERROR!", JOptionPane.ERROR_MESSAGE);
+                        });
+                    } else {
+                        configurationManager.add(pathConfiguration);
+
+                        SwingUtilities.invokeLater(() -> {
+                            loadingDialog.setVisible(false);
+                            pathConfigurationDialog.setVisible(false);
+                        });
+                    }
+                } finally {
+                    SwingUtilities.invokeLater(() -> loadingDialog.setVisible(false));
+                }
+            }).start();
         } else if (e.getSource() == streamConfigurationDialog.saveButton) {
+            final boolean isMultiple = streamConfigurationDialog.isMultiple;
             final StreamConfiguration streamConfiguration =
                     streamConfigurationDialog.streamConfiguration == null
                     ? new StreamConfiguration()
                     : new StreamConfiguration(streamConfigurationDialog.streamConfiguration.uid());
 
+            if (!isMultiple) {
+                streamConfiguration.setAlias(streamConfigurationDialog.aliasTextField.getText());
+                streamConfiguration.setUrl(streamConfigurationDialog.urlTextField.getText());
+                streamConfiguration.setBaseFileName(streamConfigurationDialog.fileNameTextField.getText());
+                streamConfiguration.setDestinationPath(streamConfigurationDialog.destinationTextField.getText());
+            } else {
+                streamConfiguration.setAlias("NEVER USED ALIAS");
+                streamConfiguration.setUrl("http://placeholder.test");
+                streamConfiguration.setBaseFileName("NEVER USED FILE NAME");
+                streamConfiguration.setDestinationPath("NEVER USED DESTINATION PATH");
+            }
+
             streamConfiguration.setEnabled(streamConfigurationDialog.enableCheckBox.isSelected());
             streamConfiguration.setType(streamConfigurationDialog.typeComboBox.getSelectedItem().toString());
-            streamConfiguration.setAlias(streamConfigurationDialog.aliasTextField.getText());
             streamConfiguration.setCountry(streamConfigurationDialog.countryTextField.getText());
-            streamConfiguration.setUrl(streamConfigurationDialog.urlTextField.getText());
             streamConfiguration.setPreferredQuality(Integer.valueOf(streamConfigurationDialog.qualitySpinner.getValue().toString()));
-            streamConfiguration.setBaseFileName(streamConfigurationDialog.fileNameTextField.getText());
-            streamConfiguration.setDestinationPath(streamConfigurationDialog.destinationTextField.getText());
             streamConfiguration.setScheduleWhenAvailable(streamConfigurationDialog.scheduleCheckBox.isSelected());
             streamConfiguration.setSchedules(new ArrayList<>(streamConfigurationDialog.scheduleTableModel.getSchedules()));
             streamConfiguration.setConcatenate(streamConfigurationDialog.concatenateCheckBox.isSelected());
@@ -185,6 +346,13 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
             streamConfiguration.setSub(streamConfigurationDialog.subCheckBox.isSelected());
             streamConfiguration.setLanguage(streamConfigurationDialog.languageComboBox.getSelectedItem().toString());
             streamConfiguration.setTranslations(streamConfigurationDialog.subList.getSelectedValuesList());
+            streamConfiguration.setDestinationPath(streamConfigurationDialog.destinationTextField.getText());
+
+            if (isMultiple) {
+                if (streamConfiguration.getCountry().isEmpty()) {
+                    streamConfiguration.setCountry("NEVER USED COUNTRY");
+                }
+            }
 
             final ConfigurationManager configurationManager = AppContext.instance().getSystem().getManager(ConfigurationManager.class);
 
@@ -210,11 +378,45 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
                             JOptionPane.showMessageDialog(streamConfigurationDialog, validationPanel, "ERROR!", JOptionPane.ERROR_MESSAGE);
                         });
                     } else {
-                        configurationManager.add(streamConfiguration, true);
+                        if (!isMultiple) {
+                            configurationManager.add(streamConfiguration, true);
+                        } else {
+                            final List<Integer> selectionList = streamTableModel.getSelectionList();
+                            final List<String> aliases = selectionList.stream()
+                                    .map(row -> streamTableModel.getValueAt(row, 2).toString())
+                                    .collect(Collectors.toList());
+
+                            final List<StreamConfiguration> selectedConfigurations = configurationManager.list(StreamConfiguration.class).stream()
+                                    .filter(s -> aliases.contains(s.getAlias()))
+                                    .collect(Collectors.toList());
+
+                            selectedConfigurations.stream()
+                                    .forEach(selectedConfiguration -> {
+                                        String originalAlias = selectedConfiguration.getAlias();
+                                        String originalUrl = selectedConfiguration.getUrl();
+                                        String originalFileName = selectedConfiguration.getBaseFileName();
+                                        String originalCountry = selectedConfiguration.getCountry();
+
+                                        selectedConfiguration.copy(streamConfiguration);
+                                        selectedConfiguration.setAlias(originalAlias);
+                                        selectedConfiguration.setUrl(originalUrl);
+                                        selectedConfiguration.setBaseFileName(originalFileName);
+
+                                        if (selectedConfiguration.getCountry().equals("NEVER USED COUNTRY")) {
+                                            selectedConfiguration.setCountry(originalCountry);
+                                        }
+
+                                        configurationManager.add(selectedConfiguration, true);
+                                    });
+                        }
 
                         SwingUtilities.invokeLater(() -> {
                             loadingDialog.setVisible(false);
                             streamConfigurationDialog.setVisible(false);
+                            streamTableModel.deselectAll();
+                            contentPanel.configureSelectedButton.setVisible(false);
+                            contentPanel.deleteDisabled.setVisible(false);
+                            contentPanel.selectionCheckBox.setSelected(false);
                         });
                     }
                 } finally {
@@ -297,6 +499,81 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
             }
         } else if (e.getSource() == configurationMenuItem) {
             SwingUtilities.invokeLater(() -> appConfigurationDialog.open(AppContext.instance()));
+        } else if (e.getSource() == contentPanel.configureSelectedButton) {
+            final List<Integer> selectionList = streamTableModel.getSelectionList();
+            final List<String> aliases = selectionList.stream()
+                    .map(row -> streamTableModel.getValueAt(row, 2).toString())
+                    .collect(Collectors.toList());
+
+            SwingUtilities.invokeLater(() -> streamConfigurationDialog.open(aliases.toArray(new String[0])));
+        } else if (e.getSource() == contentPanel.deleteDisabled) {
+            final List<Integer> selectionList = streamTableModel.getSelectionList();
+            final List<String> aliases = selectionList.stream()
+                    .map(row -> streamTableModel.getValueAt(row, 2).toString())
+                    .collect(Collectors.toList());
+
+            SwingUtilities.invokeLater(() -> {
+                streamTableModel.deselectAll();
+                contentPanel.configureSelectedButton.setVisible(false);
+                contentPanel.deleteDisabled.setVisible(false);
+                contentPanel.selectionCheckBox.setSelected(false);
+            });
+
+            final List<String> disabledStreams = AppContext.instance().getSystem().getManager(ConfigurationManager.class)
+                    .list(StreamConfiguration.class)
+                    .stream()
+                    .filter(streamConfiguration -> aliases.contains(streamConfiguration.getAlias()) && !streamConfiguration.isEnabled())
+                    .map(streamConfiguration -> streamConfiguration.getAlias())
+                    .collect(Collectors.toList());
+
+            disabledStreams.forEach(this::deleteStream);
+        } else if (e.getSource() == monitorMenuItem) {
+            SwingUtilities.invokeLater(() -> monitorConfigurationDialog.open(AppContext.instance()));
+        } else if (e.getSource() == monitorConfigurationDialog.saveButton) {
+            final ConfigurationManager configurationManager = AppContext.instance().getSystem().getManager(ConfigurationManager.class);
+
+            MonitorConfiguration monitorConfiguration = new MonitorConfiguration();
+
+            monitorConfiguration.setEnabled(monitorConfigurationDialog.enableCheckBox.isSelected());
+            monitorConfiguration.setUrl(monitorConfigurationDialog.urlTextField.getText());
+            monitorConfiguration.setCode(monitorConfigurationDialog.codeTextField.getText());
+            monitorConfiguration.setRefreshInterval(Integer.valueOf(monitorConfigurationDialog.refreshIntervalSpinner.getValue().toString()));
+
+            new Thread(() -> {
+                SwingUtilities.invokeLater(() -> {
+                    loadingDialog.setLocationRelativeTo(null);
+                    loadingDialog.setVisible(true);
+                });
+
+                try {
+                    final ValidationResults validationResults = configurationManager.validate(monitorConfiguration);
+
+                    if (validationResults.fails()) {
+                        SwingUtilities.invokeLater(() -> {
+                            JPanel validationPanel = new JPanel();
+                            validationPanel.setLayout(new BoxLayout(validationPanel, BoxLayout.Y_AXIS));
+
+                            for (ValidationResult validationResult : validationResults) {
+                                validationPanel.add(new JLabel(validationResult.getMessage()));
+                            }
+
+                            loadingDialog.setVisible(false);
+                            JOptionPane.showMessageDialog(monitorConfigurationDialog, validationPanel, "ERROR!", JOptionPane.ERROR_MESSAGE);
+                        });
+                    } else {
+                        configurationManager.add(monitorConfiguration);
+
+                        SwingUtilities.invokeLater(() -> {
+                            loadingDialog.setVisible(false);
+                            monitorConfigurationDialog.setVisible(false);
+                        });
+                    }
+                } finally {
+                    SwingUtilities.invokeLater(() -> loadingDialog.setVisible(false));
+                }
+            }).start();
+        } else if (e.getSource() == pathMenuItem) {
+            SwingUtilities.invokeLater(() -> pathConfigurationDialog.open(AppContext.instance()));
         }
     }
 
@@ -452,7 +729,9 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
         setVisible(true);
 
         appConfigurationDialog = new AppConfigurationDialog(this);
+        pathConfigurationDialog = new PathConfigurationDialog(this);
         streamConfigurationDialog = new StreamConfigurationDialog(this);
+        monitorConfigurationDialog = new MonitorConfigurationDialog(this);
         loadingDialog = new LoadingDialog(this);
 
         contentPanel.addButton.addActionListener(this);
@@ -469,26 +748,30 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
             }
         });
 
-        contentPanel.streamTable.setModel(new StreamTableModel(contentPanel.searchTextField));
+        streamTableModel = new StreamTableModel(contentPanel.searchTextField);
+
+        contentPanel.streamTable.setModel(streamTableModel);
 
         TableColumnModel columnModel = contentPanel.streamTable.getColumnModel();
 
-        columnModel.getColumn(0).setMinWidth(80);
-        columnModel.getColumn(0).setPreferredWidth(80);
-        columnModel.getColumn(1).setMinWidth(100);
-        columnModel.getColumn(1).setPreferredWidth(100);
-        columnModel.getColumn(2).setMinWidth(300);
-        columnModel.getColumn(2).setPreferredWidth(300);
-        columnModel.getColumn(3).setMinWidth(150);
-        columnModel.getColumn(3).setPreferredWidth(150);
+        columnModel.getColumn(0).setMinWidth(50);
+        columnModel.getColumn(0).setPreferredWidth(50);
+        columnModel.getColumn(1).setMinWidth(80);
+        columnModel.getColumn(1).setPreferredWidth(80);
+        columnModel.getColumn(2).setMinWidth(100);
+        columnModel.getColumn(2).setPreferredWidth(100);
+        columnModel.getColumn(3).setMinWidth(300);
+        columnModel.getColumn(3).setPreferredWidth(300);
         columnModel.getColumn(4).setMinWidth(150);
         columnModel.getColumn(4).setPreferredWidth(150);
-        columnModel.getColumn(5).setMinWidth(70);
-        columnModel.getColumn(5).setPreferredWidth(70);
+        columnModel.getColumn(5).setMinWidth(150);
+        columnModel.getColumn(5).setPreferredWidth(150);
         columnModel.getColumn(6).setMinWidth(70);
         columnModel.getColumn(6).setPreferredWidth(70);
         columnModel.getColumn(7).setMinWidth(70);
         columnModel.getColumn(7).setPreferredWidth(70);
+        columnModel.getColumn(8).setMinWidth(70);
+        columnModel.getColumn(8).setPreferredWidth(70);
 
         contentPanel.streamTable.getTableHeader().setReorderingAllowed(false);
         contentPanel.streamTable.getTableHeader().setResizingAllowed(false);
@@ -501,17 +784,17 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
         new ButtonColumn(contentPanel.streamTable, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                final String alias = contentPanel.streamTable.getValueAt(Integer.valueOf(e.getActionCommand()), 1).toString();
+                final String alias = contentPanel.streamTable.getValueAt(Integer.valueOf(e.getActionCommand()), 2).toString();
 
                 SwingUtilities.invokeLater(() -> streamConfigurationDialog.open(alias));
             }
-        }, 5);
+        }, 6);
 
         new ButtonColumn(contentPanel.streamTable, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                final String alias = contentPanel.streamTable.getValueAt(Integer.valueOf(e.getActionCommand()), 1).toString();
-                final String changeToStatus = contentPanel.streamTable.getValueAt(Integer.valueOf(e.getActionCommand()), 6).toString();
+                final String alias = contentPanel.streamTable.getValueAt(Integer.valueOf(e.getActionCommand()), 2).toString();
+                final String changeToStatus = contentPanel.streamTable.getValueAt(Integer.valueOf(e.getActionCommand()), 7).toString();
 
                 int option = JOptionPane.showConfirmDialog(MainFrame.this, "are you sure?", String.format("%s %s stream", changeToStatus, alias), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
@@ -519,12 +802,12 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
                     changeStreamStatus(alias, changeToStatus.equals("Enable"));
                 }
             }
-        }, 6);
+        }, 7);
 
         new ButtonColumn(contentPanel.streamTable, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String alias = contentPanel.streamTable.getValueAt(Integer.valueOf(e.getActionCommand()), 1).toString();
+                String alias = contentPanel.streamTable.getValueAt(Integer.valueOf(e.getActionCommand()), 2).toString();
 
                 int option = JOptionPane.showConfirmDialog(MainFrame.this, "are you sure?", String.format("Delete %s stream", alias), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
@@ -532,15 +815,72 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
                     deleteStream(alias);
                 }
             }
-        }, 7);
+        }, 8);
 
         appConfigurationDialog.saveButton.addActionListener(this);
+        pathConfigurationDialog.saveButton.addActionListener(this);
         streamConfigurationDialog.saveButton.addActionListener(this);
+        monitorConfigurationDialog.saveButton.addActionListener(this);
 
         exitMenuItem.addActionListener(this);
         exportMenuItem.addActionListener(this);
         importMenuItem.addActionListener(this);
         configurationMenuItem.addActionListener(this);
+        pathMenuItem.addActionListener(this);
+        monitorMenuItem.addActionListener(this);
+
+        contentPanel.ytButton.addActionListener(this);
+
+        contentPanel.streamTable.getSelectionModel().addListSelectionListener(e -> {
+            firstSelectedRow = e.getFirstIndex();
+            lastSelectedRow = e.getLastIndex();
+        });
+
+        contentPanel.streamTable.getModel().addTableModelListener(e -> {
+            SwingUtilities.invokeLater(() -> {
+                if (firstSelectedRow >= 0) {
+                    contentPanel.streamTable.setRowSelectionInterval(firstSelectedRow, lastSelectedRow);
+                }
+            });
+        });
+
+        contentPanel.streamTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                final int row = contentPanel.streamTable.rowAtPoint(e.getPoint());
+                final int column = contentPanel.streamTable.columnAtPoint(e.getPoint());
+
+                if (column == 0) {
+                    streamTableModel.toggleSelection(row);
+
+                    SwingUtilities.invokeLater(() -> {
+                        boolean anySelected = !streamTableModel.getSelectionList().isEmpty();
+
+                        contentPanel.configureSelectedButton.setVisible(anySelected);
+                        contentPanel.deleteDisabled.setVisible(anySelected);
+                    });
+                }
+            }
+        });
+
+        contentPanel.selectionCheckBox.addActionListener(e -> {
+            final boolean selected = contentPanel.selectionCheckBox.isSelected();
+
+            if (selected) {
+                streamTableModel.selectAll();
+            } else {
+                streamTableModel.deselectAll();
+            }
+
+            SwingUtilities.invokeLater(() -> {
+                contentPanel.configureSelectedButton.setVisible(selected);
+                contentPanel.deleteDisabled.setVisible(selected);
+                streamTableModel.fireTableDataChanged();
+            });
+        });
+
+        contentPanel.configureSelectedButton.addActionListener(this);
+        contentPanel.deleteDisabled.addActionListener(this);
 
         streamConfigurationDialog.deleteMenuItem.addActionListener((actionEvent) -> {
             int row = streamConfigurationDialog.scheduleTable.getSelectedRow();
@@ -570,80 +910,92 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-        // Generated using JFormDesigner Evaluation license - unknown
-        menuBar = new JMenuBar();
-        menu1 = new JMenu();
-        configurationMenuItem = new JMenuItem();
-        importMenuItem = new JMenuItem();
-        exportMenuItem = new JMenuItem();
-        exitMenuItem = new JMenuItem();
-        contentPanel = new ContentPanel();
-        separator2 = new JSeparator();
-        scrollPane1 = new JScrollPane();
-        logTextArea = new JTextArea();
+		// Generated using JFormDesigner Evaluation license - Luis Chavez
+		menuBar = new JMenuBar();
+		menu1 = new JMenu();
+		configurationMenuItem = new JMenuItem();
+		pathMenuItem = new JMenuItem();
+		monitorMenuItem = new JMenuItem();
+		importMenuItem = new JMenuItem();
+		exportMenuItem = new JMenuItem();
+		exitMenuItem = new JMenuItem();
+		contentPanel = new ContentPanel();
+		separator2 = new JSeparator();
+		scrollPane1 = new JScrollPane();
+		logTextArea = new JTextArea();
 
-        //======== this ========
-        Container contentPane = getContentPane();
-        contentPane.setLayout(new FormLayout(
-            "default:grow",
-            "2*(default), fill:40dlu:grow"));
+		//======== this ========
+		Container contentPane = getContentPane();
+		contentPane.setLayout(new FormLayout(
+			"default:grow",
+			"2*(default), fill:40dlu:grow"));
 
-        //======== menuBar ========
-        {
+		//======== menuBar ========
+		{
 
-            //======== menu1 ========
-            {
-                menu1.setText("File");
+			//======== menu1 ========
+			{
+				menu1.setText("File");
 
-                //---- configurationMenuItem ----
-                configurationMenuItem.setText("Configuration");
-                menu1.add(configurationMenuItem);
-                menu1.addSeparator();
+				//---- configurationMenuItem ----
+				configurationMenuItem.setText("Configuration");
+				menu1.add(configurationMenuItem);
 
-                //---- importMenuItem ----
-                importMenuItem.setText("Import");
-                menu1.add(importMenuItem);
+				//---- pathMenuItem ----
+				pathMenuItem.setText("Path");
+				menu1.add(pathMenuItem);
 
-                //---- exportMenuItem ----
-                exportMenuItem.setText("Export");
-                menu1.add(exportMenuItem);
-                menu1.addSeparator();
+				//---- monitorMenuItem ----
+				monitorMenuItem.setText("Monitor");
+				menu1.add(monitorMenuItem);
+				menu1.addSeparator();
 
-                //---- exitMenuItem ----
-                exitMenuItem.setText("Exit");
-                menu1.add(exitMenuItem);
-            }
-            menuBar.add(menu1);
-        }
-        setJMenuBar(menuBar);
-        contentPane.add(contentPanel, CC.xy(1, 1));
-        contentPane.add(separator2, CC.xy(1, 2));
+				//---- importMenuItem ----
+				importMenuItem.setText("Import");
+				menu1.add(importMenuItem);
 
-        //======== scrollPane1 ========
-        {
+				//---- exportMenuItem ----
+				exportMenuItem.setText("Export");
+				menu1.add(exportMenuItem);
+				menu1.addSeparator();
 
-            //---- logTextArea ----
-            logTextArea.setEditable(false);
-            logTextArea.setBorder(LineBorder.createBlackLineBorder());
-            scrollPane1.setViewportView(logTextArea);
-        }
-        contentPane.add(scrollPane1, CC.xy(1, 3));
-        pack();
-        setLocationRelativeTo(getOwner());
+				//---- exitMenuItem ----
+				exitMenuItem.setText("Exit");
+				menu1.add(exitMenuItem);
+			}
+			menuBar.add(menu1);
+		}
+		setJMenuBar(menuBar);
+		contentPane.add(contentPanel, CC.xy(1, 1));
+		contentPane.add(separator2, CC.xy(1, 2));
+
+		//======== scrollPane1 ========
+		{
+
+			//---- logTextArea ----
+			logTextArea.setEditable(false);
+			logTextArea.setBorder(LineBorder.createBlackLineBorder());
+			scrollPane1.setViewportView(logTextArea);
+		}
+		contentPane.add(scrollPane1, CC.xy(1, 3));
+		pack();
+		setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-    // Generated using JFormDesigner Evaluation license - unknown
-    private JMenuBar menuBar;
-    private JMenu menu1;
-    public JMenuItem configurationMenuItem;
-    public JMenuItem importMenuItem;
-    public JMenuItem exportMenuItem;
-    public JMenuItem exitMenuItem;
-    public ContentPanel contentPanel;
-    private JSeparator separator2;
-    private JScrollPane scrollPane1;
-    public JTextArea logTextArea;
+	// Generated using JFormDesigner Evaluation license - Luis Chavez
+	private JMenuBar menuBar;
+	private JMenu menu1;
+	public JMenuItem configurationMenuItem;
+	public JMenuItem pathMenuItem;
+	public JMenuItem monitorMenuItem;
+	public JMenuItem importMenuItem;
+	public JMenuItem exportMenuItem;
+	public JMenuItem exitMenuItem;
+	public ContentPanel contentPanel;
+	private JSeparator separator2;
+	private JScrollPane scrollPane1;
+	public JTextArea logTextArea;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

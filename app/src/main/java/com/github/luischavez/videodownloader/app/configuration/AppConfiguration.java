@@ -21,7 +21,6 @@ public class AppConfiguration extends BaseConfiguration {
     @Validable(value = NotEmptyValidation.class, name = "Distribution List")
     private List<String> distributionList;
 
-    @Validable(value = NotEmptyValidation.class, name = "Autosub Path")
     private String autosubPath;
 
     public String getEmail() {

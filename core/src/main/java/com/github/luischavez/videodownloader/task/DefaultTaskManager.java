@@ -1,7 +1,7 @@
 package com.github.luischavez.videodownloader.task;
 
 import com.github.luischavez.videodownloader.Context;
-import com.github.luischavez.videodownloader.system.Injected;
+import com.google.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class DefaultTaskManager extends BaseTaskManager {
 
-    @Injected
+    @Inject
     public DefaultTaskManager(Context context) {
         super(context);
     }

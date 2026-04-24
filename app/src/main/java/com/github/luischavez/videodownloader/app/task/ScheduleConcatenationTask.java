@@ -42,27 +42,34 @@ public class ScheduleConcatenationTask extends SingleScheduleTask {
         final LocalDateTime to = LocalDateTime.now().with(streamConfiguration.getConcatenateAt());
         final LocalDateTime from = to.minusDays(1);
 
-        final String extension = streamConfiguration.getType().equals("Video") ? "mkv" : "mp3";
-        final File sourceDirectoryFile = new File(streamConfiguration.getDestinationPath());
+        final String dateString1 = from.format(DIRECTORY_FORMATTER);
+        final String dateString2 = to.format(DIRECTORY_FORMATTER);
 
-        final File[] directoryFiles = sourceDirectoryFile
-                .listFiles((dir, name) -> dir.isDirectory() && (name.equals(from.format(DIRECTORY_FORMATTER)) || name.equals(to.format(DIRECTORY_FORMATTER))));
+        final String extension = streamConfiguration.getType().equals("Video") ? "mkv" : "mp3";
+        final File sourceDirectoryFile1 = new File(getWrappedContext().buildPath(streamConfiguration.getDestinationPath(), dateString1, streamConfiguration.getAlias()));
+        final File sourceDirectoryFile2 = new File(getWrappedContext().buildPath(streamConfiguration.getDestinationPath(), dateString2, streamConfiguration.getAlias()));
+        final String fileName = streamConfiguration.getBaseFileName();
 
         final ArrayList<File> allFiles = new ArrayList<>();
 
-        Arrays.asList(directoryFiles).stream()
-                .forEach(file -> {
-                    File[] files = file.listFiles();
+        if (sourceDirectoryFile1.exists()) {
+            final File[] directoryFiles1 = sourceDirectoryFile1
+                    .listFiles((f, name) -> name.contains(from.format(DIRECTORY_FORMATTER)) || name.contains(to.format(DIRECTORY_FORMATTER)));
 
-                    if (files != null && files.length > 0) {
-                        allFiles.addAll(Arrays.asList(files));
-                    }
-                });
+            allFiles.addAll(Arrays.asList(directoryFiles1));
+        }
+
+        if (sourceDirectoryFile2.exists() && !sourceDirectoryFile1.getPath().equals(sourceDirectoryFile2.getPath())) {
+            final File[] directoryFiles2 = sourceDirectoryFile2
+                    .listFiles((f, name) -> name.contains(from.format(DIRECTORY_FORMATTER)) || name.contains(to.format(DIRECTORY_FORMATTER)));
+
+            allFiles.addAll(Arrays.asList(directoryFiles2));
+        }
 
         return allFiles.stream()
                 .filter(file -> file.getName().toLowerCase().endsWith(extension))
                 .filter(file -> {
-                    if (file.length() < 2048) return false;
+                    if (file.length() < 2048 || !file.getName().startsWith(fileName)) return false;
 
                     Matcher matcher = FILE_NAME_PATTERN.matcher(file.getName());
 

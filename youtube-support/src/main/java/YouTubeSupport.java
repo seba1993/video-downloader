@@ -3,10 +3,15 @@ import com.github.luischavez.videodownloader.support.*;
 import com.github.luischavez.videodownloader.task.Task;
 import com.github.luischavez.videodownloader.util.CryptoUtils;
 import com.github.luischavez.videodownloader.util.PlatformUtils;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +22,7 @@ import java.util.stream.Collectors;
 public class YouTubeSupport extends FFMPEGSupport {
 
     private static final Pattern YOUTUBE_VIDEO_ID_PATTERN = Pattern.compile("\\\"videoId\\\":\\\"(?<id>.[^\\\"]+)");
+    private static final Pattern YOUTUBE_EMBED_PATTERN = Pattern.compile("https?://www\\.youtube\\.com/embed/(?<id>[A-Za-z0-9_-]{6,})", Pattern.CASE_INSENSITIVE);
     private static final Pattern ITAG_PATTERN = Pattern.compile("/itag/(?<itag>\\d+)/");
 
     private static final String YOUTUBE_LINK = "https://www.youtube.com/watch?v=%s";
@@ -36,6 +42,19 @@ public class YouTubeSupport extends FFMPEGSupport {
 
     private String resolveLocation(String location) {
         String lower = location.toLowerCase();
+
+        if (lower.contains("streamfare.com/")) {
+            try {
+                String content = getContent(location);
+                Matcher matcher = YOUTUBE_EMBED_PATTERN.matcher(content);
+
+                if (matcher.find()) {
+                    return String.format(YOUTUBE_LINK, matcher.group("id"));
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
 
         if (!lower.contains("youtube.com")) {
             return location;
@@ -58,6 +77,7 @@ public class YouTubeSupport extends FFMPEGSupport {
             ProcessBuilder processBuilder = new ProcessBuilder(
                     executableFile.getPath(),
                     "--ignore-config",
+                    "--cookies-from-browser", "firefox",
                     "--flat-playlist",
                     "--print", "id",
                     "--playlist-end", "1",
@@ -107,9 +127,130 @@ public class YouTubeSupport extends FFMPEGSupport {
         return "best";
     }
 
+    private Quality.Type resolveQualityType(int height) {
+        if (height >= 720) {
+            return Quality.Type.HIGH;
+        }
+
+        if (height >= 360) {
+            return Quality.Type.MEDIUM;
+        }
+
+        return Quality.Type.LOW;
+    }
+
+    private List<Media> resolveMediaWithYtDlp(String location) throws MediaOfflineException, MediaNotFoundException {
+        final String workingDirectory = System.getProperty("user.dir");
+        final String executable = resolveExecutable(workingDirectory);
+        final File youtubeDirectory = new File(buildPath(workingDirectory, "youtube"));
+        final File executableFile = new File(youtubeDirectory, executable);
+
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder(
+                    executableFile.getPath(),
+                    "--ignore-config",
+                    "--cookies-from-browser", "firefox",
+                    "--dump-single-json",
+                    "--no-warnings",
+                    "--skip-download",
+                    location
+            );
+            processBuilder.directory(youtubeDirectory);
+            processBuilder.redirectErrorStream(true);
+
+            Process process = processBuilder.start();
+            StringBuilder output = new StringBuilder();
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    output.append(line).append('\n');
+                }
+            }
+
+            int exitCode = process.waitFor();
+
+            if (process.isAlive()) {
+                process.destroyForcibly();
+            }
+
+            if (exitCode != 0 || output.length() == 0) {
+                throw new MediaOfflineException(String.format("yt-dlp failed for location %s", location));
+            }
+
+            JsonObject json = JsonParser.parseString(output.toString()).getAsJsonObject();
+            JsonArray formats = json.getAsJsonArray("formats");
+
+            if (formats == null || formats.size() == 0) {
+                throw new MediaNotFoundException(String.format("formats not found for location %s", location));
+            }
+
+            ArrayList<Media> medias = new ArrayList<>();
+
+            for (JsonElement element : formats) {
+                if (!element.isJsonObject()) {
+                    continue;
+                }
+
+                JsonObject format = element.getAsJsonObject();
+
+                if (!format.has("format_id") || !format.has("height") || !format.has("width")) {
+                    continue;
+                }
+
+                int height = format.get("height").isJsonNull() ? 0 : format.get("height").getAsInt();
+                int width = format.get("width").isJsonNull() ? 0 : format.get("width").getAsInt();
+
+                if (height <= 0 || width <= 0) {
+                    continue;
+                }
+
+                String protocol = format.has("protocol") && !format.get("protocol").isJsonNull()
+                        ? format.get("protocol").getAsString()
+                        : "";
+
+                if (!protocol.toLowerCase().contains("m3u8")) {
+                    continue;
+                }
+
+                String formatId = format.get("format_id").getAsString();
+                int bandwidth = format.has("tbr") && !format.get("tbr").isJsonNull()
+                        ? (int) Math.round(format.get("tbr").getAsDouble() * 1000)
+                        : 0;
+
+                medias.add(new Video(
+                        formatId,
+                        String.format("https://www.youtube.com/itag/%s/", formatId),
+                        new Video.VideoQuality(resolveQualityType(height), width, height, bandwidth),
+                        "",
+                        true
+                ));
+            }
+
+            if (medias.isEmpty()) {
+                throw new MediaNotFoundException(String.format("media not found for location %s", location));
+            }
+
+            return medias;
+        } catch (MediaOfflineException | MediaNotFoundException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new MediaOfflineException(String.format("yt-dlp request failed for location %s", location), ex);
+        }
+    }
+
     @Override
     protected Pattern[] getLocationPatterns() {
-        return patterns(Pattern.compile("^https?://.*youtube\\.com.*$"));
+        return patterns(
+                Pattern.compile("^https?://.*youtube\\.com.*$"),
+                Pattern.compile("^https?://.*streamfare\\.com\\/abc-news-australia-live-stream\\/?$"),
+                Pattern.compile("^https?://.*streamfare\\.com\\/africa-news-live-stream\\/?$"),
+                Pattern.compile("^https?://.*streamfare\\.com\\/cbc-news-canada-live-stream\\/?$"),
+                Pattern.compile("^https?://.*streamfare\\.com\\/euro-news-live-stream\\/?$"),
+                Pattern.compile("^https?://.*streamfare\\.com\\/france-24-live-stream\\/?$"),
+                Pattern.compile("^https?://.*streamfare\\.com\\/news-12-new-york-live-stream\\/?$"),
+                Pattern.compile("^https?://.*streamfare\\.com\\/sky-news-live-stream\\/?$"));
     }
 
     @Override
@@ -134,6 +275,11 @@ public class YouTubeSupport extends FFMPEGSupport {
                 })
                 .collect(Collectors.toList())
                 .toArray(new String[0]);
+    }
+
+    @Override
+    public List<Media> getMedia(String location) throws MediaNotFoundException, MediaOfflineException {
+        return resolveMediaWithYtDlp(resolveLocation(location));
     }
 
     @Override
@@ -175,6 +321,7 @@ public class YouTubeSupport extends FFMPEGSupport {
                 "--no-part",
                 "--hls-use-mpegts",
                 "--newline",
+                "--remux-video", "mkv",
                 "--merge-output-format", "mkv",
                 "-f", format,
                 "-o", outputTemplate,

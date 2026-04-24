@@ -86,7 +86,11 @@ public class BrightcoveSupport extends FFMPEGSupport {
         return null;
     }
 
-    private String getPolicyKey(String content) {
+    private String getPolicyKey(String account, String player, String video) {
+        String policyKeyEndpoint = String.format(BRIGHTCOVE_POLICY_KEY_ENDPOINT, account, player, video);
+
+        String content = getContent(policyKeyEndpoint);
+
         Matcher matcher = BRIGHTCOVE_PK_PATTERN.matcher(content);
 
         if (matcher.find()) {
@@ -125,9 +129,12 @@ public class BrightcoveSupport extends FFMPEGSupport {
         final String account = getAccount(content);
         final String video = getVideo(content);
         final String player = getPlayer(content);
-        final String policyKey = getPolicyKey(content);
 
-        if (account == null || video == null || player == null || policyKey == null) return "";
+        if (account == null || video == null || player == null) return "";
+
+        final String policyKey = getPolicyKey(account, player, video);
+
+        if (policyKey == null) return "";
 
         HashMap<String, String> headers = new HashMap<>();
         headers.put("BCOV-Policy", policyKey);

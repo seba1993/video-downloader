@@ -7,11 +7,16 @@ package com.github.luischavez.videodownloader.app.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
@@ -30,12 +35,17 @@ import com.github.luischavez.videodownloader.app.util.FormatUtils;
 import com.github.luischavez.videodownloader.task.TaskManager;
 import com.jgoodies.forms.factories.*;
 import com.jgoodies.forms.layout.*;
+import org.dhatim.fastexcel.reader.ReadableWorkbook;
+import org.dhatim.fastexcel.reader.Row;
+import org.dhatim.fastexcel.reader.Sheet;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.media.*;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventListener;
 import uk.co.caprica.vlcj.player.base.State;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+
+import static uk.co.caprica.vlcj.binding.LibVlc.libvlc_media_get_duration;
 
 /**
  * @author unknown
@@ -53,6 +63,8 @@ public class ClipFrame extends JFrame implements
     private final ClipTableModel clipTableModel;
 
     private EmbeddedMediaPlayer mediaPlayer;
+
+    private DirectTabDialog directTabDialog;
 
     private File currentFile;
 
@@ -77,6 +89,8 @@ public class ClipFrame extends JFrame implements
 
         videoTableModel = new VideoTableModel();
         clipTableModel = new ClipTableModel();
+
+        directTabDialog = new DirectTabDialog(this);
 
         initialize();
     }
@@ -183,6 +197,22 @@ public class ClipFrame extends JFrame implements
                 ClipFrame.this.actionPerformed(e);
             }
         }, 6);
+
+        videoTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int row = videoTable.rowAtPoint(e.getPoint());
+                    File fileAt = videoTableModel.getFileAt(row);
+
+                    if (fileAt != null) {
+                        handleVideoSelection(row);
+                    }
+                }
+            }
+        });
+
+        removeAllButton.addActionListener(this);
     }
 
     private void setEnableStatusWhenClip(boolean status) {
@@ -199,16 +229,34 @@ public class ClipFrame extends JFrame implements
     private void loadVideo(File file) {
         if (currentFile != null && currentFile.equals(file)) {
             if (!mediaPlayer.status().isPlaying()) mediaPlayer.controls().play();
+            if (directTabCheckBox.isSelected() && !directTabDialog.isVisible()) {
+                autoPlayCheckBox.setSelected(false);
+
+                directTabDialog.videoLabel.setText(file.getName());
+                directTabDialog.setVisible(true);
+                directTabDialog.clearAll(clipTableModel.getTasks(), file);
+            }
             return;
         }
 
         currentFile = file;
 
-        mediaPlayer.media().play(file.getPath());
+        mediaPlayer.media().prepare(file.getPath());
+        if (!directTabCheckBox.isSelected()) mediaPlayer.media().play(file.getPath());
+
         videoTitleLabel.setText(file.getName());
+
         timeSlider.setEnabled(true);
         playButton.setEnabled(true);
         clipButton.setEnabled(true);
+
+        if (directTabCheckBox.isSelected()) {
+            autoPlayCheckBox.setSelected(false);
+
+            directTabDialog.videoLabel.setText(file.getName());
+            directTabDialog.setVisible(true);
+            directTabDialog.clearAll(clipTableModel.getTasks(), file);
+        }
     }
 
     private void removeVideo() {
@@ -269,22 +317,36 @@ public class ClipFrame extends JFrame implements
         handleArrowKey(pressed, false);
     }
 
-    private void handleVideoRemove(int row) {
+    private void handleVideoRemove(int row, boolean confirm) {
         final File file = videoTableModel.getFileAt(row);
 
-        int option = JOptionPane.showConfirmDialog(
-                ClipFrame.this,
-                "all related clips will be removed, are you sure?",
-                String.format("Remove %s", file.getName()),
-                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        boolean remove = false;
 
-        if (option == JOptionPane.YES_OPTION) {
+        if (confirm) {
+            int option = JOptionPane.showConfirmDialog(
+                    ClipFrame.this,
+                    "all related clips will be removed, are you sure?",
+                    String.format("Remove %s", file.getName()),
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+            if (option == JOptionPane.YES_OPTION) {
+                remove = true;
+            }
+        } else {
+            remove = true;
+        }
+
+        if (remove) {
             videoTableModel.removeFile(file);
             clipTableModel.remove(file);
             if (currentFile != null && currentFile == file) {
                 removeVideo();
             }
         }
+    }
+
+    private void handleVideoRemove(int row) {
+        handleVideoRemove(row, true);
     }
 
     private void handleClipRemove(int row) {
@@ -312,12 +374,130 @@ public class ClipFrame extends JFrame implements
     private void handleLoad() {
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setMultiSelectionEnabled(true);
-        fileChooser.setFileFilter(new FileNameExtensionFilter("MKV Video", "mkv"));
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Video or excel", "mkv", "mp4", "xlsx"));
 
         int option = fileChooser.showOpenDialog(this);
         if (option == JFileChooser.APPROVE_OPTION) {
             File[] selectedFiles = fileChooser.getSelectedFiles();
-            videoTableModel.addAll(selectedFiles);
+
+            for (File video : selectedFiles) {
+                if (video.getName().endsWith("xlsx")) {
+                    continue;
+                }
+
+                videoTableModel.addFile(video);
+            }
+
+            for (File excelFile : selectedFiles) {
+                if (!excelFile.getName().endsWith("xlsx")) {
+                    continue;
+                }
+
+                HashMap<File, File> loads = new HashMap<>();
+
+                try (FileInputStream is = new FileInputStream(excelFile);
+                     ReadableWorkbook wb = new ReadableWorkbook(is)) {
+                    Sheet sheet = wb.getFirstSheet();
+
+                    try (Stream<Row> rows = sheet.openStream()) {
+                        StringBuilder basePath = new StringBuilder();
+
+                        rows.forEach(r -> {
+                            try {
+                                if (r.getCellAsString(0).orElse("").equals("BASE_PATH")) {
+                                    basePath.append(r.getCellAsString(1).orElse(""));
+                                    return;
+                                }
+
+                                if (basePath.toString().isEmpty()) {
+                                    File video = new File(r.getCellAsString(0).get());
+                                    File clips = new File(r.getCellAsString(1).get());
+
+                                    if (!video.exists() || !clips.exists()) {
+                                        return;
+                                    }
+
+                                    videoTableModel.addFile(video);
+                                    loads.put(video, clips);
+                                } else {
+                                    File video = new File(basePath.toString(), r.getCellAsString(0).get());
+                                    File clips = new File(basePath.toString(), r.getCellAsString(1).get());
+
+                                    if (!video.exists() || !clips.exists()) {
+                                        return;
+                                    }
+
+                                    videoTableModel.addFile(video);
+                                    loads.put(video, clips);
+                                }
+                            } catch (Exception exception) {
+                                exception.printStackTrace();
+                            }
+                        });
+                    }
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
+                loads.forEach((video, clips) -> {
+                    try (FileInputStream is = new FileInputStream(clips);
+                         ReadableWorkbook wb = new ReadableWorkbook(is)) {
+                        Sheet sheet = wb.getFirstSheet();
+                        try (Stream<Row> rows = sheet.openStream()) {
+                            rows.forEach(r -> {
+                                try {
+                                    SwingUtilities.invokeLater(() -> {
+                                        if (r == null
+                                                || r.getCell(0) == null
+                                                || r.getCell(0).getRawValue() == null
+                                                || r.getCell(0).getRawValue().isEmpty()) return;
+
+                                        long startHours = r.getCellAsNumber(0).orElse(BigDecimal.ZERO).longValue();
+                                        long startMinutes = r.getCellAsNumber(1).orElse(BigDecimal.ZERO).longValue();
+                                        long startSeconds = r.getCellAsNumber(2).orElse(BigDecimal.ZERO).longValue();
+                                        long stopHours = r.getCellAsNumber(3).orElse(BigDecimal.ZERO).longValue();
+                                        long stopMinutes = r.getCellAsNumber(4).orElse(BigDecimal.ZERO).longValue();
+                                        long stopSeconds = r.getCellAsNumber(5).orElse(BigDecimal.ZERO).longValue();
+
+                                        long startMillis = 0;
+                                        long stopMillis = 0;
+
+                                        startMillis += startSeconds * 1_000;
+                                        startMillis += startMinutes * 60 * 1_000;
+                                        startMillis += startHours * 60 * 60 * 1_000;
+
+                                        stopMillis += stopSeconds * 1_000;
+                                        stopMillis += stopMinutes * 60 * 1_000;
+                                        stopMillis += stopHours * 60 * 60 * 1_000;
+
+                                        if (mediaPlayer.media().play(video.getPath())) {
+                                            long length = -1;
+
+                                            do {
+                                                length = mediaPlayer.media().info().duration();
+
+                                                try {
+                                                    Thread.sleep(100);
+                                                } catch (Exception ex) {
+                                                    // IGNORE
+                                                }
+                                            } while (length < 0);
+
+                                            mediaPlayer.controls().stop();
+
+                                            clipTableModel.add(new ClipTask(context, video, startMillis, stopMillis, length));
+                                        }
+                                    });
+                                } catch (Exception exception) {
+                                    exception.printStackTrace();
+                                }
+                            });
+                        }
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                });
+            }
         }
     }
 
@@ -500,6 +680,14 @@ public class ClipFrame extends JFrame implements
         } else if (e.getSource().equals("jump_to")) {
             final int row = Integer.valueOf(e.getActionCommand());
             handleJumpTo(row);
+        } else if (e.getSource() == removeAllButton) {
+            removeVideo();
+
+            for (int row = 0; row < videoTableModel.getRowCount(); row++) {
+                handleVideoRemove(row, false);
+            }
+
+            videoTableModel.clear();
         }
 
         requestFocus();
@@ -625,12 +813,53 @@ public class ClipFrame extends JFrame implements
                         if (!clipStarted) handleStartClipping();
                         break;
                     case KeyEvent.VK_RIGHT:
-                        keyEvent.consume();
-                        handleRightArrowKey(false);
+                        if (!directTabCheckBox.isSelected()) {
+                            keyEvent.consume();
+                            handleRightArrowKey(false);
+                        }
+
                         break;
                     case KeyEvent.VK_LEFT:
-                        keyEvent.consume();
-                        handleLeftArrowKey(false);
+                        if (!directTabCheckBox.isSelected()) {
+                            keyEvent.consume();
+                            handleLeftArrowKey(false);
+                        }
+
+                        break;
+                    case KeyEvent.VK_ENTER:
+                    case KeyEvent.VK_N:
+                        if (directTabCheckBox.isSelected()) {
+                            keyEvent.consume();
+
+                            for (ClipTask task : clipTableModel.getTasks()) {
+                                if (task.getFile() == currentFile) {
+                                    clipTableModel.remove(task);
+                                }
+                            }
+
+                            for (DirectTabItemPanel item : directTabDialog.items) {
+                                if (!item.isAllCompleted()) continue;
+
+                                long videoLength = timeSlider.getMaximum();
+                                clipTableModel.add(new ClipTask(context, currentFile, item.startAt(), item.stopAt(), videoLength));
+                            }
+
+                            if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
+                                videoTable.clearSelection();
+                                removeVideo();
+                                directTabDialog.setVisible(false);
+
+                                if (!clipStarted) handleStartClipping();
+                            } else {
+                                int currentVideoIndex = videoTableModel.getIndex(currentFile);
+
+                                try {
+                                    videoTable.setRowSelectionInterval(currentVideoIndex + 1, currentVideoIndex + 1);
+                                } catch (Exception ex) {
+                                    // IGNORE
+                                }
+                            }
+                        }
                         break;
                 }
             }
@@ -638,12 +867,18 @@ public class ClipFrame extends JFrame implements
             if (keyEvent.paramString().contains("KEY_PRESSED")) {
                 switch (keyEvent.getKeyCode()) {
                     case KeyEvent.VK_RIGHT:
-                        keyEvent.consume();
-                        handleRightArrowKey(true);
+                        if (!directTabCheckBox.isSelected()) {
+                            keyEvent.consume();
+                            handleRightArrowKey(true);
+                        }
+
                         break;
                     case KeyEvent.VK_LEFT:
-                        keyEvent.consume();
-                        handleLeftArrowKey(true);
+                        if (!directTabCheckBox.isSelected()) {
+                            keyEvent.consume();
+                            handleLeftArrowKey(true);
+                        }
+
                         break;
                 }
             }
@@ -751,6 +986,10 @@ public class ClipFrame extends JFrame implements
     @Override
     public void timeChanged(MediaPlayer mediaPlayer, long newTime) {
         handleTimeChanged(newTime);
+
+        if (directTabCheckBox.isSelected()) {
+            mediaPlayer.controls().pause();
+        }
     }
 
     @Override
@@ -853,216 +1092,228 @@ public class ClipFrame extends JFrame implements
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-        // Generated using JFormDesigner Evaluation license - unknown
-        vSpacer2 = new JPanel(null);
-        label3 = new JLabel();
-        hSpacer3 = new JPanel(null);
-        label2 = new JLabel();
-        beforeSpinner = new JSpinner();
-        label4 = new JLabel();
-        afterSpinner = new JSpinner();
-        clipButton = new JButton();
-        autoPlayCheckBox = new JCheckBox();
-        loadButton = new JButton();
-        videoTitleLabel = new JLabel();
-        hSpacer1 = new JPanel(null);
-        videoPanel = new JPanel();
-        hSpacer4 = new JPanel(null);
-        scrollPane1 = new JScrollPane();
-        videoTable = new JTable();
-        hSpacer2 = new JPanel(null);
-        playButton = new JButton();
-        timeSlider = new JSlider();
-        currentTimeLabel = new JLabel();
-        startClipButton = new JButton();
-        clipProgressBar = new JProgressBar();
-        scrollPane2 = new JScrollPane();
-        clipTable = new JTable();
-        vSpacer1 = new JPanel(null);
+		// Generated using JFormDesigner Evaluation license - LUIS CHAVEZ
+		vSpacer2 = new JPanel(null);
+		label3 = new JLabel();
+		hSpacer3 = new JPanel(null);
+		label2 = new JLabel();
+		beforeSpinner = new JSpinner();
+		label4 = new JLabel();
+		afterSpinner = new JSpinner();
+		clipButton = new JButton();
+		directTabCheckBox = new JCheckBox();
+		autoPlayCheckBox = new JCheckBox();
+		removeAllButton = new JButton();
+		loadButton = new JButton();
+		videoTitleLabel = new JLabel();
+		hSpacer1 = new JPanel(null);
+		videoPanel = new JPanel();
+		hSpacer4 = new JPanel(null);
+		scrollPane1 = new JScrollPane();
+		videoTable = new JTable();
+		hSpacer2 = new JPanel(null);
+		playButton = new JButton();
+		timeSlider = new JSlider();
+		currentTimeLabel = new JLabel();
+		startClipButton = new JButton();
+		clipProgressBar = new JProgressBar();
+		scrollPane2 = new JScrollPane();
+		clipTable = new JTable();
+		vSpacer1 = new JPanel(null);
 
-        //======== this ========
-        setTitle("Clip Editor");
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        Container contentPane = getContentPane();
-        contentPane.setLayout(new FormLayout(
-            "7*(default, $lcgap), 300dlu:grow, 2*($lcgap, default), $lcgap, 200dlu, $lcgap, default",
-            "3*(default, $lgap), 200dlu:grow, $lgap, default, $lgap, pref, $lgap, 107dlu, $lgap, default"));
-        contentPane.add(vSpacer2, CC.xywh(15, 1, 7, 1));
+		//======== this ========
+		setTitle("Clip Editor");
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		Container contentPane = getContentPane();
+		contentPane.setLayout(new FormLayout(
+			"7*(default, $lcgap), 300dlu:grow, 4*($lcgap, default), $lcgap, 160dlu, $lcgap, default",
+			"3*(default, $lgap), 200dlu:grow, $lgap, default, $lgap, pref, $lgap, 107dlu, $lgap, default"));
+		contentPane.add(vSpacer2, CC.xywh(15, 1, 11, 1));
 
-        //---- label3 ----
-        label3.setText("+ Seconds:");
-        contentPane.add(label3, CC.xy(3, 3));
-        contentPane.add(hSpacer3, CC.xy(5, 3));
+		//---- label3 ----
+		label3.setText("+ Seconds:");
+		contentPane.add(label3, CC.xy(3, 3));
+		contentPane.add(hSpacer3, CC.xy(5, 3));
 
-        //---- label2 ----
-        label2.setText("Before");
-        contentPane.add(label2, CC.xy(7, 3));
+		//---- label2 ----
+		label2.setText("Before");
+		contentPane.add(label2, CC.xy(7, 3));
 
-        //---- beforeSpinner ----
-        beforeSpinner.setModel(new SpinnerNumberModel(5, 0, 10, 1));
-        beforeSpinner.setRequestFocusEnabled(false);
-        contentPane.add(beforeSpinner, CC.xy(9, 3));
+		//---- beforeSpinner ----
+		beforeSpinner.setModel(new SpinnerNumberModel(5, 0, 10, 1));
+		beforeSpinner.setRequestFocusEnabled(false);
+		contentPane.add(beforeSpinner, CC.xy(9, 3));
 
-        //---- label4 ----
-        label4.setText("After");
-        contentPane.add(label4, CC.xy(11, 3));
+		//---- label4 ----
+		label4.setText("After");
+		contentPane.add(label4, CC.xy(11, 3));
 
-        //---- afterSpinner ----
-        afterSpinner.setModel(new SpinnerNumberModel(0, 0, 10, 1));
-        afterSpinner.setRequestFocusEnabled(false);
-        contentPane.add(afterSpinner, CC.xy(13, 3));
+		//---- afterSpinner ----
+		afterSpinner.setModel(new SpinnerNumberModel(0, 0, 10, 1));
+		afterSpinner.setRequestFocusEnabled(false);
+		contentPane.add(afterSpinner, CC.xy(13, 3));
 
-        //---- clipButton ----
-        clipButton.setText("Press to start clip (space)");
-        clipButton.setEnabled(false);
-        contentPane.add(clipButton, CC.xy(15, 3, CC.CENTER, CC.DEFAULT));
+		//---- clipButton ----
+		clipButton.setText("Press to start clip (space)");
+		clipButton.setEnabled(false);
+		contentPane.add(clipButton, CC.xy(15, 3, CC.CENTER, CC.DEFAULT));
 
-        //---- autoPlayCheckBox ----
-        autoPlayCheckBox.setText("Auto Play");
-        autoPlayCheckBox.setSelected(true);
-        autoPlayCheckBox.setRequestFocusEnabled(false);
-        contentPane.add(autoPlayCheckBox, CC.xy(17, 3));
+		//---- directTabCheckBox ----
+		directTabCheckBox.setText("DirectTab");
+		contentPane.add(directTabCheckBox, CC.xy(17, 3));
 
-        //---- loadButton ----
-        loadButton.setText("Load");
-        contentPane.add(loadButton, CC.xy(21, 3));
-        contentPane.add(videoTitleLabel, CC.xywh(3, 5, 15, 1, CC.CENTER, CC.DEFAULT));
-        contentPane.add(hSpacer1, CC.xywh(1, 7, 1, 7));
+		//---- autoPlayCheckBox ----
+		autoPlayCheckBox.setText("Auto Play");
+		autoPlayCheckBox.setSelected(true);
+		autoPlayCheckBox.setRequestFocusEnabled(false);
+		contentPane.add(autoPlayCheckBox, CC.xy(19, 3));
 
-        //======== videoPanel ========
-        {
-            videoPanel.setLayout(new FormLayout(
-                "default",
-                "default"));
-        }
-        contentPane.add(videoPanel, CC.xywh(3, 7, 15, 1, CC.FILL, CC.FILL));
-        contentPane.add(hSpacer4, CC.xy(19, 7));
+		//---- removeAllButton ----
+		removeAllButton.setText("Remove All");
+		contentPane.add(removeAllButton, CC.xy(23, 3));
 
-        //======== scrollPane1 ========
-        {
+		//---- loadButton ----
+		loadButton.setText("Load");
+		contentPane.add(loadButton, CC.xy(25, 3));
+		contentPane.add(videoTitleLabel, CC.xywh(3, 5, 17, 1, CC.CENTER, CC.DEFAULT));
+		contentPane.add(hSpacer1, CC.xywh(1, 7, 1, 7));
 
-            //---- videoTable ----
-            videoTable.setModel(new DefaultTableModel(
-                new Object[][] {
-                },
-                new String[] {
-                    "Video", " "
-                }
-            ) {
-                boolean[] columnEditable = new boolean[] {
-                    false, true
-                };
-                @Override
-                public boolean isCellEditable(int rowIndex, int columnIndex) {
-                    return columnEditable[columnIndex];
-                }
-            });
-            {
-                TableColumnModel cm = videoTable.getColumnModel();
-                cm.getColumn(0).setMinWidth(200);
-                cm.getColumn(0).setPreferredWidth(200);
-                cm.getColumn(1).setMinWidth(80);
-                cm.getColumn(1).setPreferredWidth(80);
-            }
-            scrollPane1.setViewportView(videoTable);
-        }
-        contentPane.add(scrollPane1, CC.xywh(21, 5, 1, 4, CC.FILL, CC.FILL));
-        contentPane.add(hSpacer2, CC.xywh(23, 7, 1, 7));
+		//======== videoPanel ========
+		{
+			videoPanel.setLayout(new FormLayout(
+				"default",
+				"default"));
+		}
+		contentPane.add(videoPanel, CC.xywh(3, 7, 17, 1, CC.FILL, CC.FILL));
+		contentPane.add(hSpacer4, CC.xy(21, 7));
 
-        //---- playButton ----
-        playButton.setText("Play");
-        playButton.setEnabled(false);
-        contentPane.add(playButton, CC.xy(3, 9));
+		//======== scrollPane1 ========
+		{
 
-        //---- timeSlider ----
-        timeSlider.setValue(0);
-        timeSlider.setEnabled(false);
-        timeSlider.setPaintTicks(true);
-        timeSlider.setPaintLabels(true);
-        contentPane.add(timeSlider, CC.xywh(7, 9, 9, 1));
+			//---- videoTable ----
+			videoTable.setModel(new DefaultTableModel(
+				new Object[][] {
+				},
+				new String[] {
+					"Video", " "
+				}
+			) {
+				boolean[] columnEditable = new boolean[] {
+					false, true
+				};
+				@Override
+				public boolean isCellEditable(int rowIndex, int columnIndex) {
+					return columnEditable[columnIndex];
+				}
+			});
+			{
+				TableColumnModel cm = videoTable.getColumnModel();
+				cm.getColumn(0).setMinWidth(200);
+				cm.getColumn(0).setPreferredWidth(200);
+				cm.getColumn(1).setMinWidth(80);
+				cm.getColumn(1).setPreferredWidth(80);
+			}
+			scrollPane1.setViewportView(videoTable);
+		}
+		contentPane.add(scrollPane1, CC.xywh(23, 5, 3, 4, CC.FILL, CC.FILL));
+		contentPane.add(hSpacer2, CC.xywh(27, 7, 1, 7));
 
-        //---- currentTimeLabel ----
-        currentTimeLabel.setText("00:00:00");
-        contentPane.add(currentTimeLabel, CC.xy(17, 9, CC.CENTER, CC.DEFAULT));
+		//---- playButton ----
+		playButton.setText("Play");
+		playButton.setEnabled(false);
+		contentPane.add(playButton, CC.xy(3, 9));
 
-        //---- startClipButton ----
-        startClipButton.setText("Clip All (x)");
-        startClipButton.setEnabled(false);
-        contentPane.add(startClipButton, CC.xy(21, 9));
+		//---- timeSlider ----
+		timeSlider.setValue(0);
+		timeSlider.setEnabled(false);
+		timeSlider.setPaintTicks(true);
+		timeSlider.setPaintLabels(true);
+		contentPane.add(timeSlider, CC.xywh(7, 9, 9, 1));
 
-        //---- clipProgressBar ----
-        clipProgressBar.setVisible(false);
-        contentPane.add(clipProgressBar, CC.xy(21, 11));
+		//---- currentTimeLabel ----
+		currentTimeLabel.setText("00:00:00");
+		contentPane.add(currentTimeLabel, CC.xy(19, 9, CC.CENTER, CC.DEFAULT));
 
-        //======== scrollPane2 ========
-        {
+		//---- startClipButton ----
+		startClipButton.setText("Clip All (x)");
+		startClipButton.setEnabled(false);
+		contentPane.add(startClipButton, CC.xywh(23, 9, 3, 1));
 
-            //---- clipTable ----
-            clipTable.setModel(new DefaultTableModel(
-                new Object[][] {
-                },
-                new String[] {
-                    "Video", "From", "To", "Length", "Status", " ", " "
-                }
-            ) {
-                boolean[] columnEditable = new boolean[] {
-                    false, false, false, false, false, true, true
-                };
-                @Override
-                public boolean isCellEditable(int rowIndex, int columnIndex) {
-                    return columnEditable[columnIndex];
-                }
-            });
-            {
-                TableColumnModel cm = clipTable.getColumnModel();
-                cm.getColumn(0).setMinWidth(200);
-                cm.getColumn(0).setPreferredWidth(200);
-                cm.getColumn(1).setMinWidth(80);
-                cm.getColumn(1).setPreferredWidth(80);
-                cm.getColumn(3).setMinWidth(80);
-                cm.getColumn(3).setPreferredWidth(80);
-                cm.getColumn(4).setMinWidth(100);
-                cm.getColumn(4).setPreferredWidth(100);
-                cm.getColumn(5).setMinWidth(80);
-                cm.getColumn(5).setPreferredWidth(80);
-                cm.getColumn(6).setMinWidth(80);
-                cm.getColumn(6).setPreferredWidth(80);
-            }
-            scrollPane2.setViewportView(clipTable);
-        }
-        contentPane.add(scrollPane2, CC.xywh(3, 13, 19, 1, CC.FILL, CC.FILL));
-        contentPane.add(vSpacer1, CC.xywh(15, 15, 7, 1));
-        pack();
-        setLocationRelativeTo(getOwner());
+		//---- clipProgressBar ----
+		clipProgressBar.setVisible(false);
+		contentPane.add(clipProgressBar, CC.xy(25, 11));
+
+		//======== scrollPane2 ========
+		{
+
+			//---- clipTable ----
+			clipTable.setModel(new DefaultTableModel(
+				new Object[][] {
+				},
+				new String[] {
+					"Video", "From", "To", "Length", "Status", " ", " "
+				}
+			) {
+				boolean[] columnEditable = new boolean[] {
+					false, false, false, false, false, true, true
+				};
+				@Override
+				public boolean isCellEditable(int rowIndex, int columnIndex) {
+					return columnEditable[columnIndex];
+				}
+			});
+			{
+				TableColumnModel cm = clipTable.getColumnModel();
+				cm.getColumn(0).setMinWidth(200);
+				cm.getColumn(0).setPreferredWidth(200);
+				cm.getColumn(1).setMinWidth(80);
+				cm.getColumn(1).setPreferredWidth(80);
+				cm.getColumn(3).setMinWidth(80);
+				cm.getColumn(3).setPreferredWidth(80);
+				cm.getColumn(4).setMinWidth(100);
+				cm.getColumn(4).setPreferredWidth(100);
+				cm.getColumn(5).setMinWidth(80);
+				cm.getColumn(5).setPreferredWidth(80);
+				cm.getColumn(6).setMinWidth(80);
+				cm.getColumn(6).setPreferredWidth(80);
+			}
+			scrollPane2.setViewportView(clipTable);
+		}
+		contentPane.add(scrollPane2, CC.xywh(3, 13, 23, 1, CC.FILL, CC.FILL));
+		contentPane.add(vSpacer1, CC.xywh(15, 15, 11, 1));
+		pack();
+		setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-    // Generated using JFormDesigner Evaluation license - unknown
-    private JPanel vSpacer2;
-    private JLabel label3;
-    private JPanel hSpacer3;
-    private JLabel label2;
-    private JSpinner beforeSpinner;
-    private JLabel label4;
-    private JSpinner afterSpinner;
-    private JButton clipButton;
-    private JCheckBox autoPlayCheckBox;
-    private JButton loadButton;
-    private JLabel videoTitleLabel;
-    private JPanel hSpacer1;
-    private JPanel videoPanel;
-    private JPanel hSpacer4;
-    private JScrollPane scrollPane1;
-    private JTable videoTable;
-    private JPanel hSpacer2;
-    private JButton playButton;
-    private JSlider timeSlider;
-    private JLabel currentTimeLabel;
-    private JButton startClipButton;
-    private JProgressBar clipProgressBar;
-    private JScrollPane scrollPane2;
-    private JTable clipTable;
-    private JPanel vSpacer1;
+	// Generated using JFormDesigner Evaluation license - LUIS CHAVEZ
+	private JPanel vSpacer2;
+	private JLabel label3;
+	private JPanel hSpacer3;
+	private JLabel label2;
+	private JSpinner beforeSpinner;
+	private JLabel label4;
+	private JSpinner afterSpinner;
+	private JButton clipButton;
+	private JCheckBox directTabCheckBox;
+	private JCheckBox autoPlayCheckBox;
+	public JButton removeAllButton;
+	private JButton loadButton;
+	private JLabel videoTitleLabel;
+	private JPanel hSpacer1;
+	private JPanel videoPanel;
+	private JPanel hSpacer4;
+	private JScrollPane scrollPane1;
+	private JTable videoTable;
+	private JPanel hSpacer2;
+	private JButton playButton;
+	private JSlider timeSlider;
+	private JLabel currentTimeLabel;
+	private JButton startClipButton;
+	private JProgressBar clipProgressBar;
+	private JScrollPane scrollPane2;
+	private JTable clipTable;
+	private JPanel vSpacer1;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

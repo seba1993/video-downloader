@@ -29,6 +29,8 @@ public class StreamConfigurationDialog extends JDialog {
     public final JMenuItem deleteMenuItem = new JMenuItem("Delete");
 
     public ScheduleTableModel scheduleTableModel;
+
+    public boolean isMultiple;
     public StreamConfiguration streamConfiguration;
 
     public StreamConfigurationDialog(Window owner) {
@@ -75,55 +77,75 @@ public class StreamConfigurationDialog extends JDialog {
         });
     }
 
-    public void open(String alias) {
+    public void open(String... alias) {
         if (isVisible()) return;
 
-        streamConfiguration = AppContext.instance().getSystem().getManager(ConfigurationManager.class).list(StreamConfiguration.class).stream()
-                .filter(streamConfiguration -> streamConfiguration.getAlias().equals(alias))
-                .findFirst()
-                .orElse(null);
+        streamConfiguration = null;
+
+        isMultiple = alias != null && alias.length > 1;
+
+        enableCheckBox.setSelected(!isMultiple);
+        aliasLabel.setVisible(!isMultiple);
+        aliasTextField.setVisible(!isMultiple);
+        urlLabel.setVisible(!isMultiple);
+        urlTextField.setVisible(!isMultiple);
+        fileLabel.setVisible(!isMultiple);
+        fileNameTextField.setVisible(!isMultiple);
+        //destinationLabel.setVisible(!isMultiple);
+        //destinationTextField.setVisible(!isMultiple);
+        //destinationButton.setVisible(!isMultiple);
 
         aliasTextField.setText("");
         urlTextField.setText("");
         fileNameTextField.setText("");
+        destinationTextField.setText("");
         scheduleTableModel.clear();
 
-        setVisible(true);
+        if (!isMultiple && alias != null) {
+            streamConfiguration = AppContext.instance().getSystem().getManager(ConfigurationManager.class).list(StreamConfiguration.class).stream()
+                    .filter(streamConfiguration -> streamConfiguration.getAlias().equals(alias[0]))
+                    .findFirst()
+                    .orElse(null);
 
-        if (streamConfiguration == null) return;
+            if (streamConfiguration == null) return;
 
-        enableCheckBox.setSelected(streamConfiguration.isEnabled());
-        typeComboBox.setSelectedItem(streamConfiguration.getType());
-        aliasTextField.setText(streamConfiguration.getAlias());
-        countryTextField.setText(streamConfiguration.getCountry());
-        urlTextField.setText(streamConfiguration.getUrl());
-        qualitySpinner.setValue(streamConfiguration.getPreferredQuality());
-        fileNameTextField.setText(streamConfiguration.getBaseFileName());
-        destinationTextField.setText(streamConfiguration.getDestinationPath());
-        scheduleCheckBox.setSelected(streamConfiguration.isScheduleWhenAvailable());
-        concatenateCheckBox.setSelected(streamConfiguration.isConcatenate());
-        concatenateHourSpinner.setValue(streamConfiguration.getConcatenateAt().getHour());
-        concatenateMinuteSpinner.setValue(streamConfiguration.getConcatenateAt().getMinute());
-        concatenateTextField.setText(streamConfiguration.getConcatenationPath());
-        subCheckBox.setSelected(streamConfiguration.isSub());
-        languageComboBox.setSelectedItem(streamConfiguration.getLanguage());
+            enableCheckBox.setSelected(streamConfiguration.isEnabled());
+            typeComboBox.setSelectedItem(streamConfiguration.getType());
+            aliasTextField.setText(streamConfiguration.getAlias());
+            countryTextField.setText(streamConfiguration.getCountry());
+            urlTextField.setText(streamConfiguration.getUrl());
+            qualitySpinner.setValue(streamConfiguration.getPreferredQuality());
+            fileNameTextField.setText(streamConfiguration.getBaseFileName());
+            destinationTextField.setText(streamConfiguration.getDestinationPath());
+            scheduleCheckBox.setSelected(streamConfiguration.isScheduleWhenAvailable());
+            concatenateCheckBox.setSelected(streamConfiguration.isConcatenate());
+            concatenateHourSpinner.setValue(streamConfiguration.getConcatenateAt().getHour());
+            concatenateMinuteSpinner.setValue(streamConfiguration.getConcatenateAt().getMinute());
+            concatenateTextField.setText(streamConfiguration.getConcatenationPath());
+            subCheckBox.setSelected(streamConfiguration.isSub());
+            languageComboBox.setSelectedItem(streamConfiguration.getLanguage());
 
-        streamConfiguration.getSchedules().stream().forEach(scheduleTableModel::addSchedule);
+            streamConfiguration.getSchedules().stream().forEach(scheduleTableModel::addSchedule);
 
-        ArrayList<Integer> selectedSubs = new ArrayList<>();
-        ListModel<String> subListModel = subList.getModel();
-        for (int i = 0; i < subListModel.getSize(); i++) {
-            if (streamConfiguration.getTranslations().contains(subListModel.getElementAt(i))) {
-                selectedSubs.add(i);
+            ArrayList<Integer> selectedSubs = new ArrayList<>();
+            ListModel<String> subListModel = subList.getModel();
+            for (int i = 0; i < subListModel.getSize(); i++) {
+                if (streamConfiguration.getTranslations().contains(subListModel.getElementAt(i))) {
+                    selectedSubs.add(i);
+                }
             }
+
+            int[] selectedSubIndices = new int[selectedSubs.size()];
+            for (int i = 0; i < selectedSubIndices.length; i++) {
+                selectedSubIndices[i] = selectedSubs.get(i);
+            }
+
+            subList.setSelectedIndices(selectedSubIndices);
+        } else {
+            countryTextField.setText("");
         }
 
-        int[] selectedSubIndices = new int[selectedSubs.size()];
-        for (int i = 0; i < selectedSubIndices.length; i++) {
-            selectedSubIndices[i] = selectedSubs.get(i);
-        }
-
-        subList.setSelectedIndices(selectedSubIndices);
+        setVisible(true);
     }
 
     private void initComponents() {
@@ -136,17 +158,17 @@ public class StreamConfigurationDialog extends JDialog {
         saveButton = new JButton();
         label4 = new JLabel();
         typeComboBox = new JComboBox<>();
-        label1 = new JLabel();
+        aliasLabel = new JLabel();
         aliasTextField = new JTextField();
         label2 = new JLabel();
         countryTextField = new JTextField();
-        label3 = new JLabel();
+        urlLabel = new JLabel();
         urlTextField = new JTextField();
         label13 = new JLabel();
         qualitySpinner = new JSpinner();
-        label5 = new JLabel();
+        fileLabel = new JLabel();
         fileNameTextField = new JTextField();
-        label6 = new JLabel();
+        destinationLabel = new JLabel();
         destinationTextField = new JTextField();
         destinationButton = new JButton();
         scheduleCheckBox = new JCheckBox();
@@ -214,9 +236,9 @@ public class StreamConfigurationDialog extends JDialog {
         }));
         contentPane.add(typeComboBox, CC.xywh(5, 5, 9, 1));
 
-        //---- label1 ----
-        label1.setText("Alias");
-        contentPane.add(label1, CC.xy(3, 7));
+        //---- aliasLabel ----
+        aliasLabel.setText("Alias");
+        contentPane.add(aliasLabel, CC.xy(3, 7));
         contentPane.add(aliasTextField, CC.xywh(5, 7, 9, 1));
 
         //---- label2 ----
@@ -224,9 +246,9 @@ public class StreamConfigurationDialog extends JDialog {
         contentPane.add(label2, CC.xy(3, 9));
         contentPane.add(countryTextField, CC.xywh(5, 9, 9, 1));
 
-        //---- label3 ----
-        label3.setText("URL");
-        contentPane.add(label3, CC.xy(3, 11));
+        //---- urlLabel ----
+        urlLabel.setText("URL");
+        contentPane.add(urlLabel, CC.xy(3, 11));
         contentPane.add(urlTextField, CC.xywh(5, 11, 9, 1));
 
         //---- label13 ----
@@ -237,17 +259,14 @@ public class StreamConfigurationDialog extends JDialog {
         qualitySpinner.setModel(new SpinnerNumberModel(720, 480, null, 1));
         contentPane.add(qualitySpinner, CC.xywh(5, 13, 7, 1, CC.LEFT, CC.DEFAULT));
 
-        //---- label5 ----
-        label5.setText("File Name");
-        contentPane.add(label5, CC.xy(3, 15));
+        //---- fileLabel ----
+        fileLabel.setText("File Name");
+        contentPane.add(fileLabel, CC.xy(3, 15));
         contentPane.add(fileNameTextField, CC.xywh(5, 15, 9, 1));
 
-        //---- label6 ----
-        label6.setText("Destination");
-        contentPane.add(label6, CC.xy(3, 17));
-
-        //---- destinationTextField ----
-        destinationTextField.setEditable(false);
+        //---- destinationLabel ----
+        destinationLabel.setText("Destination");
+        contentPane.add(destinationLabel, CC.xy(3, 17));
         contentPane.add(destinationTextField, CC.xywh(5, 17, 7, 1));
 
         //---- destinationButton ----
@@ -260,10 +279,6 @@ public class StreamConfigurationDialog extends JDialog {
 
         //======== panel1 ========
         {
-            panel1.addPropertyChangeListener(
-            new java. beans .PropertyChangeListener ( ){ @Override public void propertyChange (java . beans. PropertyChangeEvent e
-            ) { if( "\u0062or\u0064er" .equals ( e. getPropertyName () ) )throw new RuntimeException( )
-            ;} } );
             panel1.setLayout(new FormLayout(
                 "6*(default, $lcgap), center:[4dlu,min], 4*($lcgap, default), $lcgap, left:default, 2*($lcgap, default), $lcgap, default:grow, $lcgap, default",
                 "2*(default, $lgap), 84dlu, $lgap, default"));
@@ -456,17 +471,17 @@ public class StreamConfigurationDialog extends JDialog {
     public JButton saveButton;
     private JLabel label4;
     public JComboBox<String> typeComboBox;
-    private JLabel label1;
+    private JLabel aliasLabel;
     public JTextField aliasTextField;
     private JLabel label2;
     public JTextField countryTextField;
-    private JLabel label3;
+    private JLabel urlLabel;
     public JTextField urlTextField;
     private JLabel label13;
     public JSpinner qualitySpinner;
-    private JLabel label5;
+    private JLabel fileLabel;
     public JTextField fileNameTextField;
-    private JLabel label6;
+    private JLabel destinationLabel;
     public JTextField destinationTextField;
     public JButton destinationButton;
     public JCheckBox scheduleCheckBox;

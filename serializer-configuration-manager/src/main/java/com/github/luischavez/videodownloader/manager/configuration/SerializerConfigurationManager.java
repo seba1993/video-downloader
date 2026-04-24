@@ -3,25 +3,36 @@ package com.github.luischavez.videodownloader.manager.configuration;
 import com.github.luischavez.videodownloader.Context;
 import com.github.luischavez.videodownloader.configuration.BaseConfigurationManager;
 import com.github.luischavez.videodownloader.configuration.Configuration;
-import com.github.luischavez.videodownloader.system.Injected;
+import com.google.inject.Inject;
 
 import java.io.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SerializerConfigurationManager extends BaseConfigurationManager {
 
-    public static final String CONFIGURATION_FOLDER = "configurations";
+    public static final String DEFAULT_CONFIGURATION_FOLDER = "configurations";
 
     private long lastChangeTimestamp;
     private long lastStoredTimestamp;
 
+    private String configurationFolder;
+
     private final AtomicBoolean firstRun = new AtomicBoolean(true);
 
-    @Injected
+    @Inject
     public SerializerConfigurationManager(Context context) {
         super(context);
 
         setExecutionInterval(5_000L);
+        setConfigurationFolder(DEFAULT_CONFIGURATION_FOLDER);
+    }
+
+    public String getConfigurationFolder() {
+        return configurationFolder;
+    }
+
+    public void setConfigurationFolder(String configurationFolder) {
+        this.configurationFolder = configurationFolder;
     }
 
     private String buildConfigurationFileName(Configuration configuration) {
@@ -43,7 +54,7 @@ public class SerializerConfigurationManager extends BaseConfigurationManager {
     }
 
     private void deserialize() throws Exception {
-        final String configurationFolder = buildPath(getWorkingDir(), CONFIGURATION_FOLDER);
+        final String configurationFolder = buildPath(getWorkingDir(), getConfigurationFolder());
         final File configurationFolderFile = new File(configurationFolder);
 
         if (!configurationFolderFile.exists()) return;
@@ -68,7 +79,7 @@ public class SerializerConfigurationManager extends BaseConfigurationManager {
     private void storeConfiguration() throws Exception {
         lastStoredTimestamp = System.currentTimeMillis();
 
-        final String configurationFolder = buildPath(getWorkingDir(), CONFIGURATION_FOLDER);
+        final String configurationFolder = buildPath(getWorkingDir(), getConfigurationFolder());
         final File configurationFolderFile = new File(configurationFolder);
 
         if (configurationFolderFile.exists() && configurationFolderFile.list().length > 0) {

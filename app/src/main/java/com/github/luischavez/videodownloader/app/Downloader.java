@@ -4,14 +4,18 @@ import com.github.luischavez.videodownloader.Context;
 import com.github.luischavez.videodownloader.app.configuration.StreamConfiguration;
 import com.github.luischavez.videodownloader.app.gui.MainFrame;
 import com.github.luischavez.videodownloader.app.manager.GuiRepaintManager;
+import com.github.luischavez.videodownloader.app.manager.MonitorManager;
+import com.github.luischavez.videodownloader.app.manager.YouTubeManager;
 import com.github.luischavez.videodownloader.app.task.RunningPids;
 import com.github.luischavez.videodownloader.configuration.ConfigurationManager;
 import com.github.luischavez.videodownloader.manager.BaseManager;
 import com.github.luischavez.videodownloader.manager.configuration.SerializerConfigurationManager;
-import com.github.luischavez.videodownloader.schedule.*;
 import com.github.luischavez.videodownloader.manager.support.PluggableSupportManager;
+import com.github.luischavez.videodownloader.schedule.DefaultScheduleManager;
+import com.github.luischavez.videodownloader.schedule.ScheduleManager;
 import com.github.luischavez.videodownloader.support.SupportManager;
-import com.github.luischavez.videodownloader.task.*;
+import com.github.luischavez.videodownloader.task.DefaultTaskManager;
+import com.github.luischavez.videodownloader.task.TaskManager;
 import org.pushingpixels.substance.api.skin.SubstanceNightShadeLookAndFeel;
 
 import javax.swing.*;
@@ -20,7 +24,8 @@ import java.util.List;
 public class Downloader {
 
     private final AppContext context;
-    private final MainFrame mainFrame;
+
+    private MainFrame mainFrame;
 
     public Downloader() {
         context = AppContext.instance();
@@ -40,6 +45,8 @@ public class Downloader {
         context.getSystem().registerManager(ScheduleManager.class);
         context.getSystem().registerManager(SupportManager.class);
         context.getSystem().registerManager(TaskManager.class);
+        context.getSystem().registerManager(MonitorManager.class);
+        context.getSystem().registerManager(YouTubeManager.class);
 
         context.getSystem().startAllManagers(true);
 
@@ -63,7 +70,7 @@ public class Downloader {
     }
 
     private void initGui() {
-        MainFrame mainFrame = new MainFrame();
+        mainFrame = new MainFrame();
         mainFrame.initialize();
 
         JFrame.setDefaultLookAndFeelDecorated(true);
@@ -81,6 +88,8 @@ public class Downloader {
             mainFrame.logTextArea.append("\n");
             mainFrame.logTextArea.setCaretPosition(mainFrame.logTextArea.getDocument().getLength());
         });
+
+        context.getSystem().getManager(MonitorManager.class).setMainFrame(mainFrame);
     }
 
     public static void main(String... args) throws Exception {

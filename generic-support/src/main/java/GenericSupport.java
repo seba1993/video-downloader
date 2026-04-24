@@ -31,6 +31,7 @@ public class GenericSupport extends FFMPEGSupport {
     private static final Pattern NEXT_DATA_PATTERN = Pattern.compile("<script id=\"__NEXT_DATA__\" type=\"application/json\">(?<json>.+)</script>", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     private static final Pattern JWPLAYER_FILE_PATTERN = Pattern.compile("file\\s*:\\s*[\"'](?<link>https?:[^\"']+\\.m3u8[^\"']*)[\"']", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     private static final Pattern STREAM_URL_PATTERN = Pattern.compile("streamURL\\s*=\\s*[\"'](?<link>https?:[^\"']+\\.m3u8[^\"']*)[\"']", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final Pattern CLAPPR_SOURCE_PATTERN = Pattern.compile("source\\s*:\\s*[\"'](?<link>https?:[^\"']+\\.m3u8[^\"']*)[\"']", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     private static final Pattern PLLRC_PATTERN = Pattern.compile("\"src\"\\s*:\\s*\"(?<src>[^\"]+)\"\\s*,\\s*\"quality\"\\s*:\\s*\"(?<quality>[^\"]*)\"\\s*,\\s*\"type\"\\s*:\\s*\"(?<type>[^\"]+)\"", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     private static final Pattern STREAM_NAME_PATTERN = Pattern.compile("<div\\s+id=\"stream_name\"[^>]*name=\"(?<name>[^\"]+)\"", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
@@ -41,6 +42,25 @@ public class GenericSupport extends FFMPEGSupport {
 
     public GenericSupport(Context context) {
         super(context);
+    }
+
+    private boolean isStreamfareYouTubeLocation(String location) {
+        return location.contains("streamfare.com/abc-news-australia-live-stream")
+                || location.contains("streamfare.com/africa-news-live-stream")
+                || location.contains("streamfare.com/cbc-news-canada-live-stream")
+                || location.contains("streamfare.com/euro-news-live-stream")
+                || location.contains("streamfare.com/france-24-live-stream")
+                || location.contains("streamfare.com/news-12-new-york-live-stream")
+                || location.contains("streamfare.com/sky-news-live-stream");
+    }
+
+    @Override
+    public boolean canHandle(String location) {
+        if (isStreamfareYouTubeLocation(location)) {
+            return false;
+        }
+
+        return super.canHandle(location);
     }
 
     @Override
@@ -76,6 +96,8 @@ public class GenericSupport extends FFMPEGSupport {
                 Pattern.compile("^https?://.*thetvapp\\.to\\/tv\\/.*$"),
                 Pattern.compile("^https?://.*usnewson\\.com\\/watch\\/.*$"),
                 Pattern.compile("^https?://.*streamfare\\.info\\/oan-news\\/?$"),
+                Pattern.compile("^https?://.*streamfare\\.(info|com)\\/.*-live-stream\\/?$"),
+                Pattern.compile("^https?://.*streamfare\\.com\\/news-12-new-york-live-stream\\/?$"),
                 Pattern.compile("^https?://.*rte\\.ie.*$"),
                 Pattern.compile("^https?://.*beritasatu\\.com.*$"),
                 Pattern.compile("^https?://.*metrotvnews\\.com.*$"),
@@ -158,6 +180,10 @@ public class GenericSupport extends FFMPEGSupport {
             newHeaders.put("Origin", "https://www.kan.org.il");
         }
 
+        if (location.contains("13tv.co.il")) {
+            newHeaders.put("Origin", "https://13tv.co.il");
+        }
+
         if (location.contains("usnewson.com")) {
             newHeaders.put("Referer", location);
             newHeaders.put("Origin", "https://usnewson.com");
@@ -202,6 +228,14 @@ public class GenericSupport extends FFMPEGSupport {
             return Map.of(
                     "Referer", location,
                     "Origin", "https://www.kan.org.il",
+                    "User-Agent", USER_AGENT
+            );
+        }
+
+        if (location.contains("13tv.co.il")) {
+            return Map.of(
+                    "Referer", location,
+                    "Origin", "https://13tv.co.il",
                     "User-Agent", USER_AGENT
             );
         }
@@ -505,15 +539,22 @@ public class GenericSupport extends FFMPEGSupport {
         JsonObject nextData = JsonParser.parseString(matcher.group("json")).getAsJsonObject();
 
         String[] preferredKeys = new String[]{
-                getJsonString(nextData, "props", "pageProps", "liveSources", "desktop", "live_no_subs"),
                 getJsonString(nextData, "props", "pageProps", "liveSources", "desktop", "live_with_subs"),
-                getJsonString(nextData, "props", "pageProps", "liveSources", "mobile", "live_no_subs"),
-                getJsonString(nextData, "props", "pageProps", "liveSources", "mobile", "live_with_subs")
+                getJsonString(nextData, "props", "pageProps", "liveSources", "desktop", "live_no_subs"),
+                getJsonString(nextData, "props", "pageProps", "liveSources", "mobile", "live_with_subs"),
+                getJsonString(nextData, "props", "pageProps", "liveSources", "mobile", "live_no_subs")
         };
 
         for (String link : preferredKeys) {
-            if (link != null && !link.trim().isEmpty()) {
+            if (link == null || link.trim().isEmpty()) {
+                continue;
+            }
+
+            try {
+                getContent(link, resolveLinkHeaders(location, link));
                 return link;
+            } catch (MediaOfflineException ex) {
+                // Try the next published variant.
             }
         }
 
@@ -534,6 +575,21 @@ public class GenericSupport extends FFMPEGSupport {
 
     private String resolveOanNews(String location) throws MediaOfflineException {
         return "https://a-cdn.klowdtv.com/live1/oan_720p/playlist.m3u8";
+    }
+
+    private String resolveStreamfareClappr(String location) throws MediaOfflineException {
+        if (location.contains("streamfare.info/")) {
+            location = location.replace("streamfare.info/", "streamfare.com/");
+        }
+
+        String content = getContent(location);
+        Matcher matcher = CLAPPR_SOURCE_PATTERN.matcher(content);
+
+        if (matcher.find()) {
+            return matcher.group("link");
+        }
+
+        return resolveGeneric(location);
     }
 
     private String resolveNewsLive(String location) throws MediaOfflineException {
@@ -740,7 +796,7 @@ public class GenericSupport extends FFMPEGSupport {
 
     @Override
     protected String[] getLinks(String location) throws MediaOfflineException {
-        if (location.contains("rainews.it") || location.contains("i24news.tv") || location.contains("kan.org.il") || location.contains("knesset.tv") || location.contains("mako.co.il") || location.contains("newslive.com") || location.contains("livenewsnow.com") || location.contains("tvpass.org/live/") || location.contains("thetvapp.to/tv/") || location.contains("usnewson.com/watch/") || location.contains("streamfare.info/oan-news")) {
+        if (location.contains("rainews.it") || location.contains("i24news.tv") || location.contains("kan.org.il") || location.contains("knesset.tv") || location.contains("mako.co.il") || location.contains("newslive.com") || location.contains("livenewsnow.com") || location.contains("tvpass.org/live/") || location.contains("thetvapp.to/tv/") || location.contains("usnewson.com/watch/") || location.contains("streamfare.info/oan-news") || (location.contains("streamfare.") && location.contains("-live-stream") && !location.contains("news-12-new-york-live-stream"))) {
             return new String[]{resolveContent(location)};
         }
 
@@ -803,6 +859,8 @@ public class GenericSupport extends FFMPEGSupport {
             return resolveUSNewsON(location);
         } else if (location.contains("streamfare.info/oan-news")) {
             return resolveOanNews(location);
+        } else if (location.contains("streamfare.") && location.contains("-live-stream") && !location.contains("news-12-new-york-live-stream")) {
+            return resolveStreamfareClappr(location);
         } else {
             return resolveDefault(location);
         }

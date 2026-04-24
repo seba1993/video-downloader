@@ -1,6 +1,5 @@
 import com.github.luischavez.videodownloader.Context;
 import com.github.luischavez.videodownloader.support.*;
-import com.github.luischavez.videodownloader.system.Injected;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -12,7 +11,6 @@ public class WebRadSupport extends FFMPEGSupport {
     private static final Pattern WEBRAD_API_ENDPOINT_PATTERN = Pattern.compile("\\\"(?<api>https:\\/\\/api\\.webrad.io\\/data\\/streams.[^\\\"]*)");
     private static final Pattern WEBRAD_STREAMS_PATTERN = Pattern.compile("\\\"streams\\\":(?<streams>\\[.*[^\\]]\\])");
 
-    @Injected
     public WebRadSupport(Context context) {
         super(context);
     }

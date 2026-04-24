@@ -3,7 +3,7 @@ package com.github.luischavez.videodownloader.configuration.validation;
 import com.github.luischavez.videodownloader.Context;
 import com.github.luischavez.videodownloader.configuration.Configuration;
 import com.github.luischavez.videodownloader.configuration.ConfigurationManager;
-import com.github.luischavez.videodownloader.system.Injected;
+import com.google.inject.Inject;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ public class UniqueValidation implements Validation {
 
     private final Context context;
 
-    @Injected
+    @Inject
     public UniqueValidation(Context context) {
         this.context = context;
     }

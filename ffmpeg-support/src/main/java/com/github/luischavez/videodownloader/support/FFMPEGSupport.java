@@ -55,16 +55,19 @@ public abstract class FFMPEGSupport extends BaseSupport {
                 .map(entry -> String.format("-%s %s", entry.getKey(), entry.getValue()))
                 .collect(Collectors.joining(" "));
 
-        final String headers = commandHeaders.entrySet().stream()
-                .map(entry -> String.format("-headers \"%s: %s\"", entry.getKey(), entry.getValue()))
-                .collect(Collectors.joining(" "));
+        final String headers = commandHeaders.isEmpty()
+                ? ""
+                : String.format("-headers \"%s\"",
+                commandHeaders.entrySet().stream()
+                        .map(entry -> String.format("%s: %s", entry.getKey(), entry.getValue()))
+                        .collect(Collectors.joining("\\r\\n")));
 
         final String url = LocationRequestUtils.sanitize(media.getUrl());
 
         final String videoCopyCodec = getVideoCopyCodec(media);
         final String audioCopyCodec = getAudioCopyCodec(media);
 
-        return String.format("ffmpeg -nostdin -xerror -abort_on empty_output %s %s -i \"%s\" %s %s \"%s\"",
+        return String.format("ffmpeg -nostdin -xerror %s %s -i \"%s\" %s %s \"%s\"",
                 options, headers, url, videoCopyCodec, audioCopyCodec, outputFile);
     }
 

@@ -45,7 +45,7 @@ public final class MailSender {
             message.setContent(body, "text/html");
 
             Transport.send(message);
-        } catch (MessagingException ex) {
+        } catch (Exception ex) {
             context.error(MailSender.class,"can't send mail to: " + to, ex);
         }
     }

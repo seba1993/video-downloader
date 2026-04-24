@@ -1,6 +1,7 @@
 package com.github.luischavez.videodownloader.system;
 
 import com.github.luischavez.videodownloader.util.ReflectionUtils;
+import com.google.inject.Inject;
 
 public abstract class BaseDependencyInjection implements DependencyInjection {
 
@@ -9,8 +10,8 @@ public abstract class BaseDependencyInjection implements DependencyInjection {
     @Override
     public <T> T make(Class<T> objectClass) throws ObjectCreationException {
         if (ReflectionUtils.isInstantiable(objectClass)) {
-            if (!ReflectionUtils.hasOneEmptyConstructor(objectClass) && !ReflectionUtils.hasConstructorAnnotated(objectClass, Injected.class)) {
-                throw new ObjectCreationException("Missing Injected annotation in class " + objectClass.getName());
+            if (!ReflectionUtils.hasOneEmptyConstructor(objectClass) && !ReflectionUtils.hasConstructorAnnotated(objectClass, Inject.class)) {
+                throw new ObjectCreationException("Missing Inject annotation in class " + objectClass.getName());
             }
         }
 

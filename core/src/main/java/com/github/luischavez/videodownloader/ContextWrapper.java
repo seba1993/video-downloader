@@ -4,6 +4,7 @@ import com.github.luischavez.videodownloader.listener.InvalidListenerClassExcept
 import com.github.luischavez.videodownloader.listener.Listenable;
 import com.github.luischavez.videodownloader.listener.Listener;
 import com.github.luischavez.videodownloader.system.System;
+import com.google.inject.Inject;
 import org.apache.commons.lang3.ClassUtils;
 
 import java.util.*;
@@ -15,6 +16,7 @@ public class ContextWrapper implements Context, Listenable {
 
     private Class<?>[] listenerClasses;
 
+    @Inject
     public ContextWrapper(Context context) {
         this.context = context;
 

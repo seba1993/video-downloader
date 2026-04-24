@@ -1,11 +1,11 @@
-JFDML JFormDesigner: "7.0.1.0.272" Java: "11.0.6" encoding: "UTF-8"
+JFDML JFormDesigner: "7.0.2.0.298" Java: "13.0.2" encoding: "UTF-8"
 
 new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class com.jgoodies.forms.layout.FormLayout ) {
 			"$columnSpecs": "default, labelcompgap, default, labelcompgap, default:grow, labelcompgap, default, labelcompgap, default"
-			"$rowSpecs": "default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, bottom:default:grow, linegap, default"
+			"$rowSpecs": "default, linegap, default, linegap, default, linegap, default, linegap, bottom:default:grow, linegap, default"
 		} ) {
 			name: "this"
 			"$sizePolicy": 1
@@ -21,7 +21,7 @@ new FormModel {
 				name: "hSpacer1"
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridY": 3
-				"gridHeight": 16
+				"gridHeight": 8
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label1"
@@ -62,7 +62,7 @@ new FormModel {
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 9
 				"gridY": 3
-				"gridHeight": 9
+				"gridHeight": 6
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label3"
@@ -81,52 +81,6 @@ new FormModel {
 				"gridY": 7
 				"gridWidth": 3
 			} )
-			add( new FormComponent( "javax.swing.JSeparator" ) {
-				name: "separator1"
-			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-				"gridX": 3
-				"gridY": 9
-				"gridWidth": 5
-			} )
-			add( new FormComponent( "javax.swing.JLabel" ) {
-				name: "label4"
-				"text": "Autosub"
-			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-				"gridX": 3
-				"gridY": 11
-			} )
-			add( new FormComponent( "javax.swing.JTextField" ) {
-				name: "autosubTextField"
-				"editable": false
-				auxiliary() {
-					"JavaCodeGenerator.variableModifiers": 1
-				}
-			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-				"gridX": 5
-				"gridY": 11
-			} )
-			add( new FormComponent( "javax.swing.JButton" ) {
-				name: "autosubButton"
-				"text": "Browse"
-				auxiliary() {
-					"JavaCodeGenerator.variableModifiers": 1
-				}
-			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-				"gridX": 7
-				"gridY": 11
-			} )
-			add( new FormComponent( "com.jformdesigner.designer.wrapper.VSpacer" ) {
-				name: "vSpacer3"
-			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-				"gridX": 5
-				"gridY": 13
-			} )
-			add( new FormComponent( "com.jformdesigner.designer.wrapper.VSpacer" ) {
-				name: "vSpacer4"
-			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-				"gridX": 5
-				"gridY": 15
-			} )
 			add( new FormComponent( "javax.swing.JButton" ) {
 				name: "saveButton"
 				"text": "Save"
@@ -135,19 +89,19 @@ new FormModel {
 				}
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 3
-				"gridY": 17
+				"gridY": 9
 				"gridWidth": 5
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.VSpacer" ) {
 				name: "vSpacer2"
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 3
-				"gridY": 19
+				"gridY": 11
 				"gridWidth": 5
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 400, 275 )
+			"size": new java.awt.Dimension( 400, 195 )
 		} )
 	}
 }

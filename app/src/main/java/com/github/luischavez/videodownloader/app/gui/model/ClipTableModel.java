@@ -6,16 +6,16 @@ import com.github.luischavez.videodownloader.app.util.FormatUtils;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public class ClipTableModel extends AbstractTableModel {
 
-    private final List<ClipTask> tasks;
+    private final CopyOnWriteArrayList<ClipTask> tasks;
 
     public ClipTableModel() {
-        tasks = new ArrayList<>();
+        tasks = new CopyOnWriteArrayList<>();
     }
 
     public void clear() {

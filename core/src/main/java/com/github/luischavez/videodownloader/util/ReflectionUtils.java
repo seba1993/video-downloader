@@ -15,9 +15,13 @@ public final class ReflectionUtils {
     public static boolean hasOneEmptyConstructor(Class<?> objectClass) {
         Constructor<?>[] constructors = objectClass.getDeclaredConstructors();
 
-        if (constructors.length > 1) return false;
+        if (constructors.length == 0) return true;
 
-        return constructors[0].getParameterCount() == 0;
+        for (Constructor<?> constructor : constructors) {
+            if (constructor.getParameterCount() == 0) return true;
+        }
+
+        return false;
     }
 
     public static boolean hasConstructorAnnotated(Class<?> objectClass, Class<? extends Annotation> annotationClass) {
