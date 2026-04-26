@@ -313,7 +313,7 @@ public class YouTubeSupport extends FFMPEGSupport {
         final String workingDirectory = System.getProperty("user.dir");
         final String executable = resolveExecutable(workingDirectory);
         final String format = resolveFormat(media);
-        final String outputTemplate = buildPath(destinationPath, baseFileName) + ".%(ext)s";
+        final String outputTemplate = buildPath(destinationPath, baseFileName) + ".mkv";
 
         final List<String> arguments = List.of(
                 "--ignore-config",

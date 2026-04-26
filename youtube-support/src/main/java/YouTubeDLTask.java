@@ -37,6 +37,11 @@ public class YouTubeDLTask extends LocalProcessTask {
     }
 
     @Override
+    protected long getStopTimeoutMillis() {
+        return 15000L;
+    }
+
+    @Override
     protected ProcessBuilder buildCommand() throws Exception {
         File folderFile = new File(getDestinationPath());
         if (!folderFile.exists()) Files.createDirectories(folderFile.toPath());

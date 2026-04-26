@@ -6,6 +6,7 @@ import com.github.luischavez.videodownloader.ContextWrapper;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -30,8 +31,26 @@ public abstract class LocalProcessTask extends ContextWrapper implements Task {
 
     protected abstract ProcessBuilder buildCommand() throws Exception;
 
+    protected long getStopTimeoutMillis() {
+        return 0L;
+    }
+
     protected void stopProcess() {
         if (process == null || !process.isAlive()) return;
+        long stopTimeoutMillis = getStopTimeoutMillis();
+
+        if (stopTimeoutMillis > 0L) {
+            process.destroy();
+
+            try {
+                if (process.waitFor(stopTimeoutMillis, TimeUnit.MILLISECONDS)) {
+                    return;
+                }
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
         process.descendants().forEach(processHandle -> processHandle.destroyForcibly());
         process.destroyForcibly();
     }
