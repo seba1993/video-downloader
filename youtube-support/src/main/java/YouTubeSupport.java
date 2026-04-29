@@ -11,6 +11,7 @@ import com.google.gson.JsonParser;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -139,6 +140,43 @@ public class YouTubeSupport extends FFMPEGSupport {
         return Quality.Type.LOW;
     }
 
+    private static String appendHeadersFragment(String url, JsonObject headers) {
+        if (url == null || headers == null || headers.entrySet().isEmpty()) {
+            return url;
+        }
+
+        StringBuilder sb = new StringBuilder(url);
+        if (!url.contains("#__headers__")) {
+            sb.append("#__headers__");
+        }
+
+        headers.entrySet().forEach(entry -> {
+            if (entry.getKey() == null || entry.getValue() == null || entry.getValue().isJsonNull()) {
+                return;
+            }
+
+            String value = entry.getValue().getAsString();
+            if (value == null || value.trim().isEmpty()) {
+                return;
+            }
+
+            sb.append("&")
+                    .append(urlEncode(entry.getKey()))
+                    .append("=")
+                    .append(urlEncode(value));
+        });
+
+        return sb.toString();
+    }
+
+    private static String urlEncode(String value) {
+        try {
+            return URLEncoder.encode(value, "UTF-8");
+        } catch (Exception ex) {
+            return value;
+        }
+    }
+
     private List<Media> resolveMediaWithYtDlp(String location) throws MediaOfflineException, MediaNotFoundException {
         final String workingDirectory = System.getProperty("user.dir");
         final String executable = resolveExecutable(workingDirectory);
@@ -187,6 +225,9 @@ public class YouTubeSupport extends FFMPEGSupport {
             }
 
             ArrayList<Media> medias = new ArrayList<>();
+            JsonObject rootHeaders = json.has("http_headers") && json.get("http_headers").isJsonObject()
+                    ? json.getAsJsonObject("http_headers")
+                    : null;
 
             for (JsonElement element : formats) {
                 if (!element.isJsonObject()) {
@@ -215,13 +256,28 @@ public class YouTubeSupport extends FFMPEGSupport {
                 }
 
                 String formatId = format.get("format_id").getAsString();
+                String m3u8Url = format.has("url") && !format.get("url").isJsonNull()
+                        ? format.get("url").getAsString()
+                        : null;
+
+                if (m3u8Url == null || m3u8Url.trim().isEmpty()) {
+                    continue;
+                }
+
+                JsonObject formatHeaders = format.has("http_headers") && format.get("http_headers").isJsonObject()
+                        ? format.getAsJsonObject("http_headers")
+                        : null;
+
+                JsonObject headers = formatHeaders != null ? formatHeaders : rootHeaders;
+                m3u8Url = appendHeadersFragment(m3u8Url, headers);
+
                 int bandwidth = format.has("tbr") && !format.get("tbr").isJsonNull()
                         ? (int) Math.round(format.get("tbr").getAsDouble() * 1000)
                         : 0;
 
                 medias.add(new Video(
                         formatId,
-                        String.format("https://www.youtube.com/itag/%s/", formatId),
+                        m3u8Url,
                         new Video.VideoQuality(resolveQualityType(height), width, height, bandwidth),
                         "",
                         true
@@ -306,28 +362,9 @@ public class YouTubeSupport extends FFMPEGSupport {
 
     @Override
     public Task generateTask(String location, Media media, Map<String, Object> params) {
+        // Hybrid mode: yt-dlp is used only to resolve the real HLS url (done in getMedia),
+        // and ffmpeg is used to record.
         location = resolveLocation(location);
-        final String baseFileName = params.get("base_file_name").toString();
-        final String destinationPath = params.get("destination_path").toString();
-
-        final String workingDirectory = System.getProperty("user.dir");
-        final String executable = resolveExecutable(workingDirectory);
-        final String format = resolveFormat(media);
-        final String outputTemplate = buildPath(destinationPath, baseFileName) + ".mkv";
-
-        final List<String> arguments = List.of(
-                "--ignore-config",
-                "--cookies-from-browser", "firefox",
-                "--no-part",
-                "--hls-use-mpegts",
-                "--newline",
-                "--remux-video", "mkv",
-                "--merge-output-format", "mkv",
-                "-f", format,
-                "-o", outputTemplate,
-                location
-        );
-
-        return new YouTubeDLTask(getWrappedContext(), media, executable, arguments, destinationPath);
+        return super.generateTask(location, media, params);
     }
 }
