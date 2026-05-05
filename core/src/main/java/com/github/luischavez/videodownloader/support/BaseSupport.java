@@ -17,6 +17,11 @@ public abstract class BaseSupport extends ContextWrapper implements Support, Med
 
     protected final HttpClient httpClient;
 
+    // Some sites return paywalls/redirects or hide HLS URLs when requests don't look like a browser.
+    // Having a default UA significantly increases the success rate for simple HTML extraction supports.
+    private static final String DEFAULT_USER_AGENT =
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
+
     public BaseSupport(Context context) {
         super(context);
 
@@ -28,7 +33,10 @@ public abstract class BaseSupport extends ContextWrapper implements Support, Med
     }
 
     protected HttpGet buildGet(String location) {
-        return new HttpGet(LocationRequestUtils.sanitize(location));
+        HttpGet httpGet = new HttpGet(LocationRequestUtils.sanitize(location));
+        httpGet.addHeader("User-Agent", DEFAULT_USER_AGENT);
+
+        return httpGet;
     }
 
     protected String getContent(String url, Map<String, String> headers) throws MediaOfflineException {
@@ -65,11 +73,41 @@ public abstract class BaseSupport extends ContextWrapper implements Support, Med
     protected abstract String[] getLinks(String location) throws MediaOfflineException;
 
     protected Map<String, String> resolveLinkHeaders(String location, String link) {
-        return Map.of();
+        // Default: keep playlist/media fetches consistent with ffmpeg header behavior.
+        // Some CDNs deny master/variant playlist requests without a Referer.
+        return Map.of("Referer", LocationRequestUtils.sanitize(location));
     }
 
     @Override
     public String buildMediaLink(String location, String parentLink, String mediaLink) {
+        if (mediaLink == null || mediaLink.isEmpty()) return mediaLink;
+
+        // Already absolute
+        if (mediaLink.startsWith("http://") || mediaLink.startsWith("https://")) {
+            return mediaLink;
+        }
+
+        // Protocol-relative
+        if (mediaLink.startsWith("//")) {
+            try {
+                java.net.URI base = new java.net.URI(LocationRequestUtils.sanitize(parentLink));
+                String scheme = base.getScheme() == null ? "https" : base.getScheme();
+                return scheme + ":" + mediaLink;
+            } catch (Exception ex) {
+                return "https:" + mediaLink;
+            }
+        }
+
+        // Relative path or file; resolve against the parent link when possible.
+        try {
+            if (parentLink != null && !parentLink.isEmpty()) {
+                java.net.URI base = new java.net.URI(LocationRequestUtils.sanitize(parentLink));
+                return base.resolve(mediaLink).toString();
+            }
+        } catch (Exception ex) {
+            // fallback below
+        }
+
         return mediaLink;
     }
 

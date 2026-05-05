@@ -497,7 +497,9 @@ public class GenericSupport extends FFMPEGSupport {
             return link;
         }
 
-        return "";
+        // Fallback: RTP pages may include the HLS URL directly in the HTML.
+        // Returning content allows the generic link extractor to pick up .m3u8 URLs.
+        return content;
     }
 
     public String resolveBiochile(String location) throws MediaOfflineException {

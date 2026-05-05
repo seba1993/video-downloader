@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
 
 public class DasersteSupport extends FFMPEGSupport {
 
-    private static final String DASERSTE_M3U8_MAIN_LINK = "https://mcdn.daserste.de/daserste/de/master.m3u8";
+    // Updated: the old mcdn.daserste.de master no longer works.
+    private static final String DASERSTE_M3U8_MAIN_LINK = "https://daserste-live.ard-mcdn.de/daserste/live/hls/de/master.m3u8";
 
     public DasersteSupport(Context context) {
         super(context);

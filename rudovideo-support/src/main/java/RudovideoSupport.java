@@ -9,7 +9,14 @@ import java.util.regex.Pattern;
 
 public class RudovideoSupport extends FFMPEGSupport {
 
-    private static final Pattern RUDO_LINK_PATTERN = Pattern.compile("src=(\\\"|')(?<link>https(.[^\\\"]*)rudo\\.video\\/live(.[^\\\"']*))(\\\"|')");
+    // canalnet.tv embeds the player in multiple ways:
+    // - <iframe src='https://rudo.video/live/<channel>' ...>
+    // - <iframe data-url=\"//rudo.video/live/<channel>/volume/0/\" src=\"\" ...>
+    // Be permissive with attribute names, spacing and scheme.
+    private static final Pattern RUDO_LINK_PATTERN = Pattern.compile(
+            "(?i)(?:src|data-url|data-video-url)\\s*=\\s*(\\\"|')(?<link>(?:https?:)?//rudo\\.video/live/[^\\\"']+)(\\\"|')"
+    );
+    private static final Pattern RUDO_BASE_PATTERN = Pattern.compile("(?i)(?:https?:)?//rudo\\.video/live/(?<id>[^/\\\"']+)");
 
     public RudovideoSupport(Context context) {
         super(context);
@@ -32,6 +39,17 @@ public class RudovideoSupport extends FFMPEGSupport {
         Matcher matcher = RUDO_LINK_PATTERN.matcher(content);
         if (matcher.find()) {
             String rudoLink = matcher.group("link");
+
+            if (rudoLink.startsWith("//")) {
+                rudoLink = "https:" + rudoLink;
+            }
+
+            // Normalize to the base /live/<id> page even if an embed adds extra path segments.
+            Matcher baseMatcher = RUDO_BASE_PATTERN.matcher(rudoLink);
+            if (baseMatcher.find()) {
+                String id = baseMatcher.group("id");
+                rudoLink = "https://rudo.video/live/" + id;
+            }
 
             return getContent(rudoLink);
         }

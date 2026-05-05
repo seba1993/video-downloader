@@ -107,13 +107,19 @@ public abstract class FFMPEGSupport extends BaseSupport {
 
     @Override
     public String buildMediaLink(String location, String parentLink, String mediaLink) {
-        if (!mediaLink.contains("http")) return null;
-
         if (mediaLink.contains("\\/")) {
             mediaLink = mediaLink.replaceAll("\\\\/", "/");
         }
 
-        return super.buildMediaLink(location, parentLink, mediaLink);
+        // Let BaseSupport resolve relative / protocol-relative links against the parent playlist URL.
+        String resolved = super.buildMediaLink(location, parentLink, mediaLink);
+        if (resolved == null) return null;
+
+        if (!resolved.startsWith("http://") && !resolved.startsWith("https://")) {
+            return null;
+        }
+
+        return resolved;
     }
 
     @Override

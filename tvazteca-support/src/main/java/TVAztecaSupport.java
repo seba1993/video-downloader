@@ -37,6 +37,8 @@ public class TVAztecaSupport extends FFMPEGSupport {
             return CryptoUtils.base64Decode(link);
         }
 
-        return "";
+        // Newer pages sometimes embed the HLS URL directly in the HTML (e.g. Uplynk).
+        // Returning the page content lets the base extractor find the .m3u8.
+        return content;
     }
 }

@@ -130,7 +130,9 @@ public class BrightcoveSupport extends FFMPEGSupport {
         final String video = getVideo(content);
         final String player = getPlayer(content);
 
-        if (account == null || video == null || player == null) return "";
+        // Some pages embed a plain HLS URL without Brightcove metadata.
+        // Returning the page content allows the base FFMPEGSupport link extractor to pick it up.
+        if (account == null || video == null || player == null) return content;
 
         final String policyKey = getPolicyKey(account, player, video);
 
