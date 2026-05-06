@@ -596,7 +596,14 @@ public class GenericSupport extends FFMPEGSupport {
 
     private String resolveNewsLive(String location) throws MediaOfflineException {
         String content = getContent(location);
-        Matcher matcher = JWPLAYER_FILE_PATTERN.matcher(content);
+        String normalizedContent = content.replace("\\/", "/");
+        Matcher matcher = JWPLAYER_FILE_PATTERN.matcher(normalizedContent);
+
+        if (matcher.find()) {
+            return matcher.group("link");
+        }
+
+        matcher = STREAM_URL_PATTERN.matcher(normalizedContent);
 
         if (matcher.find()) {
             return matcher.group("link");
