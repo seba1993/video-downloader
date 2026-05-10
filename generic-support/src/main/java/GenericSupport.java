@@ -14,8 +14,11 @@ import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.net.URLDecoder;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -32,13 +35,28 @@ public class GenericSupport extends FFMPEGSupport {
     private static final Pattern JWPLAYER_FILE_PATTERN = Pattern.compile("file\\s*:\\s*[\"'](?<link>https?:[^\"']+\\.m3u8[^\"']*)[\"']", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     private static final Pattern STREAM_URL_PATTERN = Pattern.compile("streamURL\\s*=\\s*[\"'](?<link>https?:[^\"']+\\.m3u8[^\"']*)[\"']", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     private static final Pattern CLAPPR_SOURCE_PATTERN = Pattern.compile("source\\s*:\\s*[\"'](?<link>https?:[^\"']+\\.m3u8[^\"']*)[\"']", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final Pattern HTML_SOURCE_PATTERN = Pattern.compile("<source[^>]+src=[\"'](?<link>https?:[^\"']+\\.m3u8[^\"']*)[\"']", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     private static final Pattern PLLRC_PATTERN = Pattern.compile("\"src\"\\s*:\\s*\"(?<src>[^\"]+)\"\\s*,\\s*\"quality\"\\s*:\\s*\"(?<quality>[^\"]*)\"\\s*,\\s*\"type\"\\s*:\\s*\"(?<type>[^\"]+)\"", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     private static final Pattern STREAM_NAME_PATTERN = Pattern.compile("<div\\s+id=\"stream_name\"[^>]*name=\"(?<name>[^\"]+)\"", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final Pattern AXIS_ID_PATTERN = Pattern.compile("\"axisId\"\\s*:\\s*\"?(?<id>\\d+)\"?", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final Pattern GLOBAL_FEED_URL_PATTERN = Pattern.compile("\"feedUrl\"\\s*:\\s*\"(?<url>[^\"]+)\"", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final Pattern GLOBAL_MEDIA_ID_PATTERN = Pattern.compile("\"mediaId\"\\s*:\\s*\"(?<id>[0-9a-f\\-]+)\"", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final Pattern NBC_M3U8_URL_PATTERN = Pattern.compile("\"m3u8_url\"\\s*:\\s*\"(?<link>https?:[^\"\\\\]*\\.m3u8[^\"\\\\]*)\"", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final Pattern NBC_NATIONAL_M3U8_URL_PATTERN = Pattern.compile("\"national_m3u8_url\"\\s*:\\s*\"(?<link>https?:[^\"\\\\]*\\.m3u8[^\"\\\\]*)\"", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final Pattern NBC_LOCAL_M3U8_TEMPLATE_PATTERN = Pattern.compile("\"m3u8Url\"\\s*:\\s*\"(?<link>https?:[^\"\\\\]*\\.m3u8[^\"\\\\]*)\"", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final Pattern NBC_FW_WEB_AFID_PATTERN = Pattern.compile("\"fwWebAFIDNtl\"\\s*:\\s*\"(?<value>[^\"]+)\"", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final Pattern NBC_FW_WEB_SFID_PATTERN = Pattern.compile("\"fwWebSFIDNtl\"\\s*:\\s*\"(?<value>[^\"]+)\"", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final Pattern NBC_FW_NETWORK_ID_PATTERN = Pattern.compile("\"fwNetworkID\"\\s*:\\s*\"(?<value>[^\"]+)\"", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final Pattern NBC_CALL_LETTERS_PATTERN = Pattern.compile("\"callLetters\"\\s*:\\s*\"(?<value>[^\"]+)\"", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
     private static final Pattern VIDGYOR_FUNC_PATTERN = Pattern.compile("\\.loadPlayer\\(.[^,]+,.[^,]+,(?<channel>.[^,]+),.[^,]+,.[^,]+\\)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     private static final String JAVASCRIPT_VARIABLE = "(var|let)\\s+VARNAME\\s*=\\s*(\"|')(?<value>.+)(\"|');";
 
     private static final String USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36";
+    private static final String NBC_NIELSEN_APP_ID = "PE075FB87-C9AE-41D5-8B17-95C0E9301C8E";
+    private static final String NBC_GPP = "DBABLA~BVQVAAAAAgA.QA";
+    private static final String NBC_US_PRIVACY = "1YYN";
+    private static final String NBC_PLAYER_VERSION = "8.30.1";
 
     public GenericSupport(Context context) {
         super(context);
@@ -54,9 +72,15 @@ public class GenericSupport extends FFMPEGSupport {
                 || location.contains("streamfare.com/sky-news-live-stream");
     }
 
+    private boolean isYouTubeBackedLocation(String location) {
+        return isStreamfareYouTubeLocation(location)
+                || location.contains("cnnbrasil.com.br/ao-vivo")
+                || location.contains("excelsior.com.mx/tv");
+    }
+
     @Override
     public boolean canHandle(String location) {
-        if (isStreamfareYouTubeLocation(location)) {
+        if (isYouTubeBackedLocation(location)) {
             return false;
         }
 
@@ -71,6 +95,7 @@ public class GenericSupport extends FFMPEGSupport {
                 Pattern.compile("^https?://.*n-tv\\.de.*$"),
                 Pattern.compile("^https?://.*cctv\\.com.*$"),
                 Pattern.compile("^https?://.*cnbcindonesia\\.com.*$"),
+                Pattern.compile("^https?://.*tvbrasilplay\\.com\\.br\\/tvs\\/?$"),
                 Pattern.compile("^https?://.*cnbctv18\\.com.*$"),
                 Pattern.compile("^https?://.*indiatimes\\.com.*$"),
                 Pattern.compile("^https?://.*zeebiz\\.com.*$"),
@@ -79,6 +104,8 @@ public class GenericSupport extends FFMPEGSupport {
                 Pattern.compile("^https?://.*radio-canada\\.ca.*$"),
                 Pattern.compile("^https?://.*cp24\\.com.*$"),
                 Pattern.compile("^https?://.*ctvnews\\.ca.*$"),
+                Pattern.compile("^https?://.*globalnews\\.ca\\/live\\/.*$"),
+                Pattern.compile("^https?://.*nbcnews\\.com\\/watch(?:#.*)?$"),
                 Pattern.compile("^https?://.*wionews\\.com.*$"),
                 Pattern.compile("^https?://.*timesnownews\\.com.*$"),
                 Pattern.compile("^https?://.*uol\\.com.*$"),
@@ -86,6 +113,7 @@ public class GenericSupport extends FFMPEGSupport {
                 Pattern.compile("^https?://.*globo\\.com.*$"),
                 Pattern.compile("^https?://.*cnnchile\\.com.*$"),
                 Pattern.compile("^https?://.*presstv\\.com.*$"),
+                Pattern.compile("^https?://.*jovempan\\.com\\.br\\/ao-vivo\\/?$"),
                 Pattern.compile("^https?://.*i24news\\.tv.*$"),
                 Pattern.compile("^https?://.*13tv\\.co\\.il.*$"),
                 Pattern.compile("^https?://.*kan\\.org\\.il\\/live\\/?$"),
@@ -143,16 +171,6 @@ public class GenericSupport extends FFMPEGSupport {
     public String buildMediaLink(String location, String parentLink, String mediaLink) {
         if (location.contains("rainews.it")) {
             mediaLink = "https://streamcdne1-8e7439fdb1694c8da3a0fd63e4dda518.msvdn.net/rainews1/hls/" + mediaLink;
-        } else {
-            if (!mediaLink.toUpperCase().contains("HTTP")) {
-                if (parentLink.contains("?")) {
-                    parentLink = parentLink.split("\\?")[0];
-                }
-
-                String[] split = parentLink.split("/");
-                split[split.length - 1] = mediaLink;
-                mediaLink = Arrays.asList(split).stream().collect(Collectors.joining("/"));
-            }
         }
 
         return super.buildMediaLink(location, parentLink, mediaLink);
@@ -317,9 +335,9 @@ public class GenericSupport extends FFMPEGSupport {
 
             if (matcher.find()) {
                 String link = matcher.group("link");
-                link = link.replaceAll("\\/", "");
+                link = link.replace("\\/", "/");
                 link = link.split("\"")[0];
-                link = link.replaceAll("\\\\", "/");
+                link = link.replace("\\\\", "/");
 
                 content = getContent(link);
             }
@@ -340,6 +358,541 @@ public class GenericSupport extends FFMPEGSupport {
         }
 
         return resolveGeneric(location);
+    }
+
+    private String resolveBellMedia9c9ManifestUrl(String location, String destinationCode) throws MediaOfflineException {
+        String content = getContent(location);
+        Matcher matcher = AXIS_ID_PATTERN.matcher(content);
+
+        if (!matcher.find()) {
+            return "";
+        }
+
+        String axisId = matcher.group("id");
+        String apiBaseUrl = String.format(
+                "https://capi.9c9media.com/destinations/%s/platforms/desktop/contents/%s/",
+                destinationCode,
+                axisId
+        );
+
+        JsonObject jsonObject = JsonParser.parseString(
+                fetchUrl(apiBaseUrl + "?$include=[Media.Name,Season,ContentPackages.Duration,ContentPackages.Id]")
+        ).getAsJsonObject();
+
+        JsonElement contentPackages = jsonObject.get("ContentPackages");
+        if (contentPackages == null || !contentPackages.isJsonArray() || contentPackages.getAsJsonArray().size() == 0) {
+            return "";
+        }
+
+        JsonObject firstPackage = contentPackages.getAsJsonArray().get(0).getAsJsonObject();
+        if (!firstPackage.has("Id") || firstPackage.get("Id").isJsonNull()) {
+            return "";
+        }
+
+        String packageId = firstPackage.get("Id").getAsString();
+        return apiBaseUrl + "contentpackages/" + packageId + "/manifest.m3u8";
+    }
+
+    private String resolveBellMedia9c9(String location, String destinationCode) throws MediaOfflineException {
+        String manifestUrl = resolveBellMedia9c9ManifestUrl(location, destinationCode);
+
+        if (manifestUrl == null || manifestUrl.trim().isEmpty()) {
+            return "";
+        }
+
+        return fetchUrl(manifestUrl);
+    }
+
+    private String resolveGlobalNewsMasterUrl(String location) throws MediaOfflineException {
+        String content = getContent(location);
+        String feedUrl = null;
+
+        Matcher matcher = GLOBAL_FEED_URL_PATTERN.matcher(content);
+        if (matcher.find()) {
+            feedUrl = matcher.group("url");
+        }
+
+        if (feedUrl == null || feedUrl.trim().isEmpty() || feedUrl.contains("{")) {
+            matcher = GLOBAL_MEDIA_ID_PATTERN.matcher(content);
+
+            if (!matcher.find()) {
+                return "";
+            }
+
+            String mediaId = matcher.group("id");
+            feedUrl = "/gnca-ajax-redesign/video-entry/%7B%22id%22%3A%22" + mediaId + "%22%7D/";
+        }
+
+        feedUrl = feedUrl.replace("\\/", "/");
+
+        if (!feedUrl.startsWith("http")) {
+            feedUrl = "https://globalnews.ca" + feedUrl;
+        }
+
+        JsonElement root = JsonParser.parseString(fetchUrl(feedUrl));
+        JsonObject payload = null;
+
+        if (root.isJsonArray() && root.getAsJsonArray().size() > 0) {
+            JsonElement first = root.getAsJsonArray().get(0);
+            if (first.isJsonObject()) {
+                payload = first.getAsJsonObject();
+            }
+        } else if (root.isJsonObject()) {
+            payload = root.getAsJsonObject();
+        }
+
+        if (payload == null || !payload.has("sources") || !payload.get("sources").isJsonArray()) {
+            return "";
+        }
+
+        for (JsonElement sourceElement : payload.getAsJsonArray("sources")) {
+            if (!sourceElement.isJsonObject()) {
+                continue;
+            }
+
+            JsonObject source = sourceElement.getAsJsonObject();
+            String type = getJsonString(source, "type");
+            String file = getJsonString(source, "file");
+
+            if (file == null || file.trim().isEmpty()) {
+                continue;
+            }
+
+            if (type == null || type.equalsIgnoreCase("hls")) {
+                return file.replace("\\/", "/");
+            }
+        }
+
+        return "";
+    }
+
+    private String resolveGlobalNews(String location) throws MediaOfflineException {
+        String masterUrl = resolveGlobalNewsMasterUrl(location);
+
+        if (masterUrl == null || masterUrl.trim().isEmpty()) {
+            return "";
+        }
+
+        return fetchUrl(masterUrl);
+    }
+
+    private String normalizeNBCWatchHash(String location) {
+        int index = location.indexOf('#');
+
+        if (index == -1 || index == location.length() - 1) {
+            return "";
+        }
+
+        return location.substring(index).toLowerCase();
+    }
+
+    private String getNBCNewsPortablePlayerUrl(String hash) {
+        switch (hash) {
+            case "#new-york":
+                return "https://nbcnewyork.com/portableplayer/?CID=1:2:5351877&videoID=&origin=nbcnewyork.com&fullWidth=y&autoplay=true";
+            case "#los-angeles":
+                return "https://nbclosangeles.com/portableplayer/?CID=1:9:3396742&videoID=&origin=nbclosangeles.com&fullWidth=y&autoplay=true";
+            case "#chicago":
+                return "https://nbcchicago.com/portableplayer/?CID=1:6:3010684&videoID=214364229946&origin=nbcchicago.com&fullWidth=y&autoplay=true";
+            case "#dallas-fort-worth":
+                return "https://nbcdfw.com/portableplayer/?CID=1:8:3523824&videoID=&origin=nbcdfw.com&fullWidth=y&autoplay=true";
+            case "#philadelphia":
+                return "https://nbcphiladelphia.com/portableplayer/?CID=1:12:3841075&videoID=&origin=nbcphiladelphia.com&fullWidth=y&autoplay=true";
+            case "#washington":
+                return "https://nbcwashington.com/portableplayer/?CID=1:14:3600727&videoID=&origin=nbcwashington.com&fullWidth=y&autoplay=true";
+            case "#boston":
+                return "https://nbcboston.com/portableplayer/?CID=1:5:3349031&videoID=&origin=nbcboston.com&fullWidth=y&autoplay=true";
+            case "#bay-area":
+                return "https://nbcbayarea.com/portableplayer/?CID=1:4:3519840&videoID=&origin=nbcbayarea.com&fullWidth=y&autoplay=true";
+            case "#miami":
+                return "https://nbcmiami.com/portableplayer/?CID=1:10:3294236&videoID=&origin=nbcmiami.com&fullWidth=y&autoplay=true";
+            case "#san-diego":
+                return "https://nbcsandiego.com/portableplayer/?CID=1:13:3497501&videoID=&origin=nbcsandiego.com&fullWidth=y&autoplay=true";
+            case "#connecticut":
+                return "https://nbcconnecticut.com/portableplayer/?CID=1:7:3274515&videoID=&origin=nbcconnecticut.com&fullWidth=y&autoplay=true";
+            case "#telemundo-florida":
+                return "https://telemundo51.com/portableplayer/?CID=1:24:2525424&videoID=&origin=telemundo51.com&fullWidth=y&autoplay=true";
+            case "#telemundo-noreste":
+                return "https://telemundo47.com/portableplayer/?CID=1:25:2469836&videoID=&origin=telemundo47.com&fullWidth=y&autoplay=true";
+            case "#telemundo-texas":
+                return "https://telemundodallas.com/portableplayer/?CID=1:17:2422881&videoID=&origin=telemundodallas.com&fullWidth=y&autoplay=true";
+            case "#telemundo-california":
+                return "https://telemundo52.com/portableplayer/?CID=1:21:2641429&videoID=&origin=telemundo52.com&fullWidth=y&autoplay=true";
+            default:
+                return "";
+        }
+    }
+
+    private String getNBCNewsDirectM3U8(String hash) {
+        switch (hash) {
+            case "":
+                return "https://nnaa-nbcnn-lzaj01.fast.nbcuni.com/live/master.m3u8";
+            case "#sports-now":
+                return "https://g001-live-us-cmaf-prd-ak.pcdn03.cssott.com/Content/CMAF_OL2-CBC-4s/Live/channel(nbcsportspeacock)/master.m3u8";
+            case "#allday":
+                return "https://live-oneapp-prd-news.akamaized.net/Content/CMAF_OL2-CBC-4s/Live/channel(todayallday)/master.m3u8";
+            case "#dateline":
+                return "https://live-oneapp-prd-news.akamaized.net/Content/CMAF_OL2-CBC-4s/Live/channel(dateline)/master.m3u8";
+            case "#skynews":
+                return "https://live-oneapp-prd-news.akamaized.net/Content/CMAF_OL2-CBC-4s/Live/channel(skynews)/master.m3u8";
+            case "#noticias-telemundo-ahora":
+                return "https://live-oneapp-prd-news.akamaized.net/Content/CMAF_OL2-CBC-4s/Live/channel(nota)/master.m3u8";
+            case "#telemundo-al-dia":
+                return "https://live-oneapp-prd.akamaized.net/Content/CMAF_OL2-CBC-4s/Live/channel(telemundoaldia)/master.m3u8";
+            case "#telemundo-deportes-ahora":
+                return "https://g001-live-us-cmaf-prd-ak.pcdn03.cssott.com/Content/CMAF_OL2-CBC-4s/Live/channel(telemundodeportes)/master.m3u8";
+            case "#telemundo-florida":
+                return "https://d368vp0qqzvkid.cloudfront.net/11603/88889703/hls/master.m3u8"
+                        + "?ads.caid=TelemundoNoticiasFL"
+                        + "&ads.csid=tm_ots_alldevice_allos_web_wscv_livelinear_virtualchannel"
+                        + "&ads.nw=169843"
+                        + "&ads.prof=169843%3Anbcu_ots_web_linear"
+                        + "&ads.resp=vmap1"
+                        + "&ads.sfid=23475402"
+                        + "&ads.xumo_channelId=88889703a"
+                        + "&ads.xumo_contentId=3905"
+                        + "&ads.xumo_providerId=3905"
+                        + "&ads.xumo_streamId=88889703"
+                        + "&ads.site_name=TLMD";
+            default:
+                return "";
+        }
+    }
+
+    private String decodeHtmlContent(String content) {
+        return content
+                .replace("\\/", "/")
+                .replace("&quot;", "\"")
+                .replace("&#034;", "\"")
+                .replace("&#039;", "'")
+                .replace("&#038;", "&")
+                .replace("&amp;", "&");
+    }
+
+    private String extractPatternValue(String content, Pattern pattern) {
+        Matcher matcher = pattern.matcher(content);
+
+        if (!matcher.find()) {
+            return "";
+        }
+
+        return matcher.group("value");
+    }
+
+    private String encodeValue(String value) throws MediaOfflineException {
+        try {
+            return URLEncoder.encode(value, StandardCharsets.UTF_8.name());
+        } catch (Exception ex) {
+            throw new MediaOfflineException("failed to encode NBC local value", ex);
+        }
+    }
+
+    private String getNBCUserIp(String portablePlayerUrl) throws MediaOfflineException {
+        try {
+            URL url = new URL(portablePlayerUrl);
+            String endpoint = url.getProtocol() + "://" + url.getHost() + "/wp-json/nbc/v1/ip?_locale=user";
+            String ip = fetchUrl(endpoint).replace("\"", "").trim();
+
+            if (!ip.isEmpty()) {
+                return ip;
+            }
+
+            ip = fetchUrl("https://api.ipify.org").trim();
+
+            if (!ip.isEmpty()) {
+                return ip;
+            }
+
+            throw new MediaOfflineException("empty NBC local IP response " + portablePlayerUrl);
+        } catch (Exception ex) {
+            throw new MediaOfflineException("failed to resolve NBC local IP " + portablePlayerUrl, ex);
+        }
+    }
+
+    private String resolveNBCLocalStation(String portablePlayerUrl) throws MediaOfflineException {
+        String content = decodeHtmlContent(fetchUrl(toNBCNewsPartnerPlayerUrl(portablePlayerUrl)));
+        Matcher matcher = NBC_LOCAL_M3U8_TEMPLATE_PATTERN.matcher(content);
+
+        if (!matcher.find()) {
+            return "";
+        }
+
+        String template = matcher.group("link");
+        String afid = extractPatternValue(content, NBC_FW_WEB_AFID_PATTERN);
+        String sfid = extractPatternValue(content, NBC_FW_WEB_SFID_PATTERN);
+        String networkId = extractPatternValue(content, NBC_FW_NETWORK_ID_PATTERN);
+        String callLetters = extractPatternValue(content, NBC_CALL_LETTERS_PATTERN).toLowerCase();
+        String vip = getNBCUserIp(portablePlayerUrl);
+
+        if (afid.trim().isEmpty() || sfid.trim().isEmpty() || networkId.trim().isEmpty() || callLetters.trim().isEmpty() || vip.trim().isEmpty()) {
+            return "";
+        }
+
+        return template
+                .replace("[APP_BUNDLE]", "web")
+                .replace("[ATTS]", "")
+                .replace("[USER_AGENT]", encodeValue(USER_AGENT))
+                .replace("[LMT]", "0")
+                .replace("[NIELSEN_APP_ID]", NBC_NIELSEN_APP_ID)
+                .replace("[PLAYER_HEIGHT]", "720")
+                .replace("[PLAYER_WIDTH]", "1280")
+                .replace("[SITE_PAGE]", encodeValue(portablePlayerUrl))
+                .replace("[US_PRIVACY]", NBC_US_PRIVACY)
+                .replace("[AFID]", afid)
+                .replace("[APP_NAME]", "nbcnews")
+                .replace("[APP_VERSION]", "1.0")
+                .replace("[CSID]", "nbc_ots_alldevice_allos_web_" + callLetters + "_livelinear_virtualchannel")
+                .replace("[GPP_STRING_XXXXX]", encodeValue(NBC_GPP))
+                .replace("[GPP_SID]", "7")
+                .replace("[NW]", networkId)
+                .replace("[PLAYER_VERSION]", NBC_PLAYER_VERSION)
+                .replace("[PROF]", encodeValue(networkId + ":nbcu_ots_web_linear"))
+                .replace("[SFID]", sfid)
+                .replace("[VCID]", "")
+                .replace("[VIP]", vip)
+                .replace("[IFA]", "")
+                .replace("[IFA_TYPE]", "dpid");
+    }
+
+    private String buildNBCNewsLocalFastUrl(String baseUrl,
+                                            String portablePlayerUrl,
+                                            String afid,
+                                            String sfid,
+                                            String caid,
+                                            String channelName,
+                                            String callLetters,
+                                            String xumoChannelId,
+                                            String xumoContentId,
+                                            String xumoContentName,
+                                            String xumoProviderId,
+                                            String xumoProviderName,
+                                            String xumoStreamId) throws MediaOfflineException {
+        String vip = getNBCUserIp(portablePlayerUrl);
+
+        return baseUrl
+                + "?ads._fw_app_bundle=web"
+                + "&ads._fw_atts="
+                + "&ads._fw_h_user_agent=" + encodeValue(USER_AGENT)
+                + "&ads._fw_is_lat=0"
+                + "&ads._fw_nielsen_app_id=" + NBC_NIELSEN_APP_ID
+                + "&ads._fw_player_height=720"
+                + "&ads._fw_player_width=1280"
+                + "&ads._fw_site_page=" + encodeValue(portablePlayerUrl)
+                + "&ads._fw_us_privacy=" + NBC_US_PRIVACY
+                + "&ads.afid=" + afid
+                + "&ads.appName=nbcnews"
+                + "&ads.appVersion=1.0"
+                + "&ads.caid=" + caid
+                + "&ads.channelName=" + channelName
+                + "&ads.csid=nbc_ots_alldevice_allos_web_" + callLetters.toLowerCase() + "_livelinear_virtualchannel"
+                + "&ads.flag=%2Bsltp%2Bemcr%2Bslcb%2Bsbid-fbad%2Baeti%2Bslif-vicb%2Bexvt%2Bamcb%2Bplay-uapl%2Bdtrd"
+                + "&ads.gpp=" + encodeValue(NBC_GPP)
+                + "&ads.gpp_sid=7"
+                + "&ads.nw=169843"
+                + "&ads.playerVersion=" + NBC_PLAYER_VERSION
+                + "&ads.prof=" + encodeValue("169843:nbcu_ots_web_linear")
+                + "&ads.resp=vmap1"
+                + "&ads.sfid=" + sfid
+                + "&ads.vcid="
+                + "&ads.vip=" + vip
+                + "&ads.xumo_channelId=" + xumoChannelId
+                + "&ads.xumo_contentId=" + xumoContentId
+                + "&ads.xumo_contentName=" + xumoContentName
+                + "&ads.xumo_ifa="
+                + "&ads.xumo_ifaType=dpid"
+                + "&ads.xumo_providerId=" + xumoProviderId
+                + "&ads.xumo_providerName=" + xumoProviderName
+                + "&ads.xumo_streamId=" + xumoStreamId;
+    }
+
+    private String buildNBCChicagoWatchUrl() throws MediaOfflineException {
+        return buildNBCNewsLocalFastUrl(
+                "https://d368vp0qqzvkid.cloudfront.net/11603/88889704/hls/master.m3u8",
+                "https://www.nbcchicago.com/portableplayer/?CID=1:6:3010684&videoID=214364229946&origin=nbcchicago.com&fullWidth=y&autoplay=true",
+                "396654828",
+                "23408260",
+                "NBCNCHI",
+                "nbcchicagonews",
+                "wmaq",
+                "88889704a",
+                "3818",
+                "NBCNCHI",
+                "3818",
+                "NBCNCHI",
+                "88889704"
+        );
+    }
+
+    private String buildNBCMiamiWatchUrl() throws MediaOfflineException {
+        return buildNBCNewsLocalFastUrl(
+                "https://d368vp0qqzvkid.cloudfront.net/11603/88889702/hls/master.m3u8",
+                "https://www.nbcmiami.com/portableplayer/?CID=1:10:3294236&videoID=&origin=nbcmiami.com&fullWidth=y&autoplay=true",
+                "396655091",
+                "23408328",
+                "NBCNFL",
+                "nbcsouthfloridanews",
+                "wtvj",
+                "88889702a",
+                "3823",
+                "NBCNFL",
+                "3823",
+                "NBCNFL",
+                "88889702"
+        );
+    }
+
+    private String toNBCNewsPartnerPlayerUrl(String portablePlayerUrl) throws MediaOfflineException {
+        try {
+            URL url = new URL(portablePlayerUrl);
+            String query = url.getQuery() == null ? "" : url.getQuery();
+            String turl = url.getProtocol() + "://" + url.getHost() + url.getPath();
+            return url.getProtocol() + "://" + url.getHost() + "/templates/nbc_partner_player?" + query
+                    + (query.isEmpty() ? "" : "&")
+                    + "turl=" + URLEncoder.encode(turl, StandardCharsets.UTF_8.name());
+        } catch (Exception ex) {
+            throw new MediaOfflineException("invalid NBC portable player url " + portablePlayerUrl, ex);
+        }
+    }
+
+    private String normalizeNBCM3U8Url(String link) {
+        return link
+                .replace("PLATFORM", "desktopweb")
+                .replace("APP_NAME", "nbcnews")
+                .replace("APP_VERSION", "1.0")
+                .replace("APP_BUNDLE", "web")
+                .replace("DEVICE_MAKE", "desktop")
+                .replace("DEVICE_MODEL", "desktop")
+                .replace("DEVICE_TYPE", "2-Personal_Computer")
+                .replace("LMT", "0")
+                .replace("US_PRIVACY", "1---")
+                .replace("GPP_SID", "7")
+                .replace("GPP_STRING_XXXXX", "DBABLA~BVQVAAAAAgA.QA")
+                .replace("PLAYER_WIDTH", "1280")
+                .replace("PLAYER_HEIGHT", "720")
+                .replace("SITE_NAME", "NBC")
+                .replace("SITE_PAGE", "https%3A%2F%2Fwww.nbcnews.com%2Fwatch")
+                .replace("APP_STORE_URL", "")
+                .replace("IFA_TYPE", "dpid")
+                .replace("IFA", "")
+                .replace("[APP_BUNDLE]", "web")
+                .replace("[ATTS]", "")
+                .replace("[USER_AGENT]", USER_AGENT)
+                .replace("[LMT]", "0")
+                .replace("[NIELSEN_APP_ID]", "PE075FB87-C9AE-41D5-8B17-95C0E9301C8E")
+                .replace("[PLAYER_HEIGHT]", "720")
+                .replace("[PLAYER_WIDTH]", "1280")
+                .replace("[SITE_PAGE]", "https%3A%2F%2Fwww.nbcnews.com%2Fwatch")
+                .replace("[US_PRIVACY]", "1---")
+                .replace("[AFID]", "")
+                .replace("[APP_NAME]", "nbcnews")
+                .replace("[APP_VERSION]", "1.0")
+                .replace("[CSID]", "nbc_us_desktopweb_nbcnews_ssai")
+                .replace("[GPP_STRING_XXXXX]", "DBABLA~BVQVAAAAAgA.QA")
+                .replace("[GPP_SID]", "7")
+                .replace("[NW]", "")
+                .replace("[PLAYER_VERSION]", "8.30.1")
+                .replace("[PROF]", "")
+                .replace("[SFID]", "")
+                .replace("[VCID]", "")
+                .replace("[VIP]", "")
+                .replace("[IFA]", "")
+                .replace("[IFA_TYPE]", "dpid");
+    }
+
+    private String resolveNBCPortablePlayer(String portablePlayerUrl) throws MediaOfflineException {
+        String partnerPlayerUrl = toNBCNewsPartnerPlayerUrl(portablePlayerUrl);
+        String content = fetchUrl(partnerPlayerUrl)
+                .replace("\\/", "/")
+                .replace("&amp;", "&")
+                .replace("&quot;", "\"");
+
+        Matcher matcher = NBC_M3U8_URL_PATTERN.matcher(content);
+
+        if (matcher.find()) {
+            return normalizeNBCM3U8Url(matcher.group("link"));
+        }
+
+        matcher = NBC_NATIONAL_M3U8_URL_PATTERN.matcher(content);
+
+        if (matcher.find()) {
+            return normalizeNBCM3U8Url(matcher.group("link"));
+        }
+
+        return "";
+    }
+
+    private String resolveNBCNewsWatch(String location) throws MediaOfflineException {
+        String hash = normalizeNBCWatchHash(location);
+        if ("#chicago".equals(hash)) {
+            return buildNBCChicagoWatchUrl();
+        }
+
+        if ("#miami".equals(hash)) {
+            return buildNBCMiamiWatchUrl();
+        }
+
+        String direct = getNBCNewsDirectM3U8(hash);
+
+        if (direct != null && !direct.trim().isEmpty()) {
+            return direct;
+        }
+
+        String portablePlayerUrl = getNBCNewsPortablePlayerUrl(hash);
+
+        if (portablePlayerUrl != null && !portablePlayerUrl.trim().isEmpty()) {
+            return resolveNBCPortablePlayer(portablePlayerUrl);
+        }
+
+        if (hash.isEmpty()) {
+            return getNBCNewsDirectM3U8("");
+        }
+
+        return "";
+    }
+
+    private String fetchUrl(String url) throws MediaOfflineException {
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setInstanceFollowRedirects(true);
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("User-Agent", USER_AGENT);
+
+            int status = connection.getResponseCode();
+            if (!String.valueOf(status).startsWith("2")) {
+                throw new MediaOfflineException("invalid request " + url + " status " + status);
+            }
+
+            try (InputStream inputStream = connection.getInputStream()) {
+                return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+            }
+        } catch (MediaOfflineException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new MediaOfflineException("request failed, may be the site is offline or you don't have internet connection " + url, ex);
+        }
+    }
+
+    private String[] extractLinksFromText(String content) {
+        java.util.ArrayList<String> links = new java.util.ArrayList<>();
+        Matcher matcher = LINK_PATTERN.matcher(content);
+
+        while (matcher.find()) {
+            String link = matcher.group("link");
+
+            if (link.contains("\\/")) {
+                link = link.replace("\\/", "/");
+            }
+
+            if (!link.toUpperCase().contains(".M3U8")) {
+                continue;
+            }
+
+            if (!links.contains(link)) {
+                links.add(link);
+            }
+        }
+
+        return links.toArray(new String[0]);
     }
 
     private String resolveIndiatimes(String location) throws MediaOfflineException {
@@ -462,12 +1015,46 @@ public class GenericSupport extends FFMPEGSupport {
         return "https://cbclivedai5-i.akamaihd.net/hls/live/567235/event2/CBOT/master5.m3u8";
     }
 
+    private String resolveJovemPan(String location) throws MediaOfflineException {
+        String content = getContent(location);
+        Matcher matcher = HTML_SOURCE_PATTERN.matcher(content);
+
+        if (matcher.find()) {
+            return matcher.group("link").replace("&amp;", "&");
+        }
+
+        return resolveGeneric(location);
+    }
+
     private String resolveMetrotvnews(String location) throws MediaOfflineException {
         return "http://edge.metrotvnews.com:1935/live-edge/smil:metro.smil/playlist.m3u8";
     }
 
     private String resolveCNBCIndonesia(String location) throws MediaOfflineException {
         return "https://live.cnbcindonesia.com/livecnbc/smil:cnbctv.smil/playlist.m3u8";
+    }
+
+    private String resolveTVBrasilPlay(String location) throws MediaOfflineException {
+        JsonElement root = JsonParser.parseString(fetchUrl("https://play.ebc.com.br/v2/streaming"));
+
+        if (!root.isJsonArray()) {
+            return "";
+        }
+
+        for (JsonElement item : root.getAsJsonArray()) {
+            if (!item.isJsonObject()) {
+                continue;
+            }
+
+            JsonObject tv = item.getAsJsonObject();
+            String streamUrl = getJsonString(tv, "url_streaming");
+
+            if (streamUrl != null && !streamUrl.trim().isEmpty()) {
+                return streamUrl;
+            }
+        }
+
+        return "";
     }
 
     private String resolveTimesNowNews(String location) throws MediaOfflineException {
@@ -805,11 +1392,64 @@ public class GenericSupport extends FFMPEGSupport {
 
     @Override
     protected String[] getLinks(String location) throws MediaOfflineException {
-        if (location.contains("rainews.it") || location.contains("i24news.tv") || location.contains("kan.org.il") || location.contains("knesset.tv") || location.contains("mako.co.il") || location.contains("newslive.com") || location.contains("livenewsnow.com") || location.contains("tvpass.org/live/") || location.contains("thetvapp.to/tv/") || location.contains("usnewson.com/watch/") || location.contains("streamfare.info/oan-news") || (location.contains("streamfare.") && location.contains("-live-stream") && !location.contains("news-12-new-york-live-stream"))) {
+        if (location.contains("globalnews.ca") || location.contains("ctvnews.ca") || location.contains("cp24.com")) {
+            return extractLinksFromText(resolveContent(location));
+        }
+
+        if (location.contains("rainews.it") || location.contains("i24news.tv") || location.contains("kan.org.il") || location.contains("knesset.tv") || location.contains("mako.co.il") || location.contains("newslive.com") || location.contains("livenewsnow.com") || location.contains("tvpass.org/live/") || location.contains("thetvapp.to/tv/") || location.contains("usnewson.com/watch/") || location.contains("nbcnews.com/watch") || location.contains("streamfare.info/oan-news") || (location.contains("streamfare.") && location.contains("-live-stream") && !location.contains("news-12-new-york-live-stream"))) {
             return new String[]{resolveContent(location)};
         }
 
         return super.getLinks(location);
+    }
+
+    @Override
+    public List<Media> getMedia(String location) throws MediaNotFoundException, MediaOfflineException {
+        if (location.contains("nbcnews.com/watch#miami")) {
+            String mediaUrl = resolveNBCNewsWatch(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                return Collections.singletonList(
+                        new Video(
+                                "NBC Miami",
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.HIGH, 1920, 1080, 5253600),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
+        if (location.contains("globalnews.ca") || location.contains("ctvnews.ca") || location.contains("cp24.com")) {
+            String parentLink;
+            String content;
+
+            if (location.contains("globalnews.ca")) {
+                parentLink = resolveGlobalNewsMasterUrl(location);
+                content = parentLink == null || parentLink.trim().isEmpty() ? "" : fetchUrl(parentLink);
+            } else if (location.contains("ctvnews.ca")) {
+                parentLink = resolveBellMedia9c9ManifestUrl(location, "ctvnews_web");
+                content = parentLink == null || parentLink.trim().isEmpty() ? "" : fetchUrl(parentLink);
+            } else {
+                parentLink = resolveBellMedia9c9ManifestUrl(location, "cp24_web");
+                content = parentLink == null || parentLink.trim().isEmpty() ? "" : fetchUrl(parentLink);
+            }
+
+            if (content == null || content.trim().isEmpty()) {
+                throw new MediaOfflineException(String.format("media offline or connection issue %s", location));
+            }
+
+            List<Media> medias = new GenericVideoResolver(getWrappedContext()).findMedia(location, parentLink, content, this::buildMediaLink);
+
+            if (medias == null || medias.isEmpty()) {
+                throw new MediaNotFoundException(String.format("media not found for location %s", location));
+            }
+
+            return medias;
+        }
+
+        return super.getMedia(location);
     }
 
     @Override
@@ -842,6 +1482,10 @@ public class GenericSupport extends FFMPEGSupport {
             return resolveMetrotvnews(location);
         } else if (location.contains("cnbcindonesia.com")) {
             return resolveCNBCIndonesia(location);
+        } else if (location.contains("tvbrasilplay.com.br/tvs")) {
+            return resolveTVBrasilPlay(location);
+        } else if (location.contains("jovempan.com.br/ao-vivo")) {
+            return resolveJovemPan(location);
         } else if (location.contains("timesnownews.com")) {
             return resolveTimesNowNews(location);
         } else if (location.contains("rtp.pt")) {
@@ -850,12 +1494,20 @@ public class GenericSupport extends FFMPEGSupport {
             return resolveBiochile(location);
         } else if (location.contains("13tv.co.il")) {
             return resolve13TV(location);
+        } else if (location.contains("globalnews.ca")) {
+            return resolveGlobalNews(location);
+        } else if (location.contains("nbcnews.com/watch")) {
+            return resolveNBCNewsWatch(location);
         } else if (location.contains("kan.org.il")) {
             return resolveKan(location);
         } else if (location.contains("knesset.tv")) {
             return resolveKnesset(location);
         } else if (location.contains("mako.co.il")) {
             return resolveMako(location);
+        } else if (location.contains("ctvnews.ca")) {
+            return resolveBellMedia9c9(location, "ctvnews_web");
+        } else if (location.contains("cp24.com")) {
+            return resolveBellMedia9c9(location, "cp24_web");
         } else if (location.contains("newslive.com")) {
             return resolveNewsLive(location);
         } else if (location.contains("livenewsnow.com")) {

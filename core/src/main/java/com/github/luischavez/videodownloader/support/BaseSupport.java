@@ -2,10 +2,14 @@ package com.github.luischavez.videodownloader.support;
 
 import com.github.luischavez.videodownloader.Context;
 import com.github.luischavez.videodownloader.ContextWrapper;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.protocol.HttpCoreContext;
 import org.apache.http.util.EntityUtils;
 
 import java.util.ArrayList;
@@ -28,6 +32,30 @@ public abstract class BaseSupport extends ContextWrapper implements Support, Med
         httpClient = buildHttpClient();
     }
 
+    protected static class ContentResponse {
+        private final String requestUrl;
+        private final String responseUrl;
+        private final String content;
+
+        protected ContentResponse(String requestUrl, String responseUrl, String content) {
+            this.requestUrl = requestUrl;
+            this.responseUrl = responseUrl;
+            this.content = content;
+        }
+
+        protected String getRequestUrl() {
+            return requestUrl;
+        }
+
+        protected String getResponseUrl() {
+            return responseUrl;
+        }
+
+        protected String getContent() {
+            return content;
+        }
+    }
+
     protected HttpClient buildHttpClient() {
         return HttpClientBuilder.create().build();
     }
@@ -39,7 +67,7 @@ public abstract class BaseSupport extends ContextWrapper implements Support, Med
         return httpGet;
     }
 
-    protected String getContent(String url, Map<String, String> headers) throws MediaOfflineException {
+    protected ContentResponse getContentResponse(String url, Map<String, String> headers) throws MediaOfflineException {
         try {
             HttpGet httpGet = buildGet(url);
             Map<String, String> mergedHeaders = LocationRequestUtils.mergeHeaders(headers, LocationRequestUtils.extractHeaders(url));
@@ -49,17 +77,58 @@ public abstract class BaseSupport extends ContextWrapper implements Support, Med
                         .forEach(entry -> httpGet.addHeader(entry.getKey(), entry.getValue()));
             }
 
-            HttpResponse httpResponse = httpClient.execute(httpGet);
+            HttpClientContext context = HttpClientContext.create();
+            HttpResponse httpResponse = httpClient.execute(httpGet, context);
             int statusCode = httpResponse.getStatusLine().getStatusCode();
 
             if (!String.valueOf(statusCode).startsWith("2")) {
                 throw new MediaOfflineException("invalid request " + url + " status " + statusCode);
             }
 
-            return EntityUtils.toString(httpResponse.getEntity());
+            String content = EntityUtils.toString(httpResponse.getEntity());
+            String responseUrl = resolveResponseUrl(url, context);
+
+            return new ContentResponse(url, responseUrl, content);
         } catch (Exception ex) {
             throw new MediaOfflineException("request failed, may be the site is offline or you don't have internet connection " + url, ex);
         }
+    }
+
+    private String resolveResponseUrl(String fallbackUrl, HttpClientContext context) {
+        try {
+            Object requestObject = context.getAttribute(HttpCoreContext.HTTP_REQUEST);
+            HttpHost targetHost = context.getTargetHost();
+
+            if (requestObject instanceof HttpUriRequest) {
+                java.net.URI requestUri = ((HttpUriRequest) requestObject).getURI();
+
+                if (requestUri != null) {
+                    if (requestUri.isAbsolute()) {
+                        return requestUri.toString();
+                    }
+
+                    if (targetHost != null) {
+                        return new java.net.URI(
+                                targetHost.getSchemeName(),
+                                null,
+                                targetHost.getHostName(),
+                                targetHost.getPort(),
+                                requestUri.getPath(),
+                                requestUri.getQuery(),
+                                requestUri.getFragment()
+                        ).toString();
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            // fallback below
+        }
+
+        return fallbackUrl;
+    }
+
+    protected String getContent(String url, Map<String, String> headers) throws MediaOfflineException {
+        return getContentResponse(url, headers).getContent();
     }
 
     protected String getContent(String url) throws MediaOfflineException {
@@ -148,10 +217,14 @@ public abstract class BaseSupport extends ContextWrapper implements Support, Med
             final Map<String, String> requestHeaders = LocationRequestUtils.mergeHeaders(
                     resolveLinkHeaders(location, link),
                     LocationRequestUtils.extractHeaders(location));
-            final String content = getContent(link, requestHeaders);
+            final ContentResponse response = getContentResponse(link, requestHeaders);
+            final String content = response.getContent();
+            final String parentLink = response.getResponseUrl() == null || response.getResponseUrl().trim().isEmpty()
+                    ? link
+                    : response.getResponseUrl();
 
             for (MediaResolver mediaResolver : mediaResolvers) {
-                List<Media> medias = mediaResolver.findMedia(location, link, content, this::buildMediaLink);
+                List<Media> medias = mediaResolver.findMedia(location, parentLink, content, this::buildMediaLink);
 
                 if (medias == null || medias.isEmpty()) continue;
 

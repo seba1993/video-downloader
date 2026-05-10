@@ -24,6 +24,8 @@ public class YouTubeSupport extends FFMPEGSupport {
 
     private static final Pattern YOUTUBE_VIDEO_ID_PATTERN = Pattern.compile("\\\"videoId\\\":\\\"(?<id>.[^\\\"]+)");
     private static final Pattern YOUTUBE_EMBED_PATTERN = Pattern.compile("https?://www\\.youtube\\.com/embed/(?<id>[A-Za-z0-9_-]{6,})", Pattern.CASE_INSENSITIVE);
+    private static final Pattern YOUTUBE_LIVE_PATTERN = Pattern.compile("https?://www\\.youtube\\.com/live/(?<id>[A-Za-z0-9_-]{6,})", Pattern.CASE_INSENSITIVE);
+    private static final Pattern YOUTUBE_DATA_VIDEO_PATTERN = Pattern.compile("id=\\\"(?<id>[A-Za-z0-9_-]{6,})\\\"[^>]+data-video=\\\"youtube\\\"", Pattern.CASE_INSENSITIVE);
     private static final Pattern ITAG_PATTERN = Pattern.compile("/itag/(?<itag>\\d+)/");
 
     private static final String YOUTUBE_LINK = "https://www.youtube.com/watch?v=%s";
@@ -44,10 +46,23 @@ public class YouTubeSupport extends FFMPEGSupport {
     private String resolveLocation(String location) {
         String lower = location.toLowerCase();
 
-        if (lower.contains("streamfare.com/")) {
+        if (lower.contains("streamfare.com/") || lower.contains("cnnbrasil.com.br/ao-vivo") || lower.contains("excelsior.com.mx/tv")) {
             try {
                 String content = getContent(location);
+                content = content.replace("\\/", "/");
                 Matcher matcher = YOUTUBE_EMBED_PATTERN.matcher(content);
+
+                if (matcher.find()) {
+                    return String.format(YOUTUBE_LINK, matcher.group("id"));
+                }
+
+                matcher = YOUTUBE_LIVE_PATTERN.matcher(content);
+
+                if (matcher.find()) {
+                    return String.format(YOUTUBE_LINK, matcher.group("id"));
+                }
+
+                matcher = YOUTUBE_DATA_VIDEO_PATTERN.matcher(content);
 
                 if (matcher.find()) {
                     return String.format(YOUTUBE_LINK, matcher.group("id"));
@@ -306,12 +321,30 @@ public class YouTubeSupport extends FFMPEGSupport {
                 Pattern.compile("^https?://.*streamfare\\.com\\/euro-news-live-stream\\/?$"),
                 Pattern.compile("^https?://.*streamfare\\.com\\/france-24-live-stream\\/?$"),
                 Pattern.compile("^https?://.*streamfare\\.com\\/news-12-new-york-live-stream\\/?$"),
-                Pattern.compile("^https?://.*streamfare\\.com\\/sky-news-live-stream\\/?$"));
+                Pattern.compile("^https?://.*streamfare\\.com\\/sky-news-live-stream\\/?$"),
+                Pattern.compile("^https?://.*cnnbrasil\\.com\\.br\\/ao-vivo\\/?$"),
+                Pattern.compile("^https?://.*excelsior\\.com\\.mx\\/tv\\/?$"));
     }
 
     @Override
     protected MediaResolver[] getMediaResolvers() {
         return resolvers(new M3U8VideoResolver(getWrappedContext()));
+    }
+
+    @Override
+    protected String getAudioCopyCodec(Media media) {
+        if (media instanceof Video && media.getQuality() instanceof Video.VideoQuality) {
+            int height = Video.VideoQuality.class.cast(media.getQuality()).getHeight();
+
+            // YouTube low HLS variants (144p/240p) currently expose HE-AAC audio.
+            // Some players fail to play that audio reliably inside the recorded MKV,
+            // so normalize only those low variants to AAC-LC during recording.
+            if (height <= 240) {
+                return "-c:a aac -profile:a aac_low -b:a 128k";
+            }
+        }
+
+        return super.getAudioCopyCodec(media);
     }
 
     @Override

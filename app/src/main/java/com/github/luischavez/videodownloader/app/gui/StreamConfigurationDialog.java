@@ -38,6 +38,7 @@ public class StreamConfigurationDialog extends JDialog {
 
         initComponents();
         initialize();
+        setTitle("Stream Configuration");
     }
 
     private final void initialize() {
@@ -145,6 +146,10 @@ public class StreamConfigurationDialog extends JDialog {
             countryTextField.setText("");
         }
 
+        pack();
+        setLocationRelativeTo(getOwner());
+        toFront();
+        requestFocus();
         setVisible(true);
     }
 
@@ -256,7 +261,7 @@ public class StreamConfigurationDialog extends JDialog {
         contentPane.add(label13, CC.xy(3, 13));
 
         //---- qualitySpinner ----
-        qualitySpinner.setModel(new SpinnerNumberModel(720, 480, null, 1));
+        qualitySpinner.setModel(new SpinnerNumberModel(720, 144, null, 1));
         contentPane.add(qualitySpinner, CC.xywh(5, 13, 7, 1, CC.LEFT, CC.DEFAULT));
 
         //---- fileLabel ----

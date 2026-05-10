@@ -123,7 +123,13 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == contentPanel.addButton) {
-            SwingUtilities.invokeLater(() -> streamConfigurationDialog.open(null));
+            try {
+                AppContext.instance().log(MainFrame.class, "debug", "add stream button clicked", null);
+                streamConfigurationDialog.open((String[]) null);
+            } catch (Throwable ex) {
+                AppContext.instance().error(MainFrame.class, "can't open stream configuration dialog", ex);
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR!", JOptionPane.ERROR_MESSAGE);
+            }
         } else if (e.getSource() == contentPanel.ytButton) {
             YouTubeConfigurationPanel youTubeConfigurationPanel = new YouTubeConfigurationPanel();
 

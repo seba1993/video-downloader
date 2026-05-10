@@ -11,7 +11,9 @@ import java.util.regex.Pattern;
 public class GenericVideoResolver extends M3U8VideoResolver {
 
     private static final Pattern[] M3U8_OPTION_PATTERNS = {
-            Pattern.compile("(?<descriptor>(?<info>#EXT.*BANDWIDTH=(?<bandwidth>\\d+).*RESOLUTION=(?<resolution>(?<width>\\d+)x(?<height>\\d+)).*)\\s*\\n\\s*(?<m3u8>.+))", Pattern.MULTILINE),
+            Pattern.compile("(?<descriptor>(?<info>#EXT.*BANDWIDTH=(?<bandwidth>\\d+).*RESOLUTION=(?<resolution>(?<width>\\d+)x(?<height>\\d+)).*)\\s*\\r?\\n\\s*(?<m3u8>.+))", Pattern.MULTILINE),
+            Pattern.compile("(?<descriptor>(?<info>#EXT.*RESOLUTION=(?<resolution>(?<width>\\d+)x(?<height>\\d+)).*BANDWIDTH=(?<bandwidth>\\d+).*)\\s*\\r?\\n\\s*(?<m3u8>.+))", Pattern.MULTILINE),
+            Pattern.compile("(?<descriptor>(?<info>#EXT.*BANDWIDTH=(?<bandwidth>\\d+).*)\\s*\\r?\\n\\s*(?<m3u8>.+))", Pattern.MULTILINE),
     };
 
     public GenericVideoResolver(Context context) {
@@ -21,7 +23,11 @@ public class GenericVideoResolver extends M3U8VideoResolver {
     @Override
     protected List<MediaDescriptor> getMediaDescriptors(String location, String parentLink, String content) {
         if (!location.contains("rainews.it")) {
-            return super.getMediaDescriptors(location, parentLink, content);
+            List<MediaDescriptor> descriptors = super.getMediaDescriptors(location, parentLink, content);
+
+            if (!descriptors.isEmpty()) {
+                return descriptors;
+            }
         }
 
         if (content.toUpperCase().contains("#EXTINF")) {
