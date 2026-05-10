@@ -534,8 +534,6 @@ public class GenericSupport extends FFMPEGSupport {
                 return "https://live-oneapp-prd-news.akamaized.net/Content/CMAF_OL2-CBC-4s/Live/channel(dateline)/master.m3u8";
             case "#skynews":
                 return "https://live-oneapp-prd-news.akamaized.net/Content/CMAF_OL2-CBC-4s/Live/channel(skynews)/master.m3u8";
-            case "#noticias-telemundo-ahora":
-                return "https://live-oneapp-prd-news.akamaized.net/Content/CMAF_OL2-CBC-4s/Live/channel(nota)/master.m3u8";
             case "#telemundo-al-dia":
                 return "https://live-oneapp-prd.akamaized.net/Content/CMAF_OL2-CBC-4s/Live/channel(telemundoaldia)/master.m3u8";
             case "#telemundo-deportes-ahora":
@@ -722,6 +720,281 @@ public class GenericSupport extends FFMPEGSupport {
         );
     }
 
+    private String buildNBCNewYorkWatchUrl() throws MediaOfflineException {
+        return buildNBCNewsLocalFastUrl(
+                "https://d2kowtvrzzi7ps.cloudfront.net/11602/88889709/hls/master.m3u8",
+                "https://www.nbcnewyork.com/portableplayer/?CID=1:2:5351877&videoID=&origin=nbcnewyork.com&fullWidth=y&autoplay=true",
+                "396654844",
+                "23408240",
+                "NBCNNY",
+                "nbcnewyorknews",
+                "wnbc",
+                "88889709a",
+                "3816",
+                "NBCNNY",
+                "3816",
+                "NBCNNY",
+                "88889709"
+        );
+    }
+
+    private String buildNBCLosAngelesWatchUrl() throws MediaOfflineException {
+        return buildNBCNewsLocalFastUrl(
+                "https://d2kowtvrzzi7ps.cloudfront.net/11602/88889710/hls/master.m3u8",
+                "https://www.nbclosangeles.com/portableplayer/?CID=1:9:3396742&videoID=&origin=nbclosangeles.com&fullWidth=y&autoplay=true",
+                "396654852",
+                "23408248",
+                "NBCNLA",
+                "nbclosangelesnews",
+                "knbc",
+                "88889710a",
+                "3817",
+                "NBCNLA",
+                "3817",
+                "NBCNLA",
+                "88889710"
+        );
+    }
+
+    private String buildNBCBayAreaWatchUrl() throws MediaOfflineException {
+        return buildNBCNewsLocalFastUrl(
+                "https://d2kowtvrzzi7ps.cloudfront.net/11602/88889711/hls/master.m3u8",
+                "https://www.nbcbayarea.com/portableplayer/?CID=1:4:3519840&videoID=&origin=nbcbayarea.com&fullWidth=y&autoplay=true",
+                "396654860",
+                "23408256",
+                "NBCNBA",
+                "nbcbayareanews",
+                "kntv",
+                "88889711a",
+                "3822",
+                "NBCNBA",
+                "3822",
+                "NBCNBA",
+                "88889711"
+        );
+    }
+
+    private String buildNBCBostonWatchUrl() throws MediaOfflineException {
+        return buildNBCNewsLocalFastUrl(
+                "https://d2kowtvrzzi7ps.cloudfront.net/11602/88889713/hls/master.m3u8",
+                "https://www.nbcboston.com/portableplayer/?CID=1:5:3349031&videoID=&origin=nbcboston.com&fullWidth=y&autoplay=true",
+                "396654876",
+                "23408264",
+                "NBCNBOS",
+                "nbcbostonnews",
+                "wbts",
+                "88889713a",
+                "3820",
+                "NBCNBOS",
+                "3820",
+                "NBCNBOS",
+                "88889713"
+        );
+    }
+
+    private String buildNBCConnecticutWatchUrl() throws MediaOfflineException {
+        return buildNBCNewsLocalFastUrl(
+                "https://d2kowtvrzzi7ps.cloudfront.net/11602/88889707/hls/master.m3u8",
+                "https://www.nbcconnecticut.com/portableplayer/?CID=1:7:3274515&videoID=&origin=nbcconnecticut.com&fullWidth=y&autoplay=true",
+                "396654812",
+                "23408244",
+                "NBCNCT",
+                "nbcconnecticutnews",
+                "wvit",
+                "88889707a",
+                "3832",
+                "NBCNCT",
+                "3832",
+                "NBCNCT",
+                "88889707"
+        );
+    }
+
+    private String buildNBCDallasFortWorthWatchUrl() throws MediaOfflineException {
+        return buildNBCNewsLocalFastUrl(
+                "https://d2kowtvrzzi7ps.cloudfront.net/11602/88889706/hls/master.m3u8",
+                "https://www.nbcdfw.com/portableplayer/?CID=1:8:3523824&videoID=&origin=nbcdfw.com&fullWidth=y&autoplay=true",
+                "396654804",
+                "23408236",
+                "NBCNDAL",
+                "nbcdallasfortworthnews",
+                "kdfw",
+                "88889706a",
+                "3831",
+                "NBCNDAL",
+                "3831",
+                "NBCNDAL",
+                "88889706"
+        );
+    }
+
+    private String resolveNBCLowestVariantUrl(String location, String masterUrl) throws MediaOfflineException {
+        String content = fetchUrl(masterUrl);
+        String[] lines = content.split("\\r?\\n");
+        String selectedLink = "";
+        int selectedHeight = Integer.MAX_VALUE;
+        int selectedBandwidth = Integer.MAX_VALUE;
+
+        for (int i = 0; i < lines.length - 1; i++) {
+            String info = lines[i];
+            String link = lines[i + 1].trim();
+
+            if (!info.startsWith("#EXT-X-STREAM-INF")) {
+                continue;
+            }
+
+            if (link.isEmpty() || link.startsWith("#")) {
+                continue;
+            }
+
+            int height = 0;
+            int bandwidth = 0;
+
+            Matcher resolutionMatcher = Pattern.compile("RESOLUTION=(\\d+)x(\\d+)").matcher(info);
+            if (resolutionMatcher.find()) {
+                height = Integer.parseInt(resolutionMatcher.group(2));
+            }
+
+            Matcher bandwidthMatcher = Pattern.compile("BANDWIDTH=(\\d+)").matcher(info);
+            if (bandwidthMatcher.find()) {
+                bandwidth = Integer.parseInt(bandwidthMatcher.group(1));
+            }
+
+            if (selectedLink.isEmpty()
+                    || height < selectedHeight
+                    || (height == selectedHeight && bandwidth < selectedBandwidth)) {
+                selectedHeight = height;
+                selectedBandwidth = bandwidth;
+                selectedLink = link;
+            }
+        }
+
+        if (selectedLink.isEmpty()) {
+            return masterUrl;
+        }
+
+        try {
+            URL base = new URL(masterUrl);
+            java.net.URI resolved = new java.net.URI(base.getProtocol(), base.getAuthority(), base.getPath(), null, null).resolve(selectedLink.trim());
+            if (resolved != null) {
+                return resolved.toString();
+            }
+        } catch (Exception ex) {
+            // fallback below
+        }
+
+        String resolved = buildMediaLink(location, masterUrl, selectedLink);
+        if (resolved == null || resolved.trim().isEmpty()) {
+            return masterUrl;
+        }
+
+        return resolved;
+    }
+
+    private String resolveNBCChicagoLowestVariantUrl(String location) throws MediaOfflineException {
+        return resolveNBCLowestVariantUrl(location, buildNBCChicagoWatchUrl());
+    }
+
+    private String resolveNBCNewYorkLowestVariantUrl(String location) throws MediaOfflineException {
+        return resolveNBCLowestVariantUrl(location, buildNBCNewYorkWatchUrl());
+    }
+
+    private String resolveNBCLosAngelesLowestVariantUrl(String location) throws MediaOfflineException {
+        return resolveNBCLowestVariantUrl(location, buildNBCLosAngelesWatchUrl());
+    }
+
+    private String resolveNBCBayAreaLowestVariantUrl(String location) throws MediaOfflineException {
+        return resolveNBCLowestVariantUrl(location, buildNBCBayAreaWatchUrl());
+    }
+
+    private String resolveNBCBostonLowestVariantUrl(String location) throws MediaOfflineException {
+        return resolveNBCLowestVariantUrl(location, buildNBCBostonWatchUrl());
+    }
+
+    private String resolveNBCConnecticutLowestVariantUrl(String location) throws MediaOfflineException {
+        return resolveNBCLowestVariantUrl(location, buildNBCConnecticutWatchUrl());
+    }
+
+    private String resolveNBCDallasFortWorthLowestVariantUrl(String location) throws MediaOfflineException {
+        return resolveNBCLowestVariantUrl(location, buildNBCDallasFortWorthWatchUrl());
+    }
+
+    private String resolveNBCPhiladelphiaLowestVariantUrl(String location) throws MediaOfflineException {
+        String masterUrl = resolveNBCNewsWatch(location);
+
+        if (masterUrl == null || masterUrl.trim().isEmpty()) {
+            return "";
+        }
+
+        return resolveNBCLowestVariantUrl(location, masterUrl);
+    }
+
+    private String resolveNBCSanDiegoLowestVariantUrl(String location) throws MediaOfflineException {
+        String masterUrl = resolveNBCNewsWatch(location);
+
+        if (masterUrl == null || masterUrl.trim().isEmpty()) {
+            return "";
+        }
+
+        return resolveNBCLowestVariantUrl(location, masterUrl);
+    }
+
+    private String resolveNBCTelemundoCaliforniaLowestVariantUrl(String location) throws MediaOfflineException {
+        String masterUrl = resolveNBCNewsWatch(location);
+
+        if (masterUrl == null || masterUrl.trim().isEmpty()) {
+            return "";
+        }
+
+        return resolveNBCLowestVariantUrl(location, masterUrl);
+    }
+
+    private String resolveNBCTelemundoFloridaLowestVariantUrl(String location) throws MediaOfflineException {
+        String masterUrl = resolveNBCNewsWatch(location);
+
+        if (masterUrl == null || masterUrl.trim().isEmpty()) {
+            return "";
+        }
+
+        return resolveNBCLowestVariantUrl(location, masterUrl);
+    }
+
+    private String resolveNBCTelemundoNoresteLowestVariantUrl(String location) throws MediaOfflineException {
+        String masterUrl = resolveNBCNewsWatch(location);
+
+        if (masterUrl == null || masterUrl.trim().isEmpty()) {
+            return "";
+        }
+
+        return resolveNBCLowestVariantUrl(location, masterUrl);
+    }
+
+    private String resolveNBCTelemundoTexasLowestVariantUrl(String location) throws MediaOfflineException {
+        String masterUrl = resolveNBCNewsWatch(location);
+
+        if (masterUrl == null || masterUrl.trim().isEmpty()) {
+            return "";
+        }
+
+        return resolveNBCLowestVariantUrl(location, masterUrl);
+    }
+
+    private String resolveNBCDatelineLowestVariantUrl(String location) throws MediaOfflineException {
+        // Dateline's master playlist has been unstable with the generic variant resolver.
+        // Keep this pinned to the lowest direct rendition so the behavior is deterministic.
+        return "https://live-oneapp-prd-news.akamaized.net/Content/CMAF_OL2-CBC-4s/Live/channel(dateline)/01_program.m3u8";
+    }
+
+    private String resolveNBCWashingtonLowestVariantUrl(String location) throws MediaOfflineException {
+        String masterUrl = resolveNBCNewsWatch(location);
+
+        if (masterUrl == null || masterUrl.trim().isEmpty()) {
+            return "";
+        }
+
+        return resolveNBCLowestVariantUrl(location, masterUrl);
+    }
+
     private String buildNBCMiamiWatchUrl() throws MediaOfflineException {
         return buildNBCNewsLocalFastUrl(
                 "https://d368vp0qqzvkid.cloudfront.net/11603/88889702/hls/master.m3u8",
@@ -886,8 +1159,36 @@ public class GenericSupport extends FFMPEGSupport {
 
     private String resolveNBCNewsWatch(String location) throws MediaOfflineException {
         String hash = normalizeNBCWatchHash(location);
+        if ("#new-york".equals(hash)) {
+            return resolveNBCNewYorkLowestVariantUrl(location);
+        }
+
+        if ("#los-angeles".equals(hash)) {
+            return resolveNBCLosAngelesLowestVariantUrl(location);
+        }
+
+        if ("#bay-area".equals(hash)) {
+            return resolveNBCBayAreaLowestVariantUrl(location);
+        }
+
+        if ("#boston".equals(hash)) {
+            return resolveNBCBostonLowestVariantUrl(location);
+        }
+
+        if ("#connecticut".equals(hash)) {
+            return resolveNBCConnecticutLowestVariantUrl(location);
+        }
+
+        if ("#dallas-fort-worth".equals(hash)) {
+            return resolveNBCDallasFortWorthLowestVariantUrl(location);
+        }
+
+        if ("#dateline".equals(hash)) {
+            return resolveNBCDatelineLowestVariantUrl(location);
+        }
+
         if ("#chicago".equals(hash)) {
-            return buildNBCChicagoWatchUrl();
+            return resolveNBCChicagoLowestVariantUrl(location);
         }
 
         if ("#miami".equals(hash)) {
@@ -1455,6 +1756,10 @@ public class GenericSupport extends FFMPEGSupport {
 
     @Override
     protected String[] getLinks(String location) throws MediaOfflineException {
+        if (location.contains("nbcnews.com/watch#noticias-telemundo-ahora")) {
+            return new String[0];
+        }
+
         if (location.contains("globalnews.ca") || location.contains("ctvnews.ca") || location.contains("cp24.com")) {
             return extractLinksFromText(resolveContent(location));
         }
@@ -1468,6 +1773,246 @@ public class GenericSupport extends FFMPEGSupport {
 
     @Override
     public List<Media> getMedia(String location) throws MediaNotFoundException, MediaOfflineException {
+        if ("https://www.nbcnews.com/watch".equals(location) || "https://nbcnews.com/watch".equals(location)) {
+            String mediaUrl = resolveNBCLowestVariantUrl(location, resolveNBCNewsWatch(location));
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                return java.util.Collections.singletonList(
+                        new Video(
+                                "NBC News",
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.HIGH, 1920, 1080, 5253600),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
+        if (location.contains("nbcnews.com/watch#telemundo-texas")) {
+            String mediaUrl = resolveNBCTelemundoTexasLowestVariantUrl(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                return java.util.Collections.singletonList(
+                        new Video(
+                                "NBC Telemundo Texas",
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.HIGH, 1920, 1080, 5253600),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
+        if (location.contains("nbcnews.com/watch#telemundo-noreste")) {
+            String mediaUrl = resolveNBCTelemundoNoresteLowestVariantUrl(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                return java.util.Collections.singletonList(
+                        new Video(
+                                "NBC Telemundo Noreste",
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.HIGH, 1920, 1080, 5253600),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
+        if (location.contains("nbcnews.com/watch#telemundo-florida")) {
+            String mediaUrl = resolveNBCTelemundoFloridaLowestVariantUrl(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                return java.util.Collections.singletonList(
+                        new Video(
+                                "NBC Telemundo Florida",
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.HIGH, 1920, 1080, 5253600),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
+        if (location.contains("nbcnews.com/watch#telemundo-california")) {
+            String mediaUrl = resolveNBCTelemundoCaliforniaLowestVariantUrl(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                return java.util.Collections.singletonList(
+                        new Video(
+                                "NBC Telemundo California",
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.HIGH, 1920, 1080, 5253600),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
+        if (location.contains("nbcnews.com/watch#san-diego")) {
+            String mediaUrl = resolveNBCSanDiegoLowestVariantUrl(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                return java.util.Collections.singletonList(
+                        new Video(
+                                "NBC San Diego",
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.HIGH, 1920, 1080, 5253600),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
+        if (location.contains("nbcnews.com/watch#philadelphia")) {
+            String mediaUrl = resolveNBCPhiladelphiaLowestVariantUrl(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                return java.util.Collections.singletonList(
+                        new Video(
+                                "NBC Philadelphia",
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.HIGH, 1920, 1080, 5253600),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
+        if (location.contains("nbcnews.com/watch#dateline")) {
+            String mediaUrl = resolveNBCDatelineLowestVariantUrl(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                return java.util.Collections.singletonList(
+                        new Video(
+                                "NBC Dateline",
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.HIGH, 1920, 1080, 5253600),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
+        if (location.contains("nbcnews.com/watch#dallas-fort-worth")) {
+            String mediaUrl = resolveNBCDallasFortWorthLowestVariantUrl(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                return java.util.Collections.singletonList(
+                        new Video(
+                                "NBC Dallas Fort Worth",
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.HIGH, 1920, 1080, 5253600),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
+        if (location.contains("nbcnews.com/watch#connecticut")) {
+            String mediaUrl = resolveNBCConnecticutLowestVariantUrl(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                return java.util.Collections.singletonList(
+                        new Video(
+                                "NBC Connecticut",
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.HIGH, 1920, 1080, 5253600),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
+        if (location.contains("nbcnews.com/watch#boston")) {
+            String mediaUrl = resolveNBCBostonLowestVariantUrl(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                return java.util.Collections.singletonList(
+                        new Video(
+                                "NBC Boston",
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.HIGH, 1920, 1080, 5253600),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
+        if (location.contains("nbcnews.com/watch#bay-area")) {
+            String mediaUrl = resolveNBCBayAreaLowestVariantUrl(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                return java.util.Collections.singletonList(
+                        new Video(
+                                "NBC Bay Area",
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.HIGH, 1920, 1080, 5253600),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
+        if (location.contains("nbcnews.com/watch#los-angeles")) {
+            String mediaUrl = resolveNBCLosAngelesLowestVariantUrl(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                return java.util.Collections.singletonList(
+                        new Video(
+                                "NBC Los Angeles",
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.HIGH, 1920, 1080, 5253600),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
+        if (location.contains("nbcnews.com/watch#new-york")) {
+            String mediaUrl = resolveNBCNewYorkLowestVariantUrl(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                return java.util.Collections.singletonList(
+                        new Video(
+                                "NBC New York",
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.HIGH, 1920, 1080, 5253600),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
+        if (location.contains("nbcnews.com/watch#washington")) {
+            String mediaUrl = resolveNBCWashingtonLowestVariantUrl(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                return java.util.Collections.singletonList(
+                        new Video(
+                                "NBC Washington",
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.HIGH, 1920, 1080, 5253600),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
         if (location.contains("globalnews.ca") || location.contains("ctvnews.ca") || location.contains("cp24.com")) {
             String parentLink;
             String content;

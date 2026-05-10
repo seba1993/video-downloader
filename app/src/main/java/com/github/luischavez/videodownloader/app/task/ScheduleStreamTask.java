@@ -152,9 +152,11 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
                 if (!concatenationFolderFile.exists()) concatenationFolderFile.mkdirs();
             }
 
+            // Intentional policy: after sorting, pick the lowest available quality.
+            // If later you want the app to prefer a higher quality again, this is the
+            // single place to change that behavior.
             medias.sort(Comparable::compareTo);
-
-            Media selectedMedia = medias.get(0);
+            Media selectedMedia = selectPreferredMedia(medias);
 
             String baseFileName = streamConfiguration.getBaseFileName() + "_" + currentTime.format(FILE_NAME_FORMATTER);
 
@@ -177,6 +179,14 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
     @Override
     protected void doDisable() throws Exception {
         task.kill();
+    }
+
+    private Media selectPreferredMedia(List<Media> medias) {
+        if (medias == null || medias.isEmpty()) {
+            return null;
+        }
+
+        return medias.get(0);
     }
 
     @Override
