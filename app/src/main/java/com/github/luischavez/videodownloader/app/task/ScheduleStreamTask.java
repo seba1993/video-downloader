@@ -154,20 +154,7 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
 
             medias.sort(Comparable::compareTo);
 
-            Media selectedMedia = null;
-
-            for (Media media : medias) {
-                Quality quality = media.getQuality();
-
-                if (quality instanceof Video.VideoQuality) {
-                    if (Video.VideoQuality.class.cast(quality).getHeight() >= streamConfiguration.getPreferredQuality()) {
-                        selectedMedia = media;
-                        break;
-                    }
-                }
-            }
-
-            if (selectedMedia == null) selectedMedia = medias.get(medias.size() - 1);
+            Media selectedMedia = medias.get(0);
 
             String baseFileName = streamConfiguration.getBaseFileName() + "_" + currentTime.format(FILE_NAME_FORMATTER);
 

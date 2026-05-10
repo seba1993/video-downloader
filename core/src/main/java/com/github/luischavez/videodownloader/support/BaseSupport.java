@@ -151,6 +151,8 @@ public abstract class BaseSupport extends ContextWrapper implements Support, Med
     public String buildMediaLink(String location, String parentLink, String mediaLink) {
         if (mediaLink == null || mediaLink.isEmpty()) return mediaLink;
 
+        mediaLink = mediaLink.trim();
+
         // Already absolute
         if (mediaLink.startsWith("http://") || mediaLink.startsWith("https://")) {
             return mediaLink;
@@ -171,6 +173,13 @@ public abstract class BaseSupport extends ContextWrapper implements Support, Med
         try {
             if (parentLink != null && !parentLink.isEmpty()) {
                 java.net.URI base = new java.net.URI(LocationRequestUtils.sanitize(parentLink));
+                base = new java.net.URI(
+                        base.getScheme(),
+                        base.getAuthority(),
+                        base.getPath(),
+                        null,
+                        null
+                );
                 return base.resolve(mediaLink).toString();
             }
         } catch (Exception ex) {

@@ -18,7 +18,6 @@ import java.nio.charset.StandardCharsets;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -741,6 +740,70 @@ public class GenericSupport extends FFMPEGSupport {
         );
     }
 
+    private String resolveNBCMiamiLowestVariantUrl(String location) throws MediaOfflineException {
+        String masterUrl = buildNBCMiamiWatchUrl();
+        String content = fetchUrl(masterUrl);
+        String[] lines = content.split("\\r?\\n");
+        String selectedLink = "";
+        int selectedHeight = Integer.MAX_VALUE;
+        int selectedBandwidth = Integer.MAX_VALUE;
+
+        for (int i = 0; i < lines.length - 1; i++) {
+            String info = lines[i];
+            String link = lines[i + 1].trim();
+
+            if (!info.startsWith("#EXT-X-STREAM-INF")) {
+                continue;
+            }
+
+            if (link.isEmpty() || link.startsWith("#")) {
+                continue;
+            }
+
+            int height = 0;
+            int bandwidth = 0;
+
+            Matcher resolutionMatcher = Pattern.compile("RESOLUTION=(\\d+)x(\\d+)").matcher(info);
+            if (resolutionMatcher.find()) {
+                height = Integer.parseInt(resolutionMatcher.group(2));
+            }
+
+            Matcher bandwidthMatcher = Pattern.compile("BANDWIDTH=(\\d+)").matcher(info);
+            if (bandwidthMatcher.find()) {
+                bandwidth = Integer.parseInt(bandwidthMatcher.group(1));
+            }
+
+            if (selectedLink.isEmpty()
+                    || height < selectedHeight
+                    || (height == selectedHeight && bandwidth < selectedBandwidth)) {
+                selectedHeight = height;
+                selectedBandwidth = bandwidth;
+                selectedLink = link;
+            }
+        }
+
+        if (selectedLink.isEmpty()) {
+            return masterUrl;
+        }
+
+        try {
+            URL base = new URL(masterUrl);
+            java.net.URI resolved = new java.net.URI(base.getProtocol(), base.getAuthority(), base.getPath(), null, null).resolve(selectedLink.trim());
+            if (resolved != null) {
+                return resolved.toString();
+            }
+        } catch (Exception ex) {
+            // fallback below
+        }
+
+        String resolved = buildMediaLink(location, masterUrl, selectedLink);
+        if (resolved == null || resolved.trim().isEmpty()) {
+            return masterUrl;
+        }
+
+        return resolved;
+    }
+
     private String toNBCNewsPartnerPlayerUrl(String portablePlayerUrl) throws MediaOfflineException {
         try {
             URL url = new URL(portablePlayerUrl);
@@ -828,7 +891,7 @@ public class GenericSupport extends FFMPEGSupport {
         }
 
         if ("#miami".equals(hash)) {
-            return buildNBCMiamiWatchUrl();
+            return resolveNBCMiamiLowestVariantUrl(location);
         }
 
         String direct = getNBCNewsDirectM3U8(hash);
@@ -1405,22 +1468,6 @@ public class GenericSupport extends FFMPEGSupport {
 
     @Override
     public List<Media> getMedia(String location) throws MediaNotFoundException, MediaOfflineException {
-        if (location.contains("nbcnews.com/watch#miami")) {
-            String mediaUrl = resolveNBCNewsWatch(location);
-
-            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
-                return Collections.singletonList(
-                        new Video(
-                                "NBC Miami",
-                                mediaUrl,
-                                new Video.VideoQuality(Quality.Type.HIGH, 1920, 1080, 5253600),
-                                "",
-                                true
-                        )
-                );
-            }
-        }
-
         if (location.contains("globalnews.ca") || location.contains("ctvnews.ca") || location.contains("cp24.com")) {
             String parentLink;
             String content;
