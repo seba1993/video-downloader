@@ -62,6 +62,10 @@ public class GenericSupport extends FFMPEGSupport {
     private static final String NBC_GPP = "DBABLA~BVQVAAAAAgA.QA";
     private static final String NBC_US_PRIVACY = "1YYN";
     private static final String NBC_PLAYER_VERSION = "8.30.1";
+    private static final String LIVENOWFOX_API_KEY = "EnQIMCZDfBfkGjuBqz5aUJM131Ncju5U";
+    private static final String LIVENOWFOX_LOCAL_ASSET_INFO_ID = "FOXIDSH059841490000";
+    private static final String LIVENOWFOX_REFERER = "https://www.livenowfox.com/";
+    private static final String LIVENOWFOX_PLATFORM_LOCATION = "eyJ2Zm94IjpmYWxzZSwib3ZlcnJpZGUiOmZhbHNlLCJsYXRpdHVkZSI6MjUuNjYsImxvbmdpdHVkZSI6LTgwLjQxLCJjaXR5IjoiTWlhbWkiLCJyZWdpb24iOiJGbG9yaWRhIiwiY291bnRyeSI6IlVTIiwiemlwX2NvZGUiOiIzMzE4NiIsInRpbWVfem9uZSI6Ii0wNDowMCIsIm1ldHJvX2NvZGUiOiI1MjgiLCJuYXRpb25hbF9zdGF0aW9uc19jYWxsX3NpZ24iOlsiRk9YLVNPVUwiLCJGT1hXRUFUSEVSIiwibmV3c25vdyJdLCJwdWJsaWNfaXAiOiIxOTUuMTgxLjE2My44IiwiY29ubl9zcGVlZCI6ImJyb2FkYmFuZCIsImNvbm5fdHlwZSI6IndpcmVkIn0=";
 
     public GenericSupport(Context context) {
         super(context);
@@ -110,6 +114,7 @@ public class GenericSupport extends FFMPEGSupport {
                 Pattern.compile("^https?://.*cp24\\.com.*$"),
                 Pattern.compile("^https?://.*ctvnews\\.ca.*$"),
                 Pattern.compile("^https?://.*globalnews\\.ca\\/live\\/.*$"),
+                Pattern.compile("^https?://.*livenowfox\\.com\\/live(?:\\?.*)?$"),
                 Pattern.compile("^https?://.*nbcnews\\.com\\/watch(?:#.*)?$"),
                 Pattern.compile("^https?://.*abc\\.com\\/watch-live\\/.*$"),
                 Pattern.compile("^https?://.*wionews\\.com.*$"),
@@ -303,6 +308,13 @@ public class GenericSupport extends FFMPEGSupport {
             return Map.of(
                     "Referer", location,
                     "Origin", "https://tvpass.org",
+                    "User-Agent", USER_AGENT
+            );
+        }
+
+        if (location.contains("livenowfox.com/live")) {
+            return Map.of(
+                    "Referer", LIVENOWFOX_REFERER,
                     "User-Agent", USER_AGENT
             );
         }
@@ -1866,6 +1878,99 @@ public class GenericSupport extends FFMPEGSupport {
         }
     }
 
+    private String extractLiveNowFoxCallsign(String location) throws MediaOfflineException {
+        try {
+            String query = new URL(location).getQuery();
+
+            if (query == null || query.trim().isEmpty()) {
+                return "";
+            }
+
+            for (String part : query.split("&")) {
+                String[] pieces = part.split("=", 2);
+
+                if (pieces.length != 2 || !"id".equalsIgnoreCase(pieces[0])) {
+                    continue;
+                }
+
+                String value = URLDecoder.decode(pieces[1], StandardCharsets.UTF_8.name()).trim().toUpperCase();
+                return value;
+            }
+
+            return "";
+        } catch (MediaOfflineException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new MediaOfflineException("invalid LiveNOW FOX url " + location, ex);
+        }
+    }
+
+    private String buildLiveNowFoxAnonymousToken(String deviceId) throws MediaOfflineException {
+        String body = "{\"deviceId\":\"" + jsonEscape(deviceId) + "\"}";
+        Map<String, String> headers = new HashMap<>();
+        headers.put("x-api-key", LIVENOWFOX_API_KEY);
+        headers.put("x-delegated-auth-flow", "true");
+        headers.put("Referer", LIVENOWFOX_REFERER);
+
+        JsonObject loginJson = JsonParser.parseString(
+                postJson("https://api3.fox.com/v2.0/login/v2", body, headers)
+        ).getAsJsonObject();
+
+        if (!loginJson.has("accessToken") || loginJson.get("accessToken").isJsonNull()) {
+            throw new MediaOfflineException("missing LiveNOW FOX accessToken");
+        }
+
+        return loginJson.get("accessToken").getAsString();
+    }
+
+    private String resolveLiveNowFox(String location) throws MediaOfflineException {
+        String callsign = extractLiveNowFoxCallsign(location);
+
+        if (callsign.isEmpty() || "LNFX".equalsIgnoreCase(callsign)) {
+            return "";
+        }
+
+        String assetInfoUrl = "https://prod.api.digitalvideoplatform.com/fts/v3.0/assetinfo/"
+                + LIVENOWFOX_LOCAL_ASSET_INFO_ID
+                + "?network=fts&callsign="
+                + callsign;
+
+        JsonObject assetInfo = JsonParser.parseString(fetchUrl(assetInfoUrl)).getAsJsonObject();
+        JsonObject asset = assetInfo.getAsJsonObject("asset");
+
+        if (asset == null || !asset.has("id") || asset.get("id").isJsonNull()) {
+            throw new MediaOfflineException("missing LiveNOW FOX asset id for " + callsign);
+        }
+
+        String assetId = asset.get("id").getAsString();
+        String deviceId = java.util.UUID.randomUUID().toString();
+        String accessToken = buildLiveNowFoxAnonymousToken(deviceId);
+        String body = "{\"asset\":{\"id\":\"" + jsonEscape(assetId) + "\"},"
+                + "\"stream\":{\"type\":\"live\"},"
+                + "\"device\":{\"capabilities\":[],\"width\":1280,\"height\":720,\"os\":\"Windows\",\"osv\":\"10\"},"
+                + "\"ad\":{\"did\":\"" + jsonEscape(deviceId) + "\",\"customParams\":{},\"capabilities\":[\"ssai\"]},"
+                + "\"privacy\":{\"us\":\"1YNN\",\"lat\":false}}";
+
+        Map<String, String> headers = new HashMap<>();
+        headers.put("x-api-key", LIVENOWFOX_API_KEY);
+        headers.put("x-access-token", "Bearer " + accessToken);
+        headers.put("x-platform-location", LIVENOWFOX_PLATFORM_LOCATION);
+        headers.put("x-device-capabilities", "drm/widevine");
+        headers.put("Referer", LIVENOWFOX_REFERER);
+
+        JsonObject watchJson = JsonParser.parseString(
+                postJson("https://prod.api.digitalvideoplatform.com/fts/v3.0/watchlive", body, headers)
+        ).getAsJsonObject();
+
+        String playbackUrl = getJsonString(watchJson, "stream", "playbackUrl");
+
+        if (playbackUrl == null || playbackUrl.trim().isEmpty()) {
+            throw new MediaOfflineException("missing LiveNOW FOX playback url for " + callsign);
+        }
+
+        return playbackUrl;
+    }
+
     private String resolveGeneric(String location) throws MediaOfflineException {
         String content = getContent(location);
 
@@ -1892,7 +1997,7 @@ public class GenericSupport extends FFMPEGSupport {
             return extractLinksFromText(resolveContent(location));
         }
 
-        if (location.contains("rainews.it") || location.contains("i24news.tv") || location.contains("kan.org.il") || location.contains("knesset.tv") || location.contains("mako.co.il") || location.contains("newslive.com") || location.contains("livenewsnow.com") || location.contains("tvpass.org/live/") || location.contains("thetvapp.to/tv/") || location.contains("usnewson.com/watch/") || location.contains("nbcnews.com/watch") || location.contains("streamfare.info/oan-news") || (location.contains("streamfare.") && location.contains("-live-stream") && !location.contains("news-12-new-york-live-stream"))) {
+        if (location.contains("rainews.it") || location.contains("i24news.tv") || location.contains("kan.org.il") || location.contains("knesset.tv") || location.contains("mako.co.il") || location.contains("newslive.com") || location.contains("livenewsnow.com") || location.contains("tvpass.org/live/") || location.contains("thetvapp.to/tv/") || location.contains("usnewson.com/watch/") || location.contains("nbcnews.com/watch") || location.contains("livenowfox.com/live") || location.contains("streamfare.info/oan-news") || (location.contains("streamfare.") && location.contains("-live-stream") && !location.contains("news-12-new-york-live-stream"))) {
             return new String[]{resolveContent(location)};
         }
 
@@ -2262,6 +2367,8 @@ public class GenericSupport extends FFMPEGSupport {
             return resolve13TV(location);
         } else if (location.contains("globalnews.ca")) {
             return resolveGlobalNews(location);
+        } else if (location.contains("livenowfox.com/live")) {
+            return resolveLiveNowFox(location);
         } else if (location.contains("abc.com/watch-live/")) {
             return resolveABCWatchLive(location);
         } else if (location.contains("nbcnews.com/watch")) {
