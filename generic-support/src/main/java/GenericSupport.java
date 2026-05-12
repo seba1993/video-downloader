@@ -47,11 +47,17 @@ public class GenericSupport extends FFMPEGSupport {
     private static final Pattern NBC_FW_WEB_SFID_PATTERN = Pattern.compile("\"fwWebSFIDNtl\"\\s*:\\s*\"(?<value>[^\"]+)\"", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     private static final Pattern NBC_FW_NETWORK_ID_PATTERN = Pattern.compile("\"fwNetworkID\"\\s*:\\s*\"(?<value>[^\"]+)\"", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     private static final Pattern NBC_CALL_LETTERS_PATTERN = Pattern.compile("\"callLetters\"\\s*:\\s*\"(?<value>[^\"]+)\"", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final Pattern ABC_DMP_PLAYBACK_TOKEN_PATTERN = Pattern.compile("\"dmpPlaybackToken\"\\s*:\\s*\"(?<token>[^\"]+)\"", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
     private static final Pattern VIDGYOR_FUNC_PATTERN = Pattern.compile("\\.loadPlayer\\(.[^,]+,.[^,]+,(?<channel>.[^,]+),.[^,]+,.[^,]+\\)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     private static final String JAVASCRIPT_VARIABLE = "(var|let)\\s+VARNAME\\s*=\\s*(\"|')(?<value>.+)(\"|');";
 
     private static final String USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36";
+    private static final String ABC_REGISTER_DEVICE_BEARER = "YWJjJmJyb3dzZXImMS4wLjA.B1avqvrcbTb6GRneixWJGLgLCyVkVzOulkgaeD75Bys";
+    private static final String ABC_CLIENT_ID = "abc-a9045cb5";
+    private static final String ABC_SDK_VERSION = "34.1";
+    private static final String ABC_APPLICATION_VERSION = "9.16.0";
+    private static final String ABC_DEFAULT_PLAYBACK_ID = "eyJjaGFubmVsSWQiOiI3OTQ0OTMxMi03OWRkLTQ3M2QtODczYy01MTVlYmY0YjVlNWYiLCJjb250ZW50VHlwZSI6ImxpbmVhciIsInNvdXJjZUlkIjoiZGlzbmV5LWVudGVydGFpbm1lbnQtc3RhdGljIn0=";
     private static final String NBC_NIELSEN_APP_ID = "PE075FB87-C9AE-41D5-8B17-95C0E9301C8E";
     private static final String NBC_GPP = "DBABLA~BVQVAAAAAgA.QA";
     private static final String NBC_US_PRIVACY = "1YYN";
@@ -105,6 +111,7 @@ public class GenericSupport extends FFMPEGSupport {
                 Pattern.compile("^https?://.*ctvnews\\.ca.*$"),
                 Pattern.compile("^https?://.*globalnews\\.ca\\/live\\/.*$"),
                 Pattern.compile("^https?://.*nbcnews\\.com\\/watch(?:#.*)?$"),
+                Pattern.compile("^https?://.*abc\\.com\\/watch-live\\/.*$"),
                 Pattern.compile("^https?://.*wionews\\.com.*$"),
                 Pattern.compile("^https?://.*timesnownews\\.com.*$"),
                 Pattern.compile("^https?://.*uol\\.com.*$"),
@@ -181,7 +188,16 @@ public class GenericSupport extends FFMPEGSupport {
             media = new Video(media.getInfo(), "https://d1nmqgphjn0y4.cloudfront.net/live/ip/live.isml/5ee6e167-1167-4a85-9d8d-e08a3f55cff3.m3u8", new Video.VideoQuality(Quality.Type.HIGH, 1920, 1080, 1000), "", true);
         }
 
-        return super.generateCommand(location, media, outputFile);
+        String command = super.generateCommand(location, media, outputFile);
+
+        if (location.contains("abc.com/watch-live/")) {
+            command = command.replace(
+                    "ffmpeg -nostdin -xerror",
+                    "ffmpeg -nostdin -xerror -allowed_extensions ALL -allowed_segment_extensions ALL -extension_picky 0 -protocol_whitelist file,http,https,tcp,tls,crypto,data"
+            );
+        }
+
+        return command;
     }
 
     @Override
@@ -1236,6 +1252,108 @@ public class GenericSupport extends FFMPEGSupport {
         }
     }
 
+    private String postJson(String url, String body, Map<String, String> headers) throws MediaOfflineException {
+        try {
+            byte[] data = body.getBytes(StandardCharsets.UTF_8);
+            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setInstanceFollowRedirects(true);
+            connection.setRequestMethod("POST");
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("User-Agent", USER_AGENT);
+
+            headers.forEach(connection::setRequestProperty);
+
+            connection.getOutputStream().write(data);
+
+            int status = connection.getResponseCode();
+            if (!String.valueOf(status).startsWith("2")) {
+                throw new MediaOfflineException("invalid request " + url + " status " + status);
+            }
+
+            return readConnectionContent(connection);
+        } catch (MediaOfflineException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new MediaOfflineException("request failed, may be the site is offline or you don't have internet connection " + url, ex);
+        }
+    }
+
+    private String jsonEscape(String value) {
+        return value.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
+
+    private String getRequiredString(JsonObject object, String field) throws MediaOfflineException {
+        if (object == null || !object.has(field) || object.get(field).isJsonNull()) {
+            throw new MediaOfflineException("missing ABC response field " + field);
+        }
+
+        return object.get(field).getAsString();
+    }
+
+    private String resolveABCWatchLive(String location) throws MediaOfflineException {
+        String content = getContent(location);
+        Matcher matcher = ABC_DMP_PLAYBACK_TOKEN_PATTERN.matcher(content);
+        String playbackId = matcher.find() ? matcher.group("token") : ABC_DEFAULT_PLAYBACK_ID;
+
+        String registerBody = "{\"query\":\"mutation registerDevice($input: RegisterDeviceInput!) { registerDevice(registerDevice: $input) { grant { grantType assertion } } }\","
+                + "\"variables\":{\"input\":{\"deviceFamily\":\"browser\",\"applicationRuntime\":\"chrome\",\"deviceProfile\":\"windows\",\"deviceLanguage\":\"en-US\","
+                + "\"attributes\":{\"osDeviceIds\":[],\"manufacturer\":\"microsoft\",\"model\":null,\"operatingSystem\":\"windows\",\"operatingSystemVersion\":\"10.0\","
+                + "\"browserName\":\"chrome\",\"browserVersion\":\"148.0.0\",\"brand\":\"web\"},\"devicePlatformId\":\"browser\"}},\"operationName\":\"registerDevice\"}";
+
+        Map<String, String> registerHeaders = new HashMap<>();
+        registerHeaders.put("Authorization", "Bearer " + ABC_REGISTER_DEVICE_BEARER);
+        registerHeaders.put("X-BAMSDK-Client-ID", ABC_CLIENT_ID);
+        registerHeaders.put("X-BAMSDK-Version", ABC_SDK_VERSION);
+        registerHeaders.put("X-BAMSDK-Platform", "javascript/windows/chrome");
+        registerHeaders.put("X-BAMSDK-Platform-ID", "browser");
+        registerHeaders.put("X-DSS-Edge-Accept", "vnd.dss.edge+json; version=2");
+        registerHeaders.put("X-Application-Version", ABC_APPLICATION_VERSION);
+        registerHeaders.put("Origin", "https://abc.com");
+        registerHeaders.put("Referer", location);
+
+        JsonObject registerJson = JsonParser.parseString(
+                postJson("https://disney-entertainment.api.edge.bamgrid.com/graph/v1/device/graphql", registerBody, registerHeaders)
+        ).getAsJsonObject();
+
+        JsonObject sdk = registerJson.getAsJsonObject("extensions").getAsJsonObject("sdk");
+        String accessToken = getRequiredString(sdk.getAsJsonObject("token"), "accessToken");
+
+        String playbackSessionId = java.util.UUID.randomUUID().toString();
+        String standardWebId = java.util.UUID.randomUUID().toString();
+        String playbackBody = "{\"playback\":{\"attributes\":{\"resolution\":{\"max\":[\"1280x720\"]},\"protocol\":\"HTTPS\","
+                + "\"assetInsertionStrategies\":{\"point\":\"SGAI\",\"range\":\"SGAI\"},\"playbackInitiationContext\":\"ONLINE\","
+                + "\"frameRates\":[60],\"videoSegmentTypes\":[\"FMP4\"],\"maxSlideDuration\":\"15_MIN\",\"promosSupported\":true},"
+                + "\"adTracking\":{\"limitAdTrackingEnabled\":\"NOT_SUPPORTED\",\"deviceAdId\":\"00000000-0000-0000-0000-000000000000\","
+                + "\"privacyOptOut\":\"YES\",\"additionalConsent\":\"\",\"gamParameters\":{\"adUnitCode\":\"/21783347309/abc-news/abc.com/web/fast-channel\","
+                + "\"contextUrl\":\"" + jsonEscape(location) + "\",\"affiliateStationCode\":\"\",\"isPlayerMuted\":false,\"isPlayerAutoplay\":true}},"
+                + "\"tracking\":{\"playbackSessionId\":\"" + playbackSessionId + "\",\"standardWebId\":\"" + jsonEscape(standardWebId) + "\"}},"
+                + "\"playbackId\":\"" + jsonEscape(playbackId) + "\",\"allowedCreatives\":[],\"allowedInsertionVisuals\":[]}";
+
+        Map<String, String> playbackHeaders = new HashMap<>();
+        playbackHeaders.put("Authorization", "Bearer " + accessToken);
+        playbackHeaders.put("X-BAMSDK-Client-ID", ABC_CLIENT_ID);
+        playbackHeaders.put("X-BAMSDK-Version", ABC_SDK_VERSION);
+        playbackHeaders.put("X-BAMSDK-Platform", "javascript/windows/chrome");
+        playbackHeaders.put("X-BAMSDK-Platform-ID", "browser");
+        playbackHeaders.put("X-DSS-Edge-Accept", "vnd.dss.edge+json; version=2");
+        playbackHeaders.put("X-Application-Version", ABC_APPLICATION_VERSION);
+        playbackHeaders.put("Origin", "https://abc.com");
+        playbackHeaders.put("Referer", location);
+
+        JsonObject playbackJson = JsonParser.parseString(
+                postJson("https://disney-entertainment.playback.edge.bamgrid.com/v7/playback/tve/ctr-regular", playbackBody, playbackHeaders)
+        ).getAsJsonObject();
+
+        JsonObject firstSource = playbackJson.getAsJsonObject("stream")
+                .getAsJsonArray("sources")
+                .get(0)
+                .getAsJsonObject();
+
+        return getRequiredString(firstSource.getAsJsonObject("slide"), "url");
+    }
+
     private String[] extractLinksFromText(String content) {
         java.util.ArrayList<String> links = new java.util.ArrayList<>();
         Matcher matcher = LINK_PATTERN.matcher(content);
@@ -1773,6 +1891,32 @@ public class GenericSupport extends FFMPEGSupport {
 
     @Override
     public List<Media> getMedia(String location) throws MediaNotFoundException, MediaOfflineException {
+        if (location != null && location.toLowerCase().contains(".m3u8")) {
+            String content = getContent(location);
+            List<Media> directMedias = new GenericVideoResolver(getWrappedContext())
+                    .findMedia(location, location, content, this::buildMediaLink);
+
+            if (directMedias != null && !directMedias.isEmpty()) {
+                return directMedias;
+            }
+        }
+
+        if (location != null && location.contains("abc.com/watch-live/")) {
+            String mediaUrl = resolveABCWatchLive(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                return java.util.Collections.singletonList(
+                        new Video(
+                                "ABC News Live",
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.HIGH, 1280, 720, 0),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
         if ("https://www.nbcnews.com/watch".equals(location) || "https://nbcnews.com/watch".equals(location)) {
             String mediaUrl = resolveNBCLowestVariantUrl(location, resolveNBCNewsWatch(location));
 
@@ -2088,6 +2232,8 @@ public class GenericSupport extends FFMPEGSupport {
             return resolve13TV(location);
         } else if (location.contains("globalnews.ca")) {
             return resolveGlobalNews(location);
+        } else if (location.contains("abc.com/watch-live/")) {
+            return resolveABCWatchLive(location);
         } else if (location.contains("nbcnews.com/watch")) {
             return resolveNBCNewsWatch(location);
         } else if (location.contains("kan.org.il")) {

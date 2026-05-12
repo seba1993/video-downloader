@@ -11,10 +11,10 @@ import java.util.regex.Pattern;
 public class M3U8VideoResolver extends BaseMediaResolver {
 
     private static final Pattern[] M3U8_OPTION_PATTERNS = {
-            Pattern.compile("(?<descriptor>(?<info>#EXT.*RESOLUTION=(?<resolution>(?<width>\\d+)x(?<height>\\d+)).*BANDWIDTH=(?<bandwidth>\\d+).*)\\n(?<m3u8>.+))", Pattern.MULTILINE),
-            Pattern.compile("(?<descriptor>(?<info>#EXT.*BANDWIDTH=(?<bandwidth>\\d+).*RESOLUTION=(?<resolution>(?<width>\\d+)x(?<height>\\d+)).*)\\n(?<m3u8>.+))", Pattern.MULTILINE),
-            Pattern.compile("(?<descriptor>(?<info>#EXT.*BANDWIDTH=(?<bandwidth>\\d+).*)\\n(?<m3u8>.+))", Pattern.MULTILINE),
-            Pattern.compile("(?<descriptor>(?<info>#EXT.*RESOLUTION=(?<resolution>(?<width>\\d+)x(?<height>\\d+)).*BANDWIDTH=(?<bandwidth>\\d+.*URI=\\\"(?<m3u8>.*[^\\\"])).*)\\n(?<m3u82>.+))", Pattern.MULTILINE),
+            Pattern.compile("(?<descriptor>(?<info>#EXT.*RESOLUTION=(?<resolution>(?<width>\\d+)x(?<height>\\d+)).*BANDWIDTH=(?<bandwidth>\\d+).*)\\r?\\n(?<m3u8>.+))", Pattern.MULTILINE),
+            Pattern.compile("(?<descriptor>(?<info>#EXT.*BANDWIDTH=(?<bandwidth>\\d+).*RESOLUTION=(?<resolution>(?<width>\\d+)x(?<height>\\d+)).*)\\r?\\n(?<m3u8>.+))", Pattern.MULTILINE),
+            Pattern.compile("(?<descriptor>(?<info>#EXT.*BANDWIDTH=(?<bandwidth>\\d+).*)\\r?\\n(?<m3u8>.+))", Pattern.MULTILINE),
+            Pattern.compile("(?<descriptor>(?<info>#EXT.*RESOLUTION=(?<resolution>(?<width>\\d+)x(?<height>\\d+)).*BANDWIDTH=(?<bandwidth>\\d+.*URI=\\\"(?<m3u8>.*[^\\\"])).*)\\r?\\n(?<m3u82>.+))", Pattern.MULTILINE),
     };
 
     private static final Pattern M3U8_CODECS_PATTERN = Pattern.compile("#EXT.*CODECS=\\\"(?<codecs>.[^\\\"]+).*");
