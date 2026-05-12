@@ -197,6 +197,16 @@ public class GenericSupport extends FFMPEGSupport {
             );
         }
 
+        if (location.contains("i24news.tv")) {
+            command = command.replace(
+                    " -i \"",
+                    " -i \""
+            ).replace(
+                    " -c:v copy -c:a copy ",
+                    " -map 0:p:0:v:0 -map 0:p:0:a:0 -c:v copy -c:a copy "
+            );
+        }
+
         return command;
     }
 
@@ -1910,6 +1920,26 @@ public class GenericSupport extends FFMPEGSupport {
                                 "ABC News Live",
                                 mediaUrl,
                                 new Video.VideoQuality(Quality.Type.HIGH, 1280, 720, 0),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
+        if (location != null && location.contains("i24news.tv")) {
+            String mediaUrl = resolveI24News(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                String info = location.toLowerCase().endsWith("/he") ? "I24 News HE"
+                        : location.toLowerCase().endsWith("/en") ? "I24 News EN"
+                        : "I24 News";
+
+                return java.util.Collections.singletonList(
+                        new Video(
+                                info,
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.LOW, 480, 270, 635800),
                                 "",
                                 true
                         )
