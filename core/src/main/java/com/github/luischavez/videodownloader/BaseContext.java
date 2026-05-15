@@ -2,6 +2,8 @@ package com.github.luischavez.videodownloader;
 
 import com.github.luischavez.videodownloader.system.System;
 
+import java.io.File;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -17,8 +19,30 @@ public abstract class BaseContext implements Context {
         return system;
     }
 
-    public String getWorkingDir() {
+    public static String resolveWorkingDir() {
+        try {
+            URI location = BaseContext.class.getProtectionDomain().getCodeSource().getLocation().toURI();
+            File file = new File(location);
+
+            if (file.isFile()) {
+                File parent = file.getParentFile();
+                if (parent != null) {
+                    return parent.getAbsolutePath();
+                }
+            }
+
+            if (file.exists()) {
+                return file.getAbsolutePath();
+            }
+        } catch (Exception ex) {
+            // Fallback below.
+        }
+
         return java.lang.System.getProperty("user.dir");
+    }
+
+    public String getWorkingDir() {
+        return resolveWorkingDir();
     }
 
     @Override

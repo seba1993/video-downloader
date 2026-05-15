@@ -1,4 +1,5 @@
 import com.github.luischavez.videodownloader.Context;
+import com.github.luischavez.videodownloader.BaseContext;
 import com.github.luischavez.videodownloader.support.*;
 import com.github.luischavez.videodownloader.task.Task;
 import com.github.luischavez.videodownloader.util.CryptoUtils;
@@ -85,7 +86,7 @@ public class YouTubeSupport extends FFMPEGSupport {
         }
 
         try {
-            final String workingDirectory = System.getProperty("user.dir");
+            final String workingDirectory = BaseContext.resolveWorkingDir();
             final String executable = resolveExecutable(workingDirectory);
             final File youtubeDirectory = new File(buildPath(workingDirectory, "youtube"));
             final File executableFile = new File(youtubeDirectory, executable);
@@ -193,7 +194,7 @@ public class YouTubeSupport extends FFMPEGSupport {
     }
 
     private List<Media> resolveMediaWithYtDlp(String location) throws MediaOfflineException, MediaNotFoundException {
-        final String workingDirectory = System.getProperty("user.dir");
+        final String workingDirectory = BaseContext.resolveWorkingDir();
         final String executable = resolveExecutable(workingDirectory);
         final File youtubeDirectory = new File(buildPath(workingDirectory, "youtube"));
         final File executableFile = new File(youtubeDirectory, executable);

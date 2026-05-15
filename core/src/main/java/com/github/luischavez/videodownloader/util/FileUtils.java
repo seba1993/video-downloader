@@ -2,6 +2,7 @@ package com.github.luischavez.videodownloader.util;
 
 import java.io.*;
 import java.util.stream.Collectors;
+import com.github.luischavez.videodownloader.BaseContext;
 
 public final class FileUtils {
 
@@ -20,7 +21,7 @@ public final class FileUtils {
     }
 
     public static String fileAsString(String fileName, String directory) {
-        directory = directory == null ? System.getProperty("user.dir") : directory;
+        directory = directory == null ? BaseContext.resolveWorkingDir() : directory;
         String fileSeparator = System.getProperty("file.separator");
         String filePath = directory + fileSeparator + fileName;
 

@@ -1,6 +1,7 @@
 package com.github.luischavez.videodownloader.app.task;
 
 import com.github.luischavez.videodownloader.Context;
+import com.github.luischavez.videodownloader.BaseContext;
 import com.github.luischavez.videodownloader.task.LocalProcessTask;
 import com.github.luischavez.videodownloader.util.PlatformUtils;
 
@@ -45,7 +46,7 @@ public class YouTubeTask extends LocalProcessTask {
 
     @Override
     protected ProcessBuilder buildCommand() throws Exception {
-        String workingDirectory = System.getProperty("user.dir");
+        String workingDirectory = BaseContext.resolveWorkingDir();
         String binDirectory = getWrappedContext().buildPath(workingDirectory, "youtube");
         final File configFile = resolveConfigFile(binDirectory);
         final String configPath = configFile.getPath();

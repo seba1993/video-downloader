@@ -29,6 +29,7 @@ import com.github.luischavez.videodownloader.app.gui.renderer.TableCenterCellRen
 import com.github.luischavez.videodownloader.app.gui.renderer.TableProgressCellRenderer;
 import com.github.luischavez.videodownloader.app.manager.YouTubeManager;
 import com.github.luischavez.videodownloader.app.task.RunningPids;
+import com.github.luischavez.videodownloader.BaseContext;
 import com.github.luischavez.videodownloader.configuration.ConfigurationManager;
 import com.github.luischavez.videodownloader.configuration.validation.ValidationResult;
 import com.github.luischavez.videodownloader.configuration.validation.ValidationResults;
@@ -70,10 +71,10 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
     }
 
     private File resolveYouTubeFile(String preferredName, String legacyName) {
-        File preferredFile = new File(AppContext.instance().buildPath(System.getProperty("user.dir"), "youtube", preferredName));
+        File preferredFile = new File(AppContext.instance().buildPath(BaseContext.resolveWorkingDir(), "youtube", preferredName));
         if (preferredFile.exists()) return preferredFile;
 
-        return new File(AppContext.instance().buildPath(System.getProperty("user.dir"), "youtube", legacyName));
+        return new File(AppContext.instance().buildPath(BaseContext.resolveWorkingDir(), "youtube", legacyName));
     }
 
     private void changeStreamStatus(String alias, boolean enable) {
@@ -193,7 +194,7 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
                         "-v";
 
                 try {
-                    File youtubeDirectory = new File(AppContext.instance().buildPath(System.getProperty("user.dir"), "youtube"));
+                    File youtubeDirectory = new File(AppContext.instance().buildPath(BaseContext.resolveWorkingDir(), "youtube"));
                     if (!youtubeDirectory.exists()) youtubeDirectory.mkdirs();
 
                     File newChannelsFile = new File(youtubeDirectory, YT_DLP_CHANNELS_NAME);

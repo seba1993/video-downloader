@@ -212,6 +212,13 @@ public class GenericSupport extends FFMPEGSupport {
             );
         }
 
+        if (location.contains("kan.org.il")) {
+            command = command.replace(
+                    " -c:v copy -c:a copy ",
+                    " -map 0:v:4 -map 0:a:0 -c:v copy -c:a copy "
+            );
+        }
+
         return command;
     }
 
@@ -1530,6 +1537,10 @@ public class GenericSupport extends FFMPEGSupport {
         return resolveGeneric(location);
     }
 
+    private String resolveAmericatv(String location) {
+        return "https://dai.google.com/linear/hls/pa/event/OY2i_lL4SMyXE5Zaj4ULEg/stream/12973818-8a4c-40da-83db-7c213537d815:SCL2/master.m3u8";
+    }
+
     private String resolveMetrotvnews(String location) throws MediaOfflineException {
         return "http://edge.metrotvnews.com:1935/live-edge/smil:metro.smil/playlist.m3u8";
     }
@@ -1655,7 +1666,7 @@ public class GenericSupport extends FFMPEGSupport {
     }
 
     private String resolveKan(String location) throws MediaOfflineException {
-        return "https://kanlivep2event-i.akamaihd.net/hls/live/747610/747610/master.m3u8";
+        return "https://kancdn.medonecdn.net/livedash/oil/kancdn-live/live/kan11/live.livx?indexMode&futc&relativePaths&dvr=7200000";
     }
 
     private String resolveKnesset(String location) throws MediaOfflineException {
@@ -2016,6 +2027,22 @@ public class GenericSupport extends FFMPEGSupport {
             }
         }
 
+        if (location != null && (location.contains("kan.org.il") || location.toLowerCase().contains(".livx"))) {
+            String mediaUrl = resolveKan(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                return java.util.Collections.singletonList(
+                        new Video(
+                                "Kan 11",
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.LOW, 640, 360, 500000),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
         if (location != null && location.contains("abc.com/watch-live/")) {
             String mediaUrl = resolveABCWatchLive(location);
 
@@ -2357,6 +2384,8 @@ public class GenericSupport extends FFMPEGSupport {
             return resolveTVBrasilPlay(location);
         } else if (location.contains("jovempan.com.br/ao-vivo")) {
             return resolveJovemPan(location);
+        } else if (location.contains("americatv.com.ar/vivo")) {
+            return resolveAmericatv(location);
         } else if (location.contains("timesnownews.com")) {
             return resolveTimesNowNews(location);
         } else if (location.contains("rtp.pt")) {

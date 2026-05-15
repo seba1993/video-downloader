@@ -1,6 +1,7 @@
 package com.github.luischavez.videodownloader.app.task;
 
 import com.github.luischavez.videodownloader.util.PlatformUtils;
+import com.github.luischavez.videodownloader.BaseContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +44,7 @@ public class RunningPids implements Serializable {
     }
 
     public void store() {
-        String userDir = System.getProperty("user.dir");
+        String userDir = BaseContext.resolveWorkingDir();
         String fileName = "running_pids.obj";
 
         File file = new File(userDir, fileName);
@@ -61,7 +62,7 @@ public class RunningPids implements Serializable {
     }
 
     public void read() {
-        String userDir = System.getProperty("user.dir");
+        String userDir = BaseContext.resolveWorkingDir();
         String fileName = "running_pids.obj";
 
         File file = new File(userDir, fileName);
