@@ -1,11 +1,26 @@
 import com.github.luischavez.videodownloader.Context;
 import com.github.luischavez.videodownloader.support.FFMPEGSupport;
 import com.github.luischavez.videodownloader.support.M3U8VideoResolver;
+import com.github.luischavez.videodownloader.support.Media;
 import com.github.luischavez.videodownloader.support.MediaOfflineException;
+import com.github.luischavez.videodownloader.support.MediaNotFoundException;
 import com.github.luischavez.videodownloader.support.MediaResolver;
+import com.github.luischavez.videodownloader.support.Quality;
+import com.github.luischavez.videodownloader.support.Video;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -23,6 +38,8 @@ public class BrightcoveSupport extends FFMPEGSupport {
     private static final String BRIGHTCOVE_PLAYBACK_ENDPOINT = "https://edge.api.brightcove.com/playback/v1/accounts/%s/videos/%s";
     private static final String BRIGHTCOVE_POLICY_KEY_ENDPOINT = "https://players.brightcove.net/%s/%s_default/index.html?videoId=%s";
     private static final String BRIGHTCOVE_PK = "BCpkADawqM1mYQgRZ1bxuC1RqjjVAz6C5FCwu-68h_fyxNd0Ib4DDhZVlqC94kInbBuHvqkHQku1mZ5cRoyB3ISThApOKNpQX3iRai4hfGNbXfMhEr_FvqmfDHw";
+    private static final String BFMTV_LIVE_URL = "https://www.bfmtv.com/en-direct/";
+    private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36";
 
     public BrightcoveSupport(Context context) {
         super(context);
@@ -36,6 +53,111 @@ public class BrightcoveSupport extends FFMPEGSupport {
     @Override
     protected MediaResolver[] getMediaResolvers() {
         return resolvers(new M3U8VideoResolver(getWrappedContext()));
+    }
+
+    @Override
+    protected Map<String, String> getHeaders(String location) {
+        if (isBfmtvLiveLocation(location)) {
+            return Map.of("User-Agent", USER_AGENT);
+        }
+
+        return super.getHeaders(location);
+    }
+
+    private boolean isBfmtvLiveLocation(String location) {
+        return location != null && location.contains("bfmtv.com") && location.contains("/en-direct");
+    }
+
+    private List<Media> resolveMediaWithYtDlp(String location) throws MediaOfflineException, MediaNotFoundException {
+        final String workingDirectory = getWrappedContext().getWorkingDir();
+        final File youtubeDirectory = new File(buildPath(workingDirectory, "youtube"));
+        final File executableFile = new File(youtubeDirectory, "yt-dlp.exe");
+
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder(
+                    executableFile.getPath(),
+                    "--ignore-config",
+                    "--dump-single-json",
+                    "--no-warnings",
+                    "--skip-download",
+                    location
+            );
+            processBuilder.directory(youtubeDirectory);
+            processBuilder.redirectErrorStream(true);
+
+            Process process = processBuilder.start();
+            StringBuilder output = new StringBuilder();
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    output.append(line).append('\n');
+                }
+            }
+
+            int exitCode = process.waitFor();
+
+            if (process.isAlive()) {
+                process.destroyForcibly();
+            }
+
+            if (exitCode != 0 || output.length() == 0) {
+                throw new MediaOfflineException(String.format("yt-dlp failed for location %s", location));
+            }
+
+            JsonObject json = JsonParser.parseString(output.toString()).getAsJsonObject();
+            JsonArray formats = json.getAsJsonArray("formats");
+
+            if (formats == null || formats.size() == 0) {
+                throw new MediaNotFoundException(String.format("formats not found for location %s", location));
+            }
+
+            List<Video> medias = new ArrayList<>();
+
+            for (JsonElement element : formats) {
+                if (!element.isJsonObject()) {
+                    continue;
+                }
+
+                JsonObject format = element.getAsJsonObject();
+
+                if (!format.has("height") || format.get("height").isJsonNull()) {
+                    continue;
+                }
+
+                final String mediaUrl;
+                if (format.has("manifest_url") && !format.get("manifest_url").isJsonNull()) {
+                    mediaUrl = format.get("manifest_url").getAsString();
+                } else if (format.has("url") && !format.get("url").isJsonNull()) {
+                    mediaUrl = format.get("url").getAsString();
+                } else {
+                    continue;
+                }
+
+                int height = format.get("height").getAsInt();
+                int width = format.has("width") && !format.get("width").isJsonNull() ? format.get("width").getAsInt() : 0;
+                String info = format.has("format") && !format.get("format").isJsonNull() ? format.get("format").getAsString() : "BFMTV";
+                int bandwidth = format.has("tbr") && !format.get("tbr").isJsonNull() ? (int) (format.get("tbr").getAsDouble() * 1000) : 0;
+
+                Quality.Type qualityType = height >= 720 ? Quality.Type.HIGH : height >= 360 ? Quality.Type.MEDIUM : Quality.Type.LOW;
+                medias.add(new Video(info, mediaUrl, new Video.VideoQuality(qualityType, width, height, bandwidth), "", true));
+            }
+
+            if (medias.isEmpty()) {
+                throw new MediaNotFoundException(String.format("formats not found for location %s", location));
+            }
+
+            Video lowest = medias.stream()
+                    .min(Comparator.comparingInt(media -> ((Video.VideoQuality) media.getQuality()).getHeight()))
+                    .orElse(medias.get(0));
+
+            return java.util.Collections.singletonList(lowest);
+        } catch (MediaOfflineException | MediaNotFoundException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new MediaOfflineException(String.format("yt-dlp request failed for location %s", location), ex);
+        }
     }
 
     private String getAccount(String content) {
@@ -123,7 +245,29 @@ public class BrightcoveSupport extends FFMPEGSupport {
     }
 
     @Override
+    protected String generateCommand(String location, Media media, String outputFile) {
+        String command = super.generateCommand(location, media, outputFile);
+
+        if (isBfmtvLiveLocation(location)) {
+            command = command.replace(
+                    " -xerror ",
+                    " -err_detect ignore_err -fflags +discardcorrupt -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 2 "
+            );
+            command = command.replace(
+                    " -c:v copy -c:a copy ",
+                    " -map 0:p:3:v:0 -map 0:p:3:a:0 -c:v copy -c:a copy "
+            );
+        }
+
+        return command;
+    }
+
+    @Override
     protected String resolveContent(String location) throws MediaOfflineException {
+        if (isBfmtvLiveLocation(location)) {
+            return getContent(location);
+        }
+
         String content = getContent(location);
 
         final String account = getAccount(content);
@@ -146,5 +290,14 @@ public class BrightcoveSupport extends FFMPEGSupport {
         content = getContent(playbackEndpoint, headers);
 
         return content;
+    }
+
+    @Override
+    public List<Media> getMedia(String location) throws MediaNotFoundException, MediaOfflineException {
+        if (isBfmtvLiveLocation(location)) {
+            return resolveMediaWithYtDlp(location);
+        }
+
+        return super.getMedia(location);
     }
 }

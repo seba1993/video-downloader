@@ -16,6 +16,8 @@ import java.net.URLDecoder;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.io.InputStream;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +26,11 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 public class GenericSupport extends FFMPEGSupport {
 
@@ -125,6 +132,9 @@ public class GenericSupport extends FFMPEGSupport {
                 Pattern.compile("^https?://.*cnnchile\\.com.*$"),
                 Pattern.compile("^https?://.*presstv\\.com.*$"),
                 Pattern.compile("^https?://.*jovempan\\.com\\.br\\/ao-vivo\\/?$"),
+                Pattern.compile("^https?://.*eltrecetv\\.com\\.ar\\/vivo\\/?$"),
+                Pattern.compile("^https?://.*tf1info\\.fr\\/direct\\/?$"),
+                Pattern.compile("^https?://.*tf1info\\.fr\\/direct\\/tf1\\/?$"),
                 Pattern.compile("^https?://.*i24news\\.tv.*$"),
                 Pattern.compile("^https?://.*13tv\\.co\\.il.*$"),
                 Pattern.compile("^https?://.*kan\\.org\\.il\\/live\\/?$"),
@@ -219,6 +229,27 @@ public class GenericSupport extends FFMPEGSupport {
             );
         }
 
+        if (location.contains("eltrecetv.com.ar/vivo")) {
+            command = command.replace(
+                    " -c:v copy -c:a copy ",
+                    " -map 0:p:0:v:0 -c:v copy "
+            );
+        }
+
+        if (location.contains("mitelefe.com/telefe-en-vivo")) {
+            command = command.replace(
+                    " -c:v copy -c:a copy ",
+                    " -map 0:p:3:v:0 -map 0:p:3:a:0 -c:v copy -c:a copy "
+            );
+        }
+
+        if (location.contains("tf1info.fr/direct")) {
+            command = command.replace(
+                    " -c:v copy -c:a copy ",
+                    " -map 0:v:4 -map 0:a:0 -c:v copy -c:a copy "
+            );
+        }
+
         return command;
     }
 
@@ -249,6 +280,19 @@ public class GenericSupport extends FFMPEGSupport {
             newHeaders.put("Origin", "https://thetvapp.to");
         }
 
+        if (location.contains("eltrecetv.com.ar/vivo")) {
+            newHeaders.put("Referer", "https://www.eltrecetv.com.ar/vivo/");
+        }
+
+        if (location.contains("mitelefe.com/telefe-en-vivo")) {
+            newHeaders.put("Referer", "https://mitelefe.com/");
+        }
+
+        if (location.contains("tf1info.fr/direct")) {
+            newHeaders.put("Referer", location.endsWith("/") ? location : location + "/");
+            newHeaders.put("Origin", "https://www.tf1info.fr");
+        }
+
         if (location.contains("tvpass.org")) {
             newHeaders.put("Referer", location);
             newHeaders.put("Origin", "https://tvpass.org");
@@ -277,6 +321,22 @@ public class GenericSupport extends FFMPEGSupport {
     protected Map<String, String> resolveLinkHeaders(String location, String link) {
         if (location.contains("planetnews") || location.contains("livenewsnow.com")) {
             return Map.of("Referer", location, "User-Agent", USER_AGENT);
+        }
+
+        if (location.contains("mitelefe.com/telefe-en-vivo")) {
+            return Map.of("Referer", "https://mitelefe.com/", "User-Agent", USER_AGENT);
+        }
+
+        if (location.contains("tf1info.fr/direct")) {
+            return Map.of(
+                    "Referer", location.endsWith("/") ? location : location + "/",
+                    "Origin", "https://www.tf1info.fr",
+                    "User-Agent", USER_AGENT
+            );
+        }
+
+        if (location.contains("eltrecetv.com.ar/vivo")) {
+            return Map.of("Referer", "https://www.eltrecetv.com.ar/vivo/", "User-Agent", USER_AGENT);
         }
 
         if (location.contains("kan.org.il")) {
@@ -1309,6 +1369,82 @@ public class GenericSupport extends FFMPEGSupport {
         }
     }
 
+    private HttpsURLConnection openInsecureHttpsConnection(String url) throws Exception {
+        TrustManager[] trustAll = new TrustManager[] {
+                new X509TrustManager() {
+                    @Override
+                    public void checkClientTrusted(X509Certificate[] chain, String authType) {
+                    }
+
+                    @Override
+                    public void checkServerTrusted(X509Certificate[] chain, String authType) {
+                    }
+
+                    @Override
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return new X509Certificate[0];
+                    }
+                }
+        };
+
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, trustAll, new SecureRandom());
+
+        HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
+        connection.setSSLSocketFactory(sslContext.getSocketFactory());
+        connection.setHostnameVerifier((HostnameVerifier) (hostname, session) -> true);
+        return connection;
+    }
+
+    private String fetchUrlInsecure(String url) throws MediaOfflineException {
+        try {
+            HttpURLConnection connection = openInsecureHttpsConnection(url);
+            connection.setInstanceFollowRedirects(true);
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("User-Agent", USER_AGENT);
+
+            int status = connection.getResponseCode();
+            if (!String.valueOf(status).startsWith("2")) {
+                throw new MediaOfflineException("invalid request " + url + " status " + status);
+            }
+
+            try (InputStream inputStream = connection.getInputStream()) {
+                return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+            }
+        } catch (MediaOfflineException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new MediaOfflineException("request failed, may be the site is offline or you don't have internet connection " + url, ex);
+        }
+    }
+
+    private String postJsonInsecure(String url, String body, Map<String, String> headers) throws MediaOfflineException {
+        try {
+            byte[] data = body.getBytes(StandardCharsets.UTF_8);
+            HttpURLConnection connection = openInsecureHttpsConnection(url);
+            connection.setInstanceFollowRedirects(true);
+            connection.setRequestMethod("POST");
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("User-Agent", USER_AGENT);
+
+            headers.forEach(connection::setRequestProperty);
+            connection.getOutputStream().write(data);
+
+            int status = connection.getResponseCode();
+            if (!String.valueOf(status).startsWith("2")) {
+                throw new MediaOfflineException("invalid request " + url + " status " + status);
+            }
+
+            return readConnectionContent(connection);
+        } catch (MediaOfflineException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new MediaOfflineException("request failed, may be the site is offline or you don't have internet connection " + url, ex);
+        }
+    }
+
     private String jsonEscape(String value) {
         return value.replace("\\", "\\\\").replace("\"", "\\\"");
     }
@@ -1537,6 +1673,69 @@ public class GenericSupport extends FFMPEGSupport {
         return resolveGeneric(location);
     }
 
+    private String resolveTelefe(String location) throws MediaOfflineException {
+        String content = fetchUrlInsecure(location);
+        Matcher matcher = Pattern.compile("data-player-url=\"(?<url>[^\"]+)\"", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE).matcher(content);
+
+        if (!matcher.find()) {
+            return "";
+        }
+
+        String url = matcher.group("url").replace("&amp;", "&");
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Referer", location);
+        headers.put("Origin", "https://mitelefe.com");
+
+        JsonObject jsonObject = JsonParser.parseString(
+                postJsonInsecure("https://mitelefe.com/vidya/tokenize", "{\"url\":\"" + jsonEscape(url) + "\"}", headers)
+        ).getAsJsonObject();
+
+        if (jsonObject.has("url") && !jsonObject.get("url").isJsonNull()) {
+            return jsonObject.get("url").getAsString();
+        }
+
+        return url;
+    }
+
+    private String resolveElTrece(String location) throws MediaOfflineException {
+        String content = fetchUrl(location);
+        Matcher matcher = Pattern.compile("data-content-id=\"(?<contentId>\\d+)\"[^>]*data-player-id=\"(?<playerId>[^\"]+)\"", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE).matcher(content);
+
+        if (!matcher.find()) {
+            matcher = Pattern.compile("embedUrl\":\"https://api\\.vodgc\\.net/player/v2/embed/playerId/(?<playerId>[^/]+)/contentId/(?<contentId>\\d+)\"", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE).matcher(content);
+        }
+
+        if (!matcher.find(0)) {
+            return "";
+        }
+
+        String contentId = matcher.group("contentId");
+        String playerId = matcher.group("playerId");
+        String apiUrl = String.format(
+                "https://api.vodgc.net/player/conf/playerId/%s/contentId/%s?title=El%%20Trece%%20Noti&autoplay=true&blockvast=&custom_poster=",
+                playerId,
+                contentId
+        );
+
+        String response = fetchUrl(apiUrl);
+        JsonObject jsonObject = JsonParser.parseString(response).getAsJsonObject();
+
+        if (jsonObject.has("content_url") && !jsonObject.get("content_url").isJsonNull()) {
+            return jsonObject.get("content_url").getAsString();
+        }
+
+        if (jsonObject.has("sources") && jsonObject.get("sources").isJsonArray()) {
+            for (JsonElement source : jsonObject.getAsJsonArray("sources")) {
+                if (source.isJsonObject() && source.getAsJsonObject().has("src")) {
+                    return source.getAsJsonObject().get("src").getAsString();
+                }
+            }
+        }
+
+        return "";
+    }
+
     private String resolveAmericatv(String location) {
         return "https://dai.google.com/linear/hls/pa/event/OY2i_lL4SMyXE5Zaj4ULEg/stream/12973818-8a4c-40da-83db-7c213537d815:SCL2/master.m3u8";
     }
@@ -1675,6 +1874,30 @@ public class GenericSupport extends FFMPEGSupport {
 
     private String resolveMako(String location) throws MediaOfflineException {
         return "https://12channel.bonus-tv.ru/cdn/12channel_blackout/playlist.m3u8";
+    }
+
+    private String resolveTf1InfoDirect(String location) throws MediaOfflineException {
+        String liveId = location.contains("/direct/tf1") ? "L_TF1" : "L_LCI";
+        String mediaInfoUrl = "https://mediainfo.tf1.fr/mediainfocombo/" + liveId + "?context=MYTF1&pver=4014002";
+
+        JsonObject root = JsonParser.parseString(fetchUrl(mediaInfoUrl)).getAsJsonObject();
+        JsonObject delivery = root.has("delivery") && root.get("delivery").isJsonObject()
+                ? root.getAsJsonObject("delivery")
+                : null;
+
+        if (delivery == null || !delivery.has("code") || delivery.get("code").isJsonNull()) {
+            return "";
+        }
+
+        if (delivery.get("code").getAsInt() != 200) {
+            return "";
+        }
+
+        if (!delivery.has("url") || delivery.get("url").isJsonNull()) {
+            return "";
+        }
+
+        return delivery.get("url").getAsString();
     }
 
     private String resolveOanNews(String location) throws MediaOfflineException {
@@ -2008,7 +2231,7 @@ public class GenericSupport extends FFMPEGSupport {
             return extractLinksFromText(resolveContent(location));
         }
 
-        if (location.contains("rainews.it") || location.contains("i24news.tv") || location.contains("kan.org.il") || location.contains("knesset.tv") || location.contains("mako.co.il") || location.contains("newslive.com") || location.contains("livenewsnow.com") || location.contains("tvpass.org/live/") || location.contains("thetvapp.to/tv/") || location.contains("usnewson.com/watch/") || location.contains("nbcnews.com/watch") || location.contains("livenowfox.com/live") || location.contains("streamfare.info/oan-news") || (location.contains("streamfare.") && location.contains("-live-stream") && !location.contains("news-12-new-york-live-stream"))) {
+        if (location.contains("rainews.it") || location.contains("i24news.tv") || location.contains("kan.org.il") || location.contains("knesset.tv") || location.contains("mako.co.il") || location.contains("newslive.com") || location.contains("livenewsnow.com") || location.contains("tvpass.org/live/") || location.contains("thetvapp.to/tv/") || location.contains("usnewson.com/watch/") || location.contains("nbcnews.com/watch") || location.contains("livenowfox.com/live") || location.contains("mitelefe.com/telefe-en-vivo") || location.contains("eltrecetv.com.ar/vivo") || location.contains("streamfare.info/oan-news") || (location.contains("streamfare.") && location.contains("-live-stream") && !location.contains("news-12-new-york-live-stream"))) {
             return new String[]{resolveContent(location)};
         }
 
@@ -2043,6 +2266,26 @@ public class GenericSupport extends FFMPEGSupport {
             }
         }
 
+        if (location != null && location.contains("tf1info.fr/direct")) {
+            String mediaUrl = resolveTf1InfoDirect(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                String info = location.contains("/direct/tf1") ? "TF1 Info Direct" : "LCI Direct";
+
+                return java.util.Collections.singletonList(
+                        new Video(
+                                info,
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.LOW, 416, 234, 400000),
+                                "",
+                                true
+                        )
+                );
+            }
+
+            throw new MediaOfflineException(String.format("media location offline %s", location));
+        }
+
         if (location != null && location.contains("abc.com/watch-live/")) {
             String mediaUrl = resolveABCWatchLive(location);
 
@@ -2072,6 +2315,38 @@ public class GenericSupport extends FFMPEGSupport {
                                 info,
                                 mediaUrl,
                                 new Video.VideoQuality(Quality.Type.LOW, 480, 270, 635800),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
+        if (location != null && location.contains("eltrecetv.com.ar/vivo")) {
+            String mediaUrl = resolveElTrece(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                return java.util.Collections.singletonList(
+                        new Video(
+                                "El Trece",
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.LOW, 640, 360, 530000),
+                                "",
+                                true
+                        )
+                );
+            }
+        }
+
+        if (location != null && location.contains("mitelefe.com/telefe-en-vivo")) {
+            String mediaUrl = resolveTelefe(location);
+
+            if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
+                return java.util.Collections.singletonList(
+                        new Video(
+                                "Telefe",
+                                mediaUrl,
+                                new Video.VideoQuality(Quality.Type.LOW, 426, 240, 618932),
                                 "",
                                 true
                         )
@@ -2384,6 +2659,10 @@ public class GenericSupport extends FFMPEGSupport {
             return resolveTVBrasilPlay(location);
         } else if (location.contains("jovempan.com.br/ao-vivo")) {
             return resolveJovemPan(location);
+        } else if (location.contains("eltrecetv.com.ar/vivo")) {
+            return resolveElTrece(location);
+        } else if (location.contains("mitelefe.com/telefe-en-vivo")) {
+            return resolveTelefe(location);
         } else if (location.contains("americatv.com.ar/vivo")) {
             return resolveAmericatv(location);
         } else if (location.contains("timesnownews.com")) {
