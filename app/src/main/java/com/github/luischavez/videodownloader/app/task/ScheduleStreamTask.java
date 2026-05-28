@@ -186,6 +186,29 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
             return null;
         }
 
+        if (isYouTubeStream()) {
+            int preferredQuality = streamConfiguration != null ? streamConfiguration.getPreferredQuality() : 0;
+
+            Media preferredMedia = medias.stream()
+                    .filter(media -> media instanceof Video && media.getQuality() instanceof Video.VideoQuality)
+                    .filter(media -> Video.VideoQuality.class.cast(media.getQuality()).getHeight() >= preferredQuality)
+                    .findFirst()
+                    .orElse(null);
+
+            if (preferredMedia != null) {
+                return preferredMedia;
+            }
+
+            Media fallbackMedia = medias.stream()
+                    .filter(media -> media instanceof Video && media.getQuality() instanceof Video.VideoQuality)
+                    .reduce((first, second) -> second)
+                    .orElse(null);
+
+            if (fallbackMedia != null) {
+                return fallbackMedia;
+            }
+        }
+
         return medias.get(0);
     }
 

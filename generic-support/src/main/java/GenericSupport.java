@@ -69,6 +69,7 @@ public class GenericSupport extends FFMPEGSupport {
     private static final String NBC_GPP = "DBABLA~BVQVAAAAAgA.QA";
     private static final String NBC_US_PRIVACY = "1YYN";
     private static final String NBC_PLAYER_VERSION = "8.30.1";
+    private static final String FOX_BUSINESS_LOW_VIDEO_URL = "https://247preview.foxbusiness.com/hls/live/2020026/fbnv3preview/primary_300.m3u8";
     private static final String LIVENOWFOX_API_KEY = "EnQIMCZDfBfkGjuBqz5aUJM131Ncju5U";
     private static final String LIVENOWFOX_LOCAL_ASSET_INFO_ID = "FOXIDSH059841490000";
     private static final String LIVENOWFOX_REFERER = "https://www.livenowfox.com/";
@@ -201,6 +202,18 @@ public class GenericSupport extends FFMPEGSupport {
     protected String generateCommand(String location, Media media, String outputFile) {
         if (location.contains("ip.digital")) {
             media = new Video(media.getInfo(), "https://d1nmqgphjn0y4.cloudfront.net/live/ip/live.isml/5ee6e167-1167-4a85-9d8d-e08a3f55cff3.m3u8", new Video.VideoQuality(Quality.Type.HIGH, 1920, 1080, 1000), "", true);
+        }
+
+        if (location.contains("streamfare.com/fox-business-live-stream")) {
+            return String.format(
+                    "ffmpeg -nostdin -xerror -headers \"User-Agent: %s\" -i \"%s\" -headers \"Referer: %s\\r\\nUser-Agent: %s\" -i \"%s\" -map 0:v:0 -map 1:a:0 -c:v copy -c:a copy \"%s\"",
+                    USER_AGENT,
+                    FOX_BUSINESS_LOW_VIDEO_URL,
+                    "https://www.livenewsnow.com/business/fox-business-network-fbn.html",
+                    USER_AGENT,
+                    LocationRequestUtils.sanitize(media.getUrl()),
+                    outputFile
+            );
         }
 
         String command = super.generateCommand(location, media, outputFile);
@@ -1907,6 +1920,10 @@ public class GenericSupport extends FFMPEGSupport {
     private String resolveStreamfareClappr(String location) throws MediaOfflineException {
         if (location.contains("streamfare.info/")) {
             location = location.replace("streamfare.info/", "streamfare.com/");
+        }
+
+        if (location.contains("streamfare.com/fox-business-live-stream")) {
+            return resolveLiveNewsNow("https://www.livenewsnow.com/business/fox-business-network-fbn.html");
         }
 
         String content = getContent(location);
