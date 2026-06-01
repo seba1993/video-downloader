@@ -1,5 +1,4 @@
 import com.github.luischavez.videodownloader.Context;
-import com.github.luischavez.videodownloader.BaseContext;
 import com.github.luischavez.videodownloader.support.*;
 import com.github.luischavez.videodownloader.task.Task;
 import com.github.luischavez.videodownloader.util.CryptoUtils;
@@ -31,6 +30,16 @@ public class YouTubeSupport extends FFMPEGSupport {
 
     private static final String YOUTUBE_LINK = "https://www.youtube.com/watch?v=%s";
 
+    private static class YtDlpResult {
+        private final int exitCode;
+        private final String output;
+
+        private YtDlpResult(int exitCode, String output) {
+            this.exitCode = exitCode;
+            this.output = output;
+        }
+    }
+
     public YouTubeSupport(Context context) {
         super(context);
     }
@@ -42,6 +51,60 @@ public class YouTubeSupport extends FFMPEGSupport {
         if (new java.io.File(ytDlpPath).exists()) return "yt-dlp" + extension;
 
         return "yt-dlp";
+    }
+
+    private YtDlpResult runYtDlp(File youtubeDirectory, File executableFile, boolean useBrowserCookies, String... arguments) throws Exception {
+        ArrayList<String> command = new ArrayList<>();
+        command.add(executableFile.getPath());
+        command.add("--ignore-config");
+
+        if (useBrowserCookies) {
+            command.add("--cookies-from-browser");
+            command.add("firefox");
+        }
+
+        command.addAll(Arrays.asList(arguments));
+
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        processBuilder.directory(youtubeDirectory);
+        processBuilder.redirectErrorStream(true);
+
+        Process process = processBuilder.start();
+        StringBuilder output = new StringBuilder();
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append('\n');
+            }
+        }
+
+        int exitCode = process.waitFor();
+
+        if (process.isAlive()) {
+            process.destroyForcibly();
+        }
+
+        return new YtDlpResult(exitCode, output.toString());
+    }
+
+    private String extractFirstVideoId(String output) {
+        if (output == null) return null;
+
+        for (String line : output.split("\\R")) {
+            line = line.trim();
+
+            if (line.isEmpty() || line.startsWith("WARNING:") || line.startsWith("ERROR:") || line.startsWith("[")) {
+                continue;
+            }
+
+            if (line.matches("[A-Za-z0-9_-]{6,}")) {
+                return line;
+            }
+        }
+
+        return null;
     }
 
     private String resolveLocation(String location) {
@@ -86,43 +149,28 @@ public class YouTubeSupport extends FFMPEGSupport {
         }
 
         try {
-            final String workingDirectory = BaseContext.resolveWorkingDir();
+            final String workingDirectory = getWorkingDir();
             final String executable = resolveExecutable(workingDirectory);
             final File youtubeDirectory = new File(buildPath(workingDirectory, "youtube"));
             final File executableFile = new File(youtubeDirectory, executable);
 
-            ProcessBuilder processBuilder = new ProcessBuilder(
-                    executableFile.getPath(),
-                    "--ignore-config",
-                    "--cookies-from-browser", "firefox",
+            String[] arguments = new String[]{
                     "--flat-playlist",
                     "--print", "id",
                     "--playlist-end", "1",
                     location
-            );
-            processBuilder.directory(youtubeDirectory);
-            processBuilder.redirectErrorStream(true);
+            };
 
-            Process process = processBuilder.start();
+            YtDlpResult result = runYtDlp(youtubeDirectory, executableFile, false, arguments);
+            String videoId = extractFirstVideoId(result.output);
 
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                String line;
+            if (videoId == null && result.exitCode != 0) {
+                result = runYtDlp(youtubeDirectory, executableFile, true, arguments);
+                videoId = extractFirstVideoId(result.output);
+            }
 
-                while ((line = reader.readLine()) != null) {
-                    line = line.trim();
-
-                    if (line.isEmpty() || line.startsWith("WARNING:") || line.startsWith("ERROR:") || line.startsWith("[")) {
-                        continue;
-                    }
-
-                    if (line.matches("[A-Za-z0-9_-]{6,}")) {
-                        return String.format(YOUTUBE_LINK, line);
-                    }
-                }
-            } finally {
-                if (process.isAlive()) {
-                    process.destroyForcibly();
-                }
+            if (videoId != null) {
+                return String.format(YOUTUBE_LINK, videoId);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -194,46 +242,30 @@ public class YouTubeSupport extends FFMPEGSupport {
     }
 
     private List<Media> resolveMediaWithYtDlp(String location) throws MediaOfflineException, MediaNotFoundException {
-        final String workingDirectory = BaseContext.resolveWorkingDir();
+        final String workingDirectory = getWorkingDir();
         final String executable = resolveExecutable(workingDirectory);
         final File youtubeDirectory = new File(buildPath(workingDirectory, "youtube"));
         final File executableFile = new File(youtubeDirectory, executable);
 
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder(
-                    executableFile.getPath(),
-                    "--ignore-config",
-                    "--cookies-from-browser", "firefox",
+            String[] arguments = new String[]{
                     "--dump-single-json",
                     "--no-warnings",
                     "--skip-download",
                     location
-            );
-            processBuilder.directory(youtubeDirectory);
-            processBuilder.redirectErrorStream(true);
+            };
 
-            Process process = processBuilder.start();
-            StringBuilder output = new StringBuilder();
+            YtDlpResult result = runYtDlp(youtubeDirectory, executableFile, false, arguments);
 
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    output.append(line).append('\n');
-                }
+            if (result.exitCode != 0 || result.output.length() == 0) {
+                result = runYtDlp(youtubeDirectory, executableFile, true, arguments);
             }
 
-            int exitCode = process.waitFor();
-
-            if (process.isAlive()) {
-                process.destroyForcibly();
-            }
-
-            if (exitCode != 0 || output.length() == 0) {
+            if (result.exitCode != 0 || result.output.length() == 0) {
                 throw new MediaOfflineException(String.format("yt-dlp failed for location %s", location));
             }
 
-            JsonObject json = JsonParser.parseString(output.toString()).getAsJsonObject();
+            JsonObject json = JsonParser.parseString(result.output).getAsJsonObject();
             JsonArray formats = json.getAsJsonArray("formats");
 
             if (formats == null || formats.size() == 0) {

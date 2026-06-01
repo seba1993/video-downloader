@@ -1,5 +1,4 @@
 import com.github.luischavez.videodownloader.Context;
-import com.github.luischavez.videodownloader.BaseContext;
 import com.github.luischavez.videodownloader.support.Media;
 import com.github.luischavez.videodownloader.task.LocalProcessTask;
 
@@ -47,7 +46,7 @@ public class YouTubeDLTask extends LocalProcessTask {
         File folderFile = new File(getDestinationPath());
         if (!folderFile.exists()) Files.createDirectories(folderFile.toPath());
 
-        final String workingDirectory = getWrappedContext().buildPath(BaseContext.resolveWorkingDir(), "youtube");
+        final String workingDirectory = getWrappedContext().buildPath(getWrappedContext().getWorkingDir(), "youtube");
 
         ArrayList<String> command = new ArrayList<>();
         command.add(new File(workingDirectory, executable).getPath());
