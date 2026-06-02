@@ -161,13 +161,8 @@ public class YouTubeSupport extends FFMPEGSupport {
                     location
             };
 
-            YtDlpResult result = runYtDlp(youtubeDirectory, executableFile, false, arguments);
+            YtDlpResult result = runYtDlp(youtubeDirectory, executableFile, true, arguments);
             String videoId = extractFirstVideoId(result.output);
-
-            if (videoId == null && result.exitCode != 0) {
-                result = runYtDlp(youtubeDirectory, executableFile, true, arguments);
-                videoId = extractFirstVideoId(result.output);
-            }
 
             if (videoId != null) {
                 return String.format(YOUTUBE_LINK, videoId);
@@ -255,11 +250,7 @@ public class YouTubeSupport extends FFMPEGSupport {
                     location
             };
 
-            YtDlpResult result = runYtDlp(youtubeDirectory, executableFile, false, arguments);
-
-            if (result.exitCode != 0 || result.output.length() == 0) {
-                result = runYtDlp(youtubeDirectory, executableFile, true, arguments);
-            }
+            YtDlpResult result = runYtDlp(youtubeDirectory, executableFile, true, arguments);
 
             if (result.exitCode != 0 || result.output.length() == 0) {
                 throw new MediaOfflineException(String.format("yt-dlp failed for location %s", location));
