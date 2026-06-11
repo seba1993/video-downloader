@@ -61,6 +61,10 @@ public class YouTubeSupport extends FFMPEGSupport {
         if (useBrowserCookies) {
             command.add("--cookies-from-browser");
             command.add("firefox");
+            command.add("--js-runtimes");
+            command.add("node");
+            command.add("--remote-components");
+            command.add("ejs:github");
         }
 
         command.addAll(Arrays.asList(arguments));
