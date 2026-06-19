@@ -2308,10 +2308,10 @@ public class GenericSupport extends FFMPEGSupport {
 
             if (mediaUrl != null && !mediaUrl.trim().isEmpty()) {
                 return java.util.Collections.singletonList(
-                        new Video(
+                        new Audio(
                                 "ABC News Live",
                                 mediaUrl,
-                                new Video.VideoQuality(Quality.Type.HIGH, 1280, 720, 0),
+                                new Audio.AudioQuality(Quality.Type.HIGH),
                                 "",
                                 true
                         )
