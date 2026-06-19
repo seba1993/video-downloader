@@ -1576,6 +1576,17 @@ public class GenericSupport extends FFMPEGSupport {
     }
 
     private String resolveI24News(String location) throws MediaOfflineException {
+        String[] parts = location.split("/");
+        String channelId = parts.length == 0 ? "en" : parts[parts.length - 1].toLowerCase();
+
+        if ("en".equals(channelId)) {
+            return "https://i24newsenglish-cdn.encoders.immergo.tv/master.m3u8";
+        }
+
+        if ("he".equals(channelId)) {
+            return "https://i24newshebrew-cdn.encoders.immergo.tv/master.m3u8";
+        }
+
         String hardwareId = String.valueOf(System.currentTimeMillis());
         String authEndpoint = String.format("https://api.i24news.wiztivi.io/authenticate?userName=I24News&hardwareId=%s&hardwareIdType=browser", hardwareId);
 
@@ -1611,9 +1622,6 @@ public class GenericSupport extends FFMPEGSupport {
         if (items == null || !items.isJsonArray()) {
             return "";
         }
-
-        String[] parts = location.split("/");
-        String channelId = parts.length == 0 ? "en" : parts[parts.length - 1].toLowerCase();
 
         for (JsonElement item : items.getAsJsonArray()) {
             if (!item.isJsonObject()) {
