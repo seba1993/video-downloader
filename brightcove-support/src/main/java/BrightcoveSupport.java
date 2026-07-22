@@ -39,6 +39,8 @@ public class BrightcoveSupport extends FFMPEGSupport {
     private static final String BRIGHTCOVE_POLICY_KEY_ENDPOINT = "https://players.brightcove.net/%s/%s_default/index.html?videoId=%s";
     private static final String BRIGHTCOVE_PK = "BCpkADawqM1mYQgRZ1bxuC1RqjjVAz6C5FCwu-68h_fyxNd0Ib4DDhZVlqC94kInbBuHvqkHQku1mZ5cRoyB3ISThApOKNpQX3iRai4hfGNbXfMhEr_FvqmfDHw";
     private static final String BFMTV_LIVE_URL = "https://www.bfmtv.com/en-direct/";
+    private static final String BFMTV_LIVE_M3U8 = "https://live-cdn-stream-euw1.bfmtv.bct.nextradiotv.com/master.m3u8";
+    private static final String BFMTV_BUSINESS_LIVE_M3U8 = "https://live-cdn-stream-euw1.bfmb.bct.nextradiotv.com/master.m3u8";
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36";
 
     public BrightcoveSupport(Context context) {
@@ -66,6 +68,31 @@ public class BrightcoveSupport extends FFMPEGSupport {
 
     private boolean isBfmtvLiveLocation(String location) {
         return location != null && location.contains("bfmtv.com") && location.contains("/en-direct");
+    }
+
+    private String getBfmtvLiveM3u8(String location) {
+        if (!isBfmtvLiveLocation(location)) {
+            return null;
+        }
+
+        if (location.contains("/economie/")) {
+            return BFMTV_BUSINESS_LIVE_M3U8;
+        }
+
+        return BFMTV_LIVE_M3U8;
+    }
+
+    private List<Media> resolveBfmtvLiveMedia(String location) throws MediaOfflineException, MediaNotFoundException {
+        String liveM3u8 = getBfmtvLiveM3u8(location);
+
+        if (liveM3u8 == null) {
+            return resolveMediaWithYtDlp(location);
+        }
+
+        String info = location.contains("/economie/") ? "BFM Business live" : "BFM TV live";
+        Video.VideoQuality quality = new Video.VideoQuality(Quality.Type.LOW, 480, 270, 450000);
+
+        return java.util.Collections.singletonList(new Video(info, liveM3u8, quality, "", true));
     }
 
     private List<Media> resolveMediaWithYtDlp(String location) throws MediaOfflineException, MediaNotFoundException {
@@ -295,7 +322,7 @@ public class BrightcoveSupport extends FFMPEGSupport {
     @Override
     public List<Media> getMedia(String location) throws MediaNotFoundException, MediaOfflineException {
         if (isBfmtvLiveLocation(location)) {
-            return resolveMediaWithYtDlp(location);
+            return resolveBfmtvLiveMedia(location);
         }
 
         return super.getMedia(location);
