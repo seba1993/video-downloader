@@ -52,6 +52,17 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
                 && streamConfiguration.getUrl().toLowerCase().contains("youtube.com");
     }
 
+    private boolean usesPreferredVideoQuality() {
+        if (streamConfiguration == null || streamConfiguration.getUrl() == null) {
+            return false;
+        }
+
+        String location = streamConfiguration.getUrl().toLowerCase();
+        return isYouTubeStream()
+                || location.contains("nbcnews.com/watch")
+                || location.contains("cbsnews.com/");
+    }
+
     private long resolveRetryDelay() {
         if (consecutiveFastFailures <= 1) {
             return FIRST_RETRY_DELAY_MS;
@@ -186,8 +197,18 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
             return null;
         }
 
-        if (isYouTubeStream()) {
+        if (usesPreferredVideoQuality()) {
             int preferredQuality = streamConfiguration != null ? streamConfiguration.getPreferredQuality() : 0;
+
+            Media exactMedia = medias.stream()
+                    .filter(media -> media instanceof Video && media.getQuality() instanceof Video.VideoQuality)
+                    .filter(media -> Video.VideoQuality.class.cast(media.getQuality()).getHeight() == preferredQuality)
+                    .findFirst()
+                    .orElse(null);
+
+            if (exactMedia != null) {
+                return exactMedia;
+            }
 
             Media preferredMedia = medias.stream()
                     .filter(media -> media instanceof Video && media.getQuality() instanceof Video.VideoQuality)

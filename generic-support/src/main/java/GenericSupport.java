@@ -1275,42 +1275,38 @@ public class GenericSupport extends FFMPEGSupport {
         return "";
     }
 
-    private String resolveNBCNewsWatch(String location) throws MediaOfflineException {
+    private String resolveNBCNewsWatchMaster(String location) throws MediaOfflineException {
         String hash = normalizeNBCWatchHash(location);
         if ("#new-york".equals(hash)) {
-            return resolveNBCNewYorkLowestVariantUrl(location);
+            return buildNBCNewYorkWatchUrl();
         }
 
         if ("#los-angeles".equals(hash)) {
-            return resolveNBCLosAngelesLowestVariantUrl(location);
+            return buildNBCLosAngelesWatchUrl();
         }
 
         if ("#bay-area".equals(hash)) {
-            return resolveNBCBayAreaLowestVariantUrl(location);
+            return buildNBCBayAreaWatchUrl();
         }
 
         if ("#boston".equals(hash)) {
-            return resolveNBCBostonLowestVariantUrl(location);
+            return buildNBCBostonWatchUrl();
         }
 
         if ("#connecticut".equals(hash)) {
-            return resolveNBCConnecticutLowestVariantUrl(location);
+            return buildNBCConnecticutWatchUrl();
         }
 
         if ("#dallas-fort-worth".equals(hash)) {
-            return resolveNBCDallasFortWorthLowestVariantUrl(location);
-        }
-
-        if ("#dateline".equals(hash)) {
-            return resolveNBCDatelineLowestVariantUrl(location);
+            return buildNBCDallasFortWorthWatchUrl();
         }
 
         if ("#chicago".equals(hash)) {
-            return resolveNBCChicagoLowestVariantUrl(location);
+            return buildNBCChicagoWatchUrl();
         }
 
         if ("#miami".equals(hash)) {
-            return resolveNBCMiamiLowestVariantUrl(location);
+            return buildNBCMiamiWatchUrl();
         }
 
         String direct = getNBCNewsDirectM3U8(hash);
@@ -1330,6 +1326,24 @@ public class GenericSupport extends FFMPEGSupport {
         }
 
         return "";
+    }
+
+    private String resolveNBCNewsWatch(String location) throws MediaOfflineException {
+        String masterUrl = resolveNBCNewsWatchMaster(location);
+
+        if (masterUrl == null || masterUrl.trim().isEmpty()) {
+            return "";
+        }
+
+        return resolveNBCLowestVariantUrl(location, masterUrl);
+    }
+
+    private String normalizeCBSMasterUrl(String mediaUrl) {
+        if (mediaUrl == null || !mediaUrl.contains("lineup.cbsivideo.com/playout/")) {
+            return mediaUrl;
+        }
+
+        return mediaUrl.replaceFirst("/\\d+/chunklist\\.m3u8(?:\\?.*)?$", "/master.m3u8");
     }
 
     private String fetchUrl(String url) throws MediaOfflineException {
@@ -2265,6 +2279,22 @@ public class GenericSupport extends FFMPEGSupport {
 
     @Override
     public List<Media> getMedia(String location) throws MediaNotFoundException, MediaOfflineException {
+        if (location != null && location.contains("cbsnews.com/")) {
+            String masterUrl = normalizeCBSMasterUrl(resolveContent(location));
+
+            if (masterUrl != null && !masterUrl.trim().isEmpty()) {
+                return super.getMedia(masterUrl);
+            }
+        }
+
+        if (location != null && location.contains("nbcnews.com/watch")) {
+            String masterUrl = resolveNBCNewsWatchMaster(location);
+
+            if (masterUrl != null && !masterUrl.trim().isEmpty()) {
+                return super.getMedia(masterUrl);
+            }
+        }
+
         if (location != null && location.toLowerCase().contains(".m3u8")) {
             String content = getContent(location);
             List<Media> directMedias = new GenericVideoResolver(getWrappedContext())

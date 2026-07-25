@@ -257,7 +257,7 @@ public class StreamConfigurationDialog extends JDialog {
         contentPane.add(urlTextField, CC.xywh(5, 11, 9, 1));
 
         //---- label13 ----
-        label13.setText("Quality >=");
+        label13.setText("Quality (p) >=");
         contentPane.add(label13, CC.xy(3, 13));
 
         //---- qualitySpinner ----
