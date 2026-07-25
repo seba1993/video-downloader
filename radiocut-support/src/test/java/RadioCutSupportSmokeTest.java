@@ -18,6 +18,8 @@ public class RadioCutSupportSmokeTest {
         outputDirectory.mkdirs();
 
         RadioCutSupport support = new RadioCutSupport(new TestContext());
+        assertSupported(support, "https://radiocut.fm/radiostation/radio10/");
+        assertSupported(support, "https://radiocut.fm/radiostation/radio10/listen/");
         List<Media> media = support.getMedia(location);
 
         if (media.size() != 1 || !(media.get(0) instanceof RadioCutMedia)) {
@@ -46,6 +48,12 @@ public class RadioCutSupportSmokeTest {
         java.lang.System.out.println("media=" + media.get(0));
         java.lang.System.out.println("output=" + output.getAbsolutePath());
         java.lang.System.out.println("bytes=" + output.length());
+    }
+
+    private static void assertSupported(RadioCutSupport support, String location) {
+        if (!support.canHandle(location)) {
+            throw new AssertionError("RadioCut URL was not accepted: " + location);
+        }
     }
 
     private static class TestContext implements Context {

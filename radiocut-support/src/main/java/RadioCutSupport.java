@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class RadioCutSupport extends ContextWrapper implements Support {
 
     private static final Pattern LOCATION_PATTERN = Pattern.compile(
-            "^https?://(?:www\\.)?radiocut\\.fm/radiostation/([^/?#]+)/listen/?(?:[?#].*)?$",
+            "^https?://(?:www\\.)?radiocut\\.fm/radiostation/([^/?#]+)(?:/listen)?/?(?:[?#].*)?$",
             Pattern.CASE_INSENSITIVE
     );
     private static final Pattern AUDIO_SECONDS_PATTERN = Pattern.compile(
