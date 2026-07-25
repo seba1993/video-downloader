@@ -46,6 +46,40 @@ public abstract class FFMPEGSupport extends BaseSupport {
         return filePath;
     }
 
+    protected String getOutputFile(Media media, String baseFileName,
+                                   String destinationPath, boolean audioOnly) {
+        if (!audioOnly) {
+            return getOutputFile(media, baseFileName, destinationPath);
+        }
+
+        return buildPath(destinationPath, String.format("%s.mp3", baseFileName));
+    }
+
+    protected String generateAudioCommand(String location, Media media, String outputFile) {
+        final Map<String, String> commandHeaders = new HashMap<>();
+        commandHeaders.putAll(getHeaders(location));
+        commandHeaders.putAll(LocationRequestUtils.extractHeaders(location));
+        commandHeaders.putAll(LocationRequestUtils.extractHeaders(media.getUrl()));
+
+        final String options = getOptions(media).entrySet().stream()
+                .map(entry -> String.format("-%s %s", entry.getKey(), entry.getValue()))
+                .collect(Collectors.joining(" "));
+
+        final String headers = commandHeaders.isEmpty()
+                ? ""
+                : String.format("-headers \"%s\"",
+                commandHeaders.entrySet().stream()
+                        .map(entry -> String.format("%s: %s", entry.getKey(), entry.getValue()))
+                        .collect(Collectors.joining("\\r\\n")));
+
+        final String url = LocationRequestUtils.sanitize(media.getUrl());
+
+        return String.format(
+                "ffmpeg -nostdin -xerror %s %s -i \"%s\" -map 0:a:0 -vn -c:a libmp3lame -b:a 128k -f mp3 \"%s\"",
+                options, headers, url, outputFile
+        );
+    }
+
     protected String generateCommand(String location, Media media, String outputFile) {
         final Map<String, String> commandHeaders = new HashMap<>();
         commandHeaders.putAll(getHeaders(location));
@@ -126,10 +160,15 @@ public abstract class FFMPEGSupport extends BaseSupport {
     public Task generateTask(String location, Media media, Map<String, Object> params) {
         final String baseFileName = params.get("base_file_name").toString();
         final String destinationPath = params.get("destination_path").toString();
+        final boolean audioOnly = "Audio".equalsIgnoreCase(
+                String.valueOf(params.getOrDefault("output_type", ""))
+        );
 
-        final String outputFile = getOutputFile(media, baseFileName, destinationPath);
+        final String outputFile = getOutputFile(media, baseFileName, destinationPath, audioOnly);
 
-        final String command = generateCommand(location, media, outputFile);
+        final String command = audioOnly
+                ? generateAudioCommand(location, media, outputFile)
+                : generateCommand(location, media, outputFile);
 
         return new FFMPEGTask(getWrappedContext(), media, command, outputFile, destinationPath);
     }

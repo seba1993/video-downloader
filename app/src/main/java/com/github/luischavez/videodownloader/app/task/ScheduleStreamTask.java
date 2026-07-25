@@ -173,7 +173,8 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
 
             task = support.generateTask(streamConfiguration.getUrl(), selectedMedia,
                     Map.of("base_file_name", baseFileName,
-                            "destination_path", destinationPath));
+                            "destination_path", destinationPath,
+                            "output_type", streamConfiguration.getType()));
 
             getSystem().getManager(TaskManager.class).add(tag, task);
             trackedTask = task;

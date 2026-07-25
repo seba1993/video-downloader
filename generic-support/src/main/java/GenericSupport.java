@@ -267,6 +267,20 @@ public class GenericSupport extends FFMPEGSupport {
     }
 
     @Override
+    protected String generateAudioCommand(String location, Media media, String outputFile) {
+        String command = super.generateAudioCommand(location, media, outputFile);
+
+        if (location.contains("abc.com/watch-live/")) {
+            command = command.replace(
+                    "ffmpeg -nostdin -xerror",
+                    "ffmpeg -nostdin -xerror -allowed_extensions ALL -allowed_segment_extensions ALL -extension_picky 0 -protocol_whitelist file,http,https,tcp,tls,crypto,data"
+            );
+        }
+
+        return command;
+    }
+
+    @Override
     protected Map<String, String> getHeaders(String location) {
         Map<String, String> newHeaders = new HashMap<>();
         newHeaders.putAll(super.getHeaders(location));
