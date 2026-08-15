@@ -69,7 +69,6 @@ public class GenericSupport extends FFMPEGSupport {
     private static final String NBC_GPP = "DBABLA~BVQVAAAAAgA.QA";
     private static final String NBC_US_PRIVACY = "1YYN";
     private static final String NBC_PLAYER_VERSION = "8.30.1";
-    private static final String FOX_BUSINESS_LOW_VIDEO_URL = "https://247preview.foxbusiness.com/hls/live/2020026/fbnv3preview/primary_300.m3u8";
     private static final String LIVENOWFOX_API_KEY = "EnQIMCZDfBfkGjuBqz5aUJM131Ncju5U";
     private static final String LIVENOWFOX_LOCAL_ASSET_INFO_ID = "FOXIDSH059841490000";
     private static final String LIVENOWFOX_REFERER = "https://www.livenowfox.com/";
@@ -77,6 +76,17 @@ public class GenericSupport extends FFMPEGSupport {
 
     public GenericSupport(Context context) {
         super(context);
+    }
+
+    @Override
+    protected HttpGet buildGet(String location) {
+        HttpGet httpGet = super.buildGet(location);
+
+        if (location.contains("13tv.co.il")) {
+            httpGet.setHeader("User-Agent", "Java/9.0.4");
+        }
+
+        return httpGet;
     }
 
     private boolean isStreamfareYouTubeLocation(String location) {
@@ -204,18 +214,6 @@ public class GenericSupport extends FFMPEGSupport {
             media = new Video(media.getInfo(), "https://d1nmqgphjn0y4.cloudfront.net/live/ip/live.isml/5ee6e167-1167-4a85-9d8d-e08a3f55cff3.m3u8", new Video.VideoQuality(Quality.Type.HIGH, 1920, 1080, 1000), "", true);
         }
 
-        if (location.contains("streamfare.com/fox-business-live-stream")) {
-            return String.format(
-                    "ffmpeg -nostdin -xerror -headers \"User-Agent: %s\" -i \"%s\" -headers \"Referer: %s\\r\\nUser-Agent: %s\" -i \"%s\" -map 0:v:0 -map 1:a:0 -c:v copy -c:a copy \"%s\"",
-                    USER_AGENT,
-                    FOX_BUSINESS_LOW_VIDEO_URL,
-                    "https://www.livenewsnow.com/business/fox-business-network-fbn.html",
-                    USER_AGENT,
-                    LocationRequestUtils.sanitize(media.getUrl()),
-                    outputFile
-            );
-        }
-
         String command = super.generateCommand(location, media, outputFile);
 
         if (location.contains("abc.com/watch-live/")) {
@@ -294,6 +292,7 @@ public class GenericSupport extends FFMPEGSupport {
         }
 
         if (location.contains("13tv.co.il")) {
+            newHeaders.remove("Referer");
             newHeaders.put("Origin", "https://13tv.co.il");
         }
 
@@ -376,7 +375,6 @@ public class GenericSupport extends FFMPEGSupport {
 
         if (location.contains("13tv.co.il")) {
             return Map.of(
-                    "Referer", location,
                     "Origin", "https://13tv.co.il",
                     "User-Agent", USER_AGENT
             );
@@ -1991,7 +1989,7 @@ public class GenericSupport extends FFMPEGSupport {
     }
 
     private String resolveLiveNewsNow(String location) throws MediaOfflineException {
-        String content = getContent(location);
+        String content = getContent(location).replace("\\/", "/");
         Matcher matcher = STREAM_URL_PATTERN.matcher(content);
 
         if (matcher.find()) {
@@ -2002,6 +2000,16 @@ public class GenericSupport extends FFMPEGSupport {
 
         if (matcher.find()) {
             return matcher.group("link");
+        }
+
+        matcher = LINK_PATTERN.matcher(content);
+
+        while (matcher.find()) {
+            String link = matcher.group("link");
+
+            if (link.toUpperCase().contains(".M3U8")) {
+                return link;
+            }
         }
 
         return resolveGeneric(location);

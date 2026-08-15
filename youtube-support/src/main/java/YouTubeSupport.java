@@ -62,9 +62,12 @@ public class YouTubeSupport extends FFMPEGSupport {
             command.add("--cookies-from-browser");
             command.add("firefox");
             command.add("--js-runtimes");
-            command.add("node");
+            File bundledNode = new File(youtubeDirectory, PlatformUtils.isWindowsHost() ? "node.exe" : "node");
+            command.add(bundledNode.isFile() ? "node:" + bundledNode.getAbsolutePath() : "node");
             command.add("--remote-components");
             command.add("ejs:github");
+            command.add("--extractor-args");
+            command.add("youtube:player_client=mweb");
         }
 
         command.addAll(Arrays.asList(arguments));

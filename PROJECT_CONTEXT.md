@@ -248,6 +248,30 @@ Algunos soportes agregan headers en fragmentos `#__headers__`.
 - Algunos HLS de canales son video-only aunque parezcan validos. Confirmar con
   `ffprobe`, no asumir que ffmpeg fallo.
 
+### YouTube: configuracion activa
+
+El 2026-07-25 se diagnostico un caso en el que YouTube devolvia `No video
+formats found` aun usando cookies de Firefox, Node y EJS. La combinacion que
+resolvio correctamente tanto una URL directa como una URL de canal `/streams`
+fue:
+
+```text
+yt-dlp nightly 2026.07.23.234303
+Node v24.13.1
+--cookies-from-browser firefox
+--js-runtimes node:RUTA_AL_NODE_24
+--remote-components ejs:github
+--extractor-args youtube:player_client=mweb
+```
+
+La implementacion activa prefiere `nuevabranch\youtube\node.exe` y agrega
+`youtube:player_client=mweb` en `YouTubeSupport.runYtDlp`. Tanto
+`nuevabranch\youtube\yt-dlp.exe` como Node 24 y `YouTubeSupport.jar` deben
+mantenerse juntos al copiar o reconstruir el portable.
+
+Esta configuracion no resuelve todavia la seleccion de multiples vivos simultaneos:
+`/streams` sigue limitado al primer resultado.
+
 ## Branches Importantes
 
 - `master`: rama remota estable historica.
@@ -261,9 +285,10 @@ Remote:
 
 ## Ultimos Cambios Relevantes
 
-- `Fix Fox Business low-quality stream handling`: agrega manejo puntual para
-  `streamfare.com/fox-business-live-stream`, mezclando video bajo de
-  `247preview.foxbusiness.com/.../primary_300.m3u8` con audio de LiveNewsNow.
+- `2026-07-29 Fox Business 720p con audio integrado`: elimina la mezcla entre
+  el preview video-only de 240p y el audio temporal de LiveNewsNow. Ahora
+  `streamfare.com/fox-business-live-stream` graba directamente el HLS combinado
+  de LiveNewsNow a 1280x720 con video H.264 y audio AAC.
 - `2026-05-17 only lowest quality`: politica general para preferir calidades bajas.
 - `2026-05-15 Add America TV support and runtime fixes`.
 - `Add LiveNOW FOX local stream support`.
