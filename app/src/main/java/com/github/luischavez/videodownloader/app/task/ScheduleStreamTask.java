@@ -59,6 +59,7 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
 
         String location = streamConfiguration.getUrl().toLowerCase();
         return isYouTubeStream()
+                || location.contains("cnnbrasil.com.br/ao-vivo")
                 || location.contains("nbcnews.com/watch")
                 || location.contains("cbsnews.com/");
     }

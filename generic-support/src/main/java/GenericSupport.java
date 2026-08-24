@@ -73,6 +73,7 @@ public class GenericSupport extends FFMPEGSupport {
     private static final String LIVENOWFOX_LOCAL_ASSET_INFO_ID = "FOXIDSH059841490000";
     private static final String LIVENOWFOX_REFERER = "https://www.livenowfox.com/";
     private static final String LIVENOWFOX_PLATFORM_LOCATION = "eyJ2Zm94IjpmYWxzZSwib3ZlcnJpZGUiOmZhbHNlLCJsYXRpdHVkZSI6MjUuNjYsImxvbmdpdHVkZSI6LTgwLjQxLCJjaXR5IjoiTWlhbWkiLCJyZWdpb24iOiJGbG9yaWRhIiwiY291bnRyeSI6IlVTIiwiemlwX2NvZGUiOiIzMzE4NiIsInRpbWVfem9uZSI6Ii0wNDowMCIsIm1ldHJvX2NvZGUiOiI1MjgiLCJuYXRpb25hbF9zdGF0aW9uc19jYWxsX3NpZ24iOlsiRk9YLVNPVUwiLCJGT1hXRUFUSEVSIiwibmV3c25vdyJdLCJwdWJsaWNfaXAiOiIxOTUuMTgxLjE2My44IiwiY29ubl9zcGVlZCI6ImJyb2FkYmFuZCIsImNvbm5fdHlwZSI6IndpcmVkIn0=";
+    private static final String PBC_LIVE_URL = "http://pbc.furrera.ps/palestinehd/index.m3u8";
 
     public GenericSupport(Context context) {
         super(context);
@@ -132,6 +133,7 @@ public class GenericSupport extends FFMPEGSupport {
                 Pattern.compile("^https?://.*cp24\\.com.*$"),
                 Pattern.compile("^https?://.*ctvnews\\.ca.*$"),
                 Pattern.compile("^https?://.*globalnews\\.ca\\/live\\/.*$"),
+                Pattern.compile("^https?://(?:www\\.)?pbc\\.ps/live/?$"),
                 Pattern.compile("^https?://.*livenowfox\\.com\\/live(?:\\?.*)?$"),
                 Pattern.compile("^https?://.*nbcnews\\.com\\/watch(?:#.*)?$"),
                 Pattern.compile("^https?://.*abc\\.com\\/watch-live\\/.*$"),
@@ -2282,6 +2284,10 @@ public class GenericSupport extends FFMPEGSupport {
         return content;
     }
 
+    private String resolvePBC(String location) {
+        return PBC_LIVE_URL;
+    }
+
     @Override
     protected String[] getLinks(String location) throws MediaOfflineException {
         if (location.contains("nbcnews.com/watch#noticias-telemundo-ahora")) {
@@ -2292,7 +2298,7 @@ public class GenericSupport extends FFMPEGSupport {
             return extractLinksFromText(resolveContent(location));
         }
 
-        if (location.contains("rainews.it") || location.contains("i24news.tv") || location.contains("kan.org.il") || location.contains("knesset.tv") || location.contains("mako.co.il") || location.contains("newslive.com") || location.contains("livenewsnow.com") || location.contains("tvpass.org/live/") || location.contains("thetvapp.to/tv/") || location.contains("usnewson.com/watch/") || location.contains("nbcnews.com/watch") || location.contains("livenowfox.com/live") || location.contains("mitelefe.com/telefe-en-vivo") || location.contains("eltrecetv.com.ar/vivo") || location.contains("streamfare.info/oan-news") || (location.contains("streamfare.") && location.contains("-live-stream") && !location.contains("news-12-new-york-live-stream"))) {
+        if (location.contains("rainews.it") || location.contains("i24news.tv") || location.contains("kan.org.il") || location.contains("knesset.tv") || location.contains("mako.co.il") || location.contains("newslive.com") || location.contains("livenewsnow.com") || location.contains("tvpass.org/live/") || location.contains("thetvapp.to/tv/") || location.contains("usnewson.com/watch/") || location.contains("nbcnews.com/watch") || location.contains("livenowfox.com/live") || location.contains("pbc.ps/live") || location.contains("mitelefe.com/telefe-en-vivo") || location.contains("eltrecetv.com.ar/vivo") || location.contains("streamfare.info/oan-news") || (location.contains("streamfare.") && location.contains("-live-stream") && !location.contains("news-12-new-york-live-stream"))) {
             return new String[]{resolveContent(location)};
         }
 
@@ -2752,6 +2758,8 @@ public class GenericSupport extends FFMPEGSupport {
             return resolve13TV(location);
         } else if (location.contains("globalnews.ca")) {
             return resolveGlobalNews(location);
+        } else if (location.contains("pbc.ps/live")) {
+            return resolvePBC(location);
         } else if (location.contains("livenowfox.com/live")) {
             return resolveLiveNowFox(location);
         } else if (location.contains("abc.com/watch-live/")) {
