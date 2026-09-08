@@ -47,11 +47,11 @@ public class YouTubeManager extends BaseManager {
         }
 
         if (task.isRunning()) {
-            return false;
+            return true;
         }
 
         task.start();
 
-        return false;
+        return true;
     }
 }
