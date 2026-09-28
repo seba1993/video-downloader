@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Downloader Control</title>
+  <style>
+    :root { color-scheme: dark; --bg:#111418; --panel:#1b2026; --line:#343b44; --text:#eef1f4; --muted:#9aa4af; --green:#39b86c; --red:#df625f; --blue:#4d91dc; --amber:#d6a13d; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font:14px/1.45 system-ui,Segoe UI,sans-serif; letter-spacing:0; }
+    header { position:sticky; top:0; z-index:2; display:flex; align-items:center; gap:16px; padding:14px 20px; background:#15191e; border-bottom:1px solid var(--line); }
+    h1 { margin:0; font-size:18px; }
+    .summary { margin-left:auto; color:var(--muted); }
+    main { max-width:1200px; margin:auto; padding:18px; }
+    .toolbar { display:flex; gap:10px; margin-bottom:14px; }
+    input { width:100%; min-height:38px; padding:8px 10px; color:var(--text); background:#0e1115; border:1px solid var(--line); border-radius:5px; font:inherit; }
+    button { min-height:34px; padding:7px 11px; color:var(--text); background:#252b32; border:1px solid #424b55; border-radius:5px; cursor:pointer; font:inherit; }
+    button:hover { background:#303740; }
+    button.danger { border-color:#75413f; }
+    button.primary { border-color:#356fae; }
+    .login { max-width:440px; margin:15vh auto; padding:20px; background:var(--panel); border:1px solid var(--line); border-radius:7px; }
+    .login h2 { margin:0 0 14px; font-size:17px; }
+    .login form { display:flex; gap:8px; }
+    .table-wrap { overflow:auto; border:1px solid var(--line); border-radius:7px; }
+    table { width:100%; border-collapse:collapse; background:var(--panel); }
+    th,td { padding:10px 12px; text-align:left; border-bottom:1px solid #2b323a; white-space:nowrap; }
+    th { color:var(--muted); font-size:12px; text-transform:uppercase; }
+    td.url { max-width:360px; overflow:hidden; text-overflow:ellipsis; }
+    .status { display:inline-flex; align-items:center; gap:7px; }
+    .dot { width:8px; height:8px; border-radius:50%; background:var(--amber); }
+    .recording .dot { background:var(--green); }
+    .disabled .dot { background:#69737d; }
+    .actions { display:flex; gap:6px; }
+    .error { margin:10px 0; padding:10px; color:#ffd9d8; background:#3a2020; border:1px solid #6e3938; border-radius:5px; }
+    .hidden { display:none !important; }
+    @media (max-width:700px) { header { padding:12px; } main { padding:10px; } .hide-mobile { display:none; } th,td { padding:9px 8px; } .actions { flex-direction:column; } }
+  </style>
+</head>
+<body>
+  <section id="login" class="login">
+    <h2>Downloader Control</h2>
+    <form id="login-form">
+      <input type="text" name="username" value="downloader" autocomplete="username" hidden>
+      <input id="token" type="password" autocomplete="current-password" placeholder="Token de acceso" required>
+      <button class="primary" type="submit">Entrar</button>
+    </form>
+    <div id="login-error" class="error hidden"></div>
+  </section>
+
+  <section id="app" class="hidden">
+    <header>
+      <h1>Downloader Control</h1>
+      <span id="summary" class="summary"></span>
+      <button id="logout">Salir</button>
+    </header>
+    <main>
+      <div class="toolbar">
+        <input id="search" type="search" placeholder="Buscar señal">
+        <button id="refresh" title="Actualizar">Actualizar</button>
+      </div>
+      <div id="error" class="error hidden"></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Señal</th><th>Estado</th><th class="hide-mobile">País</th><th class="hide-mobile">Tipo</th><th>Acciones</th></tr></thead>
+          <tbody id="streams"></tbody>
+        </table>
+      </div>
+    </main>
+  </section>
+
+  <script>
+    const state = { token: sessionStorage.getItem('downloaderToken') || '', streams: [] };
+    const $ = id => document.getElementById(id);
+
+    async function api(path, options = {}) {
+      const response = await fetch(path, { ...options, headers: { 'Authorization': `Bearer ${state.token}`, ...(options.headers || {}) } });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || `HTTP ${response.status}`);
+      return body;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+    }
+
+    function render() {
+      const query = $('search').value.trim().toLowerCase();
+      const rows = state.streams.filter(s => `${s.alias} ${s.country} ${s.url}`.toLowerCase().includes(query));
+      $('streams').innerHTML = rows.map(s => `
+        <tr>
+          <td><strong>${escapeHtml(s.alias)}</strong><br><small>${escapeHtml(s.quality)}p</small></td>
+          <td><span class="status ${escapeHtml(s.status)}"><span class="dot"></span>${escapeHtml(s.status)}</span></td>
+          <td class="hide-mobile">${escapeHtml(s.country)}</td>
+          <td class="hide-mobile">${escapeHtml(s.type)}</td>
+          <td><div class="actions">
+            <button data-action="${s.enabled ? 'disable' : 'enable'}" data-uid="${s.uid}" class="${s.enabled ? 'danger' : 'primary'}">${s.enabled ? 'Deshabilitar' : 'Habilitar'}</button>
+            <button data-action="restart" data-uid="${s.uid}" ${s.enabled ? '' : 'disabled'}>Reiniciar</button>
+          </div></td>
+        </tr>`).join('');
+      const active = state.streams.filter(s => s.status === 'recording').length;
+      $('summary').textContent = `${active} grabando / ${state.streams.length}`;
+    }
+
+    async function load() {
+      try {
+        state.streams = await api('/api/streams');
+        $('error').classList.add('hidden');
+        render();
+      } catch (error) {
+        $('error').textContent = error.message;
+        $('error').classList.remove('hidden');
+        if (error.message === 'unauthorized') logout();
+      }
+    }
+
+    async function action(uid, name) {
+      try {
+        await api(`/api/streams/${uid}/${name}`, { method:'POST' });
+        await load();
+      } catch (error) {
+        $('error').textContent = error.message;
+        $('error').classList.remove('hidden');
+      }
+    }
+
+    function logout() {
+      state.token = '';
+      sessionStorage.removeItem('downloaderToken');
+      $('app').classList.add('hidden');
+      $('login').classList.remove('hidden');
+    }
+
+    $('login-form').addEventListener('submit', async event => {
+      event.preventDefault();
+      state.token = $('token').value;
+      try {
+        await api('/api/health');
+        sessionStorage.setItem('downloaderToken', state.token);
+        $('login-error').classList.add('hidden');
+        $('login').classList.add('hidden');
+        $('app').classList.remove('hidden');
+        await load();
+      } catch (error) {
+        $('login-error').textContent = 'Token incorrecto o API no disponible';
+        $('login-error').classList.remove('hidden');
+      }
+    });
+    $('streams').addEventListener('click', event => {
+      const button = event.target.closest('button[data-action]');
+      if (button && !button.disabled) action(button.dataset.uid, button.dataset.action);
+    });
+    $('search').addEventListener('input', render);
+    $('refresh').addEventListener('click', load);
+    $('logout').addEventListener('click', logout);
+    if (state.token) { $('login').classList.add('hidden'); $('app').classList.remove('hidden'); load(); }
+    setInterval(() => { if (state.token) load(); }, 15000);
+  </script>
+</body>
+</html>

@@ -6,6 +6,7 @@ import com.github.luischavez.videodownloader.app.gui.MainFrame;
 import com.github.luischavez.videodownloader.app.manager.GuiRepaintManager;
 import com.github.luischavez.videodownloader.app.manager.MonitorManager;
 import com.github.luischavez.videodownloader.app.manager.YouTubeManager;
+import com.github.luischavez.videodownloader.app.remote.RemoteApiServer;
 import com.github.luischavez.videodownloader.app.task.RunningPids;
 import com.github.luischavez.videodownloader.configuration.ConfigurationManager;
 import com.github.luischavez.videodownloader.manager.BaseManager;
@@ -26,6 +27,8 @@ public class Downloader {
     private final AppContext context;
 
     private MainFrame mainFrame;
+
+    private RemoteApiServer remoteApiServer;
 
     public Downloader() {
         context = AppContext.instance();
@@ -57,6 +60,11 @@ public class Downloader {
 
         final List<StreamConfiguration> streamConfigurations = configurationManager.list(StreamConfiguration.class);
         streamConfigurations.stream().forEach(context::updateSchedules);
+
+        remoteApiServer = RemoteApiServer.startIfConfigured(context);
+        if (remoteApiServer != null) {
+            Runtime.getRuntime().addShutdownHook(new Thread(remoteApiServer::stop, "RemoteApiShutdown"));
+        }
 
         SwingUtilities.invokeLater(() -> {
             try {

@@ -1,0 +1,5 @@
+# Copy this file next to Downloader.jar as remote-api.properties.
+enabled=false
+bind=127.0.0.1
+port=8787
+token=replace-with-at-least-16-random-characters

@@ -278,6 +278,9 @@ Esta configuracion no resuelve todavia la seleccion de multiples vivos simultane
 - `feature/ytdlp-url-ffmpeg`: rama activa de trabajo actual. Contiene los cambios
   para usar `yt-dlp` como resolvedor y grabar con `ffmpeg`, manejo de calidades y
   fixes recientes de soportes.
+- `feature/remote-control-api`: rama derivada para la API HTTP, el panel movil y
+  futuras integraciones como Telegram. No mezclar este trabajo con fixes de
+  supports hasta estabilizar la API.
 
 Remote:
 
@@ -285,6 +288,8 @@ Remote:
 
 ## Ultimos Cambios Relevantes
 
+- `2026-09-11 Remote control API`: monitoreo, control enable/disable/restart,
+  logs, estado del sistema y panel web autenticado.
 - `2026-07-29 Fox Business 720p con audio integrado`: elimina la mezcla entre
   el preview video-only de 240p y el audio temporal de LiveNewsNow. Ahora
   `streamfare.com/fox-business-live-stream` graba directamente el HLS combinado
@@ -306,6 +311,18 @@ Remote:
 - `nuevabranch\Downloader.jar`: launcher portable; no reemplazar sin probar.
 - `nuevabranch\supports\*.jar`: plugins cargados dinamicamente; nombre de JAR y
   nombre de clase deben coincidir.
+
+## API Remota
+
+La rama `feature/remote-control-api` agrega una API HTTP integrada y un panel
+web movil. La configuracion se lee desde `remote-api.properties`, junto a
+`Downloader.jar`; el archivo real contiene un token y no debe commitearse.
+
+Endpoints iniciales: `/api/health`, `/api/streams`, `/api/tasks`, `/api/logs`,
+`/api/system` y acciones `enable`, `disable`, `restart`, `refresh` por UID. Las
+acciones pasan por `ConfigurationManager`, `TaskManager` y `AppContext`.
+
+La documentacion operativa esta en `REMOTE_API.md`.
 
 ## Reglas Practicas Para Futuras Sesiones
 

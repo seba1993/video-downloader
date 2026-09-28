@@ -6,5 +6,6 @@ pom.xml.next
 release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
+remote-api.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
