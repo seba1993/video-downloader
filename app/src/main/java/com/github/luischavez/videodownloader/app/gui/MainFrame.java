@@ -342,6 +342,12 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
             streamConfiguration.setType(streamConfigurationDialog.typeComboBox.getSelectedItem().toString());
             streamConfiguration.setCountry(streamConfigurationDialog.countryTextField.getText());
             streamConfiguration.setPreferredQuality(Integer.valueOf(streamConfigurationDialog.qualitySpinner.getValue().toString()));
+            streamConfiguration.setTimeZoneId(streamConfigurationDialog.timeZoneComboBox.getSelectedItem().toString());
+            streamConfiguration.setDailySplit(streamConfigurationDialog.dailySplitCheckBox.isSelected());
+            streamConfiguration.setDailySplitAt(
+                    LocalTime.of(
+                            Integer.valueOf(streamConfigurationDialog.dailySplitHourSpinner.getValue().toString()),
+                            Integer.valueOf(streamConfigurationDialog.dailySplitMinuteSpinner.getValue().toString())));
             streamConfiguration.setScheduleWhenAvailable(streamConfigurationDialog.scheduleCheckBox.isSelected());
             streamConfiguration.setSchedules(new ArrayList<>(streamConfigurationDialog.scheduleTableModel.getSchedules()));
             streamConfiguration.setConcatenate(streamConfigurationDialog.concatenateCheckBox.isSelected());

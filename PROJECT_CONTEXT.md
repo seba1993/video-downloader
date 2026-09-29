@@ -288,6 +288,10 @@ Remote:
 
 ## Ultimos Cambios Relevantes
 
+- `2026-09-28 Rotacion diaria por zona horaria`: cada stream puede usar una
+  zona IANA propia para carpetas y nombres, y opcionalmente cortar/reiniciar la
+  grabacion a una hora diaria configurable. Las configuraciones anteriores
+  conservan la zona del sistema y no activan el corte automaticamente.
 - `2026-09-11 Remote control API`: monitoreo, control enable/disable/restart,
   logs, estado del sistema y panel web autenticado.
 - `2026-07-29 Fox Business 720p con audio integrado`: elimina la mezcla entre
@@ -311,6 +315,12 @@ Remote:
 - `nuevabranch\Downloader.jar`: launcher portable; no reemplazar sin probar.
 - `nuevabranch\supports\*.jar`: plugins cargados dinamicamente; nombre de JAR y
   nombre de clase deben coincidir.
+- La rotacion diaria usa un temporizador compartido y elimina/recrea la tarea
+  activa en el instante configurado. Usar zonas IANA (`America/New_York`,
+  `Asia/Jerusalem`) en lugar de offsets fijos para respetar horario de verano.
+- El runtime Java 9 portable tiene `runtime\lib\tzdb.dat` actualizado desde el
+  runtime Temurin 21 instalado en la PC. Esto es necesario para reglas actuales
+  como Mexico y Brasil; el archivo previo esta respaldado junto al runtime.
 
 ## API Remota
 

@@ -6,6 +6,7 @@ import com.github.luischavez.videodownloader.configuration.validation.*;
 import com.github.luischavez.videodownloader.schedule.Schedule;
 
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,12 @@ public class StreamConfiguration extends BaseConfiguration {
     private String country;
 
     private int preferredQuality;
+
+    private String timeZoneId;
+
+    private boolean dailySplit;
+
+    private LocalTime dailySplitAt;
 
     @Validable(value = NotEmptyValidation.class, name = "File Name")
     private String baseFileName;
@@ -117,6 +124,32 @@ public class StreamConfiguration extends BaseConfiguration {
 
     public void setPreferredQuality(int preferredQuality) {
         this.preferredQuality = preferredQuality;
+    }
+
+    public String getTimeZoneId() {
+        return timeZoneId == null || timeZoneId.trim().isEmpty()
+                ? ZoneId.systemDefault().getId()
+                : timeZoneId;
+    }
+
+    public void setTimeZoneId(String timeZoneId) {
+        this.timeZoneId = timeZoneId;
+    }
+
+    public boolean isDailySplit() {
+        return dailySplit;
+    }
+
+    public void setDailySplit(boolean dailySplit) {
+        this.dailySplit = dailySplit;
+    }
+
+    public LocalTime getDailySplitAt() {
+        return dailySplitAt == null ? LocalTime.MIDNIGHT : dailySplitAt;
+    }
+
+    public void setDailySplitAt(LocalTime dailySplitAt) {
+        this.dailySplitAt = dailySplitAt;
     }
 
     public String getBaseFileName() {
@@ -206,6 +239,9 @@ public class StreamConfiguration extends BaseConfiguration {
         setUrl(streamConfiguration.getUrl());
         setType(streamConfiguration.getType());
         setPreferredQuality(streamConfiguration.getPreferredQuality());
+        setTimeZoneId(streamConfiguration.getTimeZoneId());
+        setDailySplit(streamConfiguration.isDailySplit());
+        setDailySplitAt(streamConfiguration.getDailySplitAt());
         setBaseFileName(streamConfiguration.getBaseFileName());
         setDestinationPath(streamConfiguration.getDestinationPath());
         setScheduleWhenAvailable(streamConfiguration.isScheduleWhenAvailable());

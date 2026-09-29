@@ -105,6 +105,22 @@ public abstract class FFMPEGSupport extends BaseSupport {
                 options, headers, url, videoCopyCodec, audioCopyCodec, outputFile);
     }
 
+    protected String addDurationLimit(String command, String outputFile, long durationSeconds) {
+        if (durationSeconds <= 0L) {
+            return command;
+        }
+
+        String quotedOutput = String.format("\"%s\"", outputFile);
+        int outputIndex = command.lastIndexOf(quotedOutput);
+        if (outputIndex < 0) {
+            return command;
+        }
+
+        return command.substring(0, outputIndex)
+                + String.format("-t %d ", durationSeconds)
+                + command.substring(outputIndex);
+    }
+
     protected abstract String resolveContent(String location) throws MediaOfflineException;
 
     protected boolean isValidLink(String link) {
@@ -166,9 +182,18 @@ public abstract class FFMPEGSupport extends BaseSupport {
 
         final String outputFile = getOutputFile(media, baseFileName, destinationPath, audioOnly);
 
-        final String command = audioOnly
+        String command = audioOnly
                 ? generateAudioCommand(location, media, outputFile)
                 : generateCommand(location, media, outputFile);
+
+        Object durationValue = params.get("max_duration_seconds");
+        if (durationValue != null) {
+            try {
+                command = addDurationLimit(command, outputFile, Long.parseLong(durationValue.toString()));
+            } catch (NumberFormatException ignored) {
+                // Invalid optional duration keeps the original command.
+            }
+        }
 
         return new FFMPEGTask(getWrappedContext(), media, command, outputFile, destinationPath);
     }

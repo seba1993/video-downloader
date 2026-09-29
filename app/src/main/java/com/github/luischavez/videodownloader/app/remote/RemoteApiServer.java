@@ -174,6 +174,9 @@ public final class RemoteApiServer {
         response.put("enabled", configuration.isEnabled());
         response.put("type", configuration.getType());
         response.put("quality", configuration.getPreferredQuality());
+        response.put("timeZone", configuration.getTimeZoneId());
+        response.put("dailySplit", configuration.isDailySplit());
+        response.put("dailySplitAt", configuration.getDailySplitAt().toString());
         response.put("scheduleWhenAvailable", configuration.isScheduleWhenAvailable());
         response.put("status", taskStatus(configuration, task));
         response.put("pid", task != null && task.isRunning() ? task.pid() : null);

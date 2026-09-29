@@ -49,6 +49,10 @@ GET /api/system
 
 `limit` is restricted to a maximum of 500 log lines.
 
+Stream responses include `timeZone`, `dailySplit` and `dailySplitAt`. These
+values describe the zone used for file/folder dates and the optional daily
+recording rotation configured in the Swing interface.
+
 Example:
 
 ```powershell

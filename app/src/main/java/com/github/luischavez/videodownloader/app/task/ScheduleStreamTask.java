@@ -9,10 +9,16 @@ import com.github.luischavez.videodownloader.task.Task;
 import com.github.luischavez.videodownloader.task.TaskManager;
 
 import java.io.File;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class ScheduleStreamTask extends KeepRunningScheduleTask {
 
@@ -22,16 +28,24 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
     private static final long FIRST_RETRY_DELAY_MS = 30_000L;
     private static final long SECOND_RETRY_DELAY_MS = 60_000L;
     private static final long MAX_RETRY_DELAY_MS = 120_000L;
+    private static final ScheduledExecutorService DAILY_ROTATION_EXECUTOR = Executors.newScheduledThreadPool(4, runnable -> {
+        Thread thread = new Thread(runnable, "DailyStreamRotation");
+        thread.setDaemon(true);
+        return thread;
+    });
 
     private final long tag;
 
-    private StreamConfiguration streamConfiguration;
-    private Task task;
+    private volatile StreamConfiguration streamConfiguration;
+    private volatile Task task;
     private Task trackedTask;
     private boolean trackedTaskRunning;
     private long trackedTaskStartTime;
     private int consecutiveFastFailures;
     private long nextAllowedRetryTime;
+    private ScheduledFuture<?> dailyRotationFuture;
+    private Task dailyRotationTask;
+    private String dailyRotationSignature;
 
     public ScheduleStreamTask(Context context, long tag) {
         super(context);
@@ -39,6 +53,7 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
         this.tag = tag;
 
         refresh();
+        scheduleDailyRotationIfNeeded();
     }
 
     public void refresh() {
@@ -79,6 +94,98 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
     private void resetRetryState() {
         consecutiveFastFailures = 0;
         nextAllowedRetryTime = 0L;
+    }
+
+    private String buildDailyRotationSignature() {
+        if (streamConfiguration == null) {
+            return "";
+        }
+
+        return StreamTime.zone(streamConfiguration).getId()
+                + "|" + streamConfiguration.getDailySplitAt();
+    }
+
+    private synchronized void cancelDailyRotation() {
+        if (dailyRotationFuture != null) {
+            dailyRotationFuture.cancel(false);
+        }
+
+        dailyRotationFuture = null;
+        dailyRotationTask = null;
+        dailyRotationSignature = null;
+    }
+
+    private synchronized void scheduleDailyRotationIfNeeded() {
+        if (streamConfiguration == null || !streamConfiguration.isDailySplit()
+                || task == null || !task.isRunning()) {
+            cancelDailyRotation();
+            return;
+        }
+
+        String signature = buildDailyRotationSignature();
+        if (dailyRotationFuture != null && !dailyRotationFuture.isDone()
+                && dailyRotationTask == task
+                && signature.equals(dailyRotationSignature)) {
+            return;
+        }
+
+        cancelDailyRotation();
+
+        Instant now = Instant.now();
+        ZonedDateTime nextSplit = StreamTime.nextDailySplit(streamConfiguration, now);
+        long delay = StreamTime.millisUntilNextDailySplit(streamConfiguration, now);
+        Task expectedTask = task;
+
+        dailyRotationTask = expectedTask;
+        dailyRotationSignature = signature;
+        dailyRotationFuture = DAILY_ROTATION_EXECUTOR.schedule(
+                () -> rotateAtDailyBoundary(expectedTask, signature),
+                delay,
+                TimeUnit.MILLISECONDS);
+
+        debug(ScheduleStreamTask.class, String.format(
+                "daily rotation scheduled tag=%d zone=%s split_at=%s next=%s",
+                tag, StreamTime.zone(streamConfiguration).getId(),
+                streamConfiguration.getDailySplitAt(), nextSplit));
+    }
+
+    private synchronized void rotateAtDailyBoundary(Task expectedTask, String expectedSignature) {
+        dailyRotationFuture = null;
+        dailyRotationTask = null;
+        dailyRotationSignature = null;
+        refresh();
+
+        if (streamConfiguration == null || !streamConfiguration.isEnabled()
+                || !streamConfiguration.isDailySplit()
+                || !expectedSignature.equals(buildDailyRotationSignature())) {
+            scheduleDailyRotationIfNeeded();
+            return;
+        }
+
+        if (task != null && task != expectedTask) {
+            scheduleDailyRotationIfNeeded();
+            return;
+        }
+
+        debug(ScheduleStreamTask.class, String.format(
+                "daily rotation started tag=%d alias=%s zone=%s",
+                tag, streamConfiguration.getAlias(), StreamTime.zone(streamConfiguration).getId()));
+
+        try {
+            if (task == expectedTask) {
+                getSystem().getManager(TaskManager.class).remove(tag);
+            }
+            task = null;
+            trackedTask = null;
+            trackedTaskRunning = false;
+            trackedTaskStartTime = 0L;
+            resetRetryState();
+            generateTask();
+        } catch (Exception ex) {
+            error(ScheduleStreamTask.class,
+                    String.format("daily rotation failed tag=%d alias=%s", tag, streamConfiguration.getAlias()),
+                    ex);
+        }
     }
 
     private void finalizeTrackedTask(long now) {
@@ -129,7 +236,7 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
         }
     }
 
-    private void generateTask() throws Exception {
+    private synchronized void generateTask() throws Exception {
         refresh();
         long now = System.currentTimeMillis();
 
@@ -137,6 +244,7 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
 
         if (task != null) {
             if (task.isFresh() || task.isRunning()) {
+                scheduleDailyRotationIfNeeded();
                 return;
             }
         }
@@ -149,7 +257,7 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
         List<Media> medias = getSystem().getManager(SupportManager.class).media(streamConfiguration.getUrl());
 
         if (!medias.isEmpty()) {
-            final LocalDateTime currentTime = LocalDateTime.now();
+            final ZonedDateTime currentTime = StreamTime.now(streamConfiguration);
 
             String destinationPath = streamConfiguration.getDestinationPath();
             String alias = streamConfiguration.getAlias();
@@ -172,15 +280,25 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
 
             String baseFileName = streamConfiguration.getBaseFileName() + "_" + currentTime.format(FILE_NAME_FORMATTER);
 
-            task = support.generateTask(streamConfiguration.getUrl(), selectedMedia,
-                    Map.of("base_file_name", baseFileName,
-                            "destination_path", destinationPath,
-                            "output_type", streamConfiguration.getType()));
+            Map<String, Object> taskParameters = new HashMap<>();
+            taskParameters.put("base_file_name", baseFileName);
+            taskParameters.put("destination_path", destinationPath);
+            taskParameters.put("output_type", streamConfiguration.getType());
+
+            if (streamConfiguration.isDailySplit()) {
+                long millisUntilSplit = StreamTime.millisUntilNextDailySplit(
+                        streamConfiguration, Instant.now());
+                long secondsUntilSplit = Math.max(1L, (millisUntilSplit + 999L) / 1_000L);
+                taskParameters.put("max_duration_seconds", secondsUntilSplit);
+            }
+
+            task = support.generateTask(streamConfiguration.getUrl(), selectedMedia, taskParameters);
 
             getSystem().getManager(TaskManager.class).add(tag, task);
             trackedTask = task;
             trackedTaskRunning = task.isRunning();
             trackedTaskStartTime = trackedTaskRunning ? System.currentTimeMillis() : 0L;
+            scheduleDailyRotationIfNeeded();
         }
     }
 
@@ -191,7 +309,10 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
 
     @Override
     protected void doDisable() throws Exception {
-        task.kill();
+        cancelDailyRotation();
+        if (task != null) {
+            task.kill();
+        }
     }
 
     private Media selectPreferredMedia(List<Media> medias) {

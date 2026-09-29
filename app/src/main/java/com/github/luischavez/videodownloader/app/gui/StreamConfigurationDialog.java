@@ -6,7 +6,9 @@ package com.github.luischavez.videodownloader.app.gui;
 
 import java.awt.*;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
 import javax.swing.*;
 import javax.swing.table.*;
 
@@ -45,6 +47,13 @@ public class StreamConfigurationDialog extends JDialog {
         scheduleTableModel = new ScheduleTableModel(new ArrayList<>());
         scheduleTable.setModel(scheduleTableModel);
 
+        ArrayList<String> timeZones = new ArrayList<>(ZoneId.getAvailableZoneIds());
+        Collections.sort(timeZones);
+        timeZoneComboBox.setModel(new DefaultComboBoxModel<>(timeZones.toArray(new String[0])));
+        timeZoneComboBox.setSelectedItem(ZoneId.systemDefault().getId());
+        dailySplitCheckBox.addActionListener(actionEvent -> updateDailySplitControls());
+        updateDailySplitControls();
+
         addScheduleButton.addActionListener((actionEvent) -> {
             final Schedule.Day day = Schedule.Day.valueOf(dayComboBox.getSelectedItem().toString());
             final LocalTime startAt = LocalTime.of(Integer.valueOf(hourSpinner.getValue().toString()), Integer.valueOf(minuteSpinner.getValue().toString()));
@@ -78,6 +87,12 @@ public class StreamConfigurationDialog extends JDialog {
         });
     }
 
+    private void updateDailySplitControls() {
+        boolean enabled = dailySplitCheckBox.isSelected();
+        dailySplitHourSpinner.setEnabled(enabled);
+        dailySplitMinuteSpinner.setEnabled(enabled);
+    }
+
     public void open(String... alias) {
         if (isVisible()) return;
 
@@ -100,6 +115,11 @@ public class StreamConfigurationDialog extends JDialog {
         urlTextField.setText("");
         fileNameTextField.setText("");
         destinationTextField.setText("");
+        timeZoneComboBox.setSelectedItem(ZoneId.systemDefault().getId());
+        dailySplitCheckBox.setSelected(false);
+        dailySplitHourSpinner.setValue(0);
+        dailySplitMinuteSpinner.setValue(0);
+        updateDailySplitControls();
         scheduleTableModel.clear();
 
         if (!isMultiple && alias != null) {
@@ -116,6 +136,11 @@ public class StreamConfigurationDialog extends JDialog {
             countryTextField.setText(streamConfiguration.getCountry());
             urlTextField.setText(streamConfiguration.getUrl());
             qualitySpinner.setValue(streamConfiguration.getPreferredQuality());
+            timeZoneComboBox.setSelectedItem(streamConfiguration.getTimeZoneId());
+            dailySplitCheckBox.setSelected(streamConfiguration.isDailySplit());
+            dailySplitHourSpinner.setValue(streamConfiguration.getDailySplitAt().getHour());
+            dailySplitMinuteSpinner.setValue(streamConfiguration.getDailySplitAt().getMinute());
+            updateDailySplitControls();
             fileNameTextField.setText(streamConfiguration.getBaseFileName());
             destinationTextField.setText(streamConfiguration.getDestinationPath());
             scheduleCheckBox.setSelected(streamConfiguration.isScheduleWhenAvailable());
@@ -176,6 +201,13 @@ public class StreamConfigurationDialog extends JDialog {
         destinationLabel = new JLabel();
         destinationTextField = new JTextField();
         destinationButton = new JButton();
+        timeZoneLabel = new JLabel();
+        timeZoneComboBox = new JComboBox<>();
+        dailySplitCheckBox = new JCheckBox();
+        dailySplitAtLabel = new JLabel();
+        dailySplitHourSpinner = new JSpinner();
+        dailySplitSeparatorLabel = new JLabel();
+        dailySplitMinuteSpinner = new JSpinner();
         scheduleCheckBox = new JCheckBox();
         panel1 = new JPanel();
         vSpacer3 = new JPanel(null);
@@ -216,15 +248,15 @@ public class StreamConfigurationDialog extends JDialog {
         Container contentPane = getContentPane();
         contentPane.setLayout(new FormLayout(
             "default, $lcgap, left:default, $lcgap, default, $lcgap, center:[4dlu,min], $lcgap, default, $lcgap, default:grow, 2*($lcgap, default)",
-            "10*(default, $lgap), pref, 7*($lgap, default)"));
+            "12*(default, $lgap), pref, 7*($lgap, default)"));
         contentPane.add(vSpacer1, CC.xywh(3, 1, 11, 1));
 
         //---- enableCheckBox ----
         enableCheckBox.setText("Enable");
         enableCheckBox.setSelected(true);
         contentPane.add(enableCheckBox, CC.xywh(3, 3, 9, 1));
-        contentPane.add(hSpacer1, CC.xywh(1, 2, 1, 33));
-        contentPane.add(hSpacer2, CC.xywh(15, 2, 1, 33));
+        contentPane.add(hSpacer1, CC.xywh(1, 2, 1, 37));
+        contentPane.add(hSpacer2, CC.xywh(15, 2, 1, 37));
 
         //---- saveButton ----
         saveButton.setText("Save");
@@ -278,9 +310,34 @@ public class StreamConfigurationDialog extends JDialog {
         destinationButton.setText("Browse");
         contentPane.add(destinationButton, CC.xy(13, 17));
 
+        //---- timeZoneLabel ----
+        timeZoneLabel.setText("Time Zone");
+        contentPane.add(timeZoneLabel, CC.xy(3, 19));
+        contentPane.add(timeZoneComboBox, CC.xywh(5, 19, 9, 1));
+
+        //---- dailySplitCheckBox ----
+        dailySplitCheckBox.setText("Split Daily");
+        contentPane.add(dailySplitCheckBox, CC.xywh(3, 21, 3, 1));
+
+        //---- dailySplitAtLabel ----
+        dailySplitAtLabel.setText("Cut At");
+        contentPane.add(dailySplitAtLabel, CC.xy(7, 21));
+
+        //---- dailySplitHourSpinner ----
+        dailySplitHourSpinner.setModel(new SpinnerNumberModel(0, 0, 23, 1));
+        contentPane.add(dailySplitHourSpinner, CC.xy(9, 21));
+
+        //---- dailySplitSeparatorLabel ----
+        dailySplitSeparatorLabel.setText(":");
+        contentPane.add(dailySplitSeparatorLabel, CC.xy(11, 21, CC.CENTER, CC.DEFAULT));
+
+        //---- dailySplitMinuteSpinner ----
+        dailySplitMinuteSpinner.setModel(new SpinnerNumberModel(0, 0, 59, 1));
+        contentPane.add(dailySplitMinuteSpinner, CC.xy(13, 21));
+
         //---- scheduleCheckBox ----
         scheduleCheckBox.setText("Schedule When Available");
-        contentPane.add(scheduleCheckBox, CC.xywh(3, 19, 9, 1));
+        contentPane.add(scheduleCheckBox, CC.xywh(3, 23, 9, 1));
 
         //======== panel1 ========
         {
@@ -371,47 +428,47 @@ public class StreamConfigurationDialog extends JDialog {
             panel1.add(scrollPane1, CC.xywh(3, 5, 27, 1));
             panel1.add(vSpacer4, CC.xywh(3, 7, 27, 1));
         }
-        contentPane.add(panel1, CC.xywh(3, 21, 11, 1));
+        contentPane.add(panel1, CC.xywh(3, 25, 11, 1));
 
         //---- concatenateCheckBox ----
         concatenateCheckBox.setText("Concatenate");
-        contentPane.add(concatenateCheckBox, CC.xywh(3, 23, 9, 1));
+        contentPane.add(concatenateCheckBox, CC.xywh(3, 27, 9, 1));
 
         //---- label15 ----
         label15.setText("Start At");
-        contentPane.add(label15, CC.xy(3, 25));
+        contentPane.add(label15, CC.xy(3, 29));
 
         //---- concatenateHourSpinner ----
         concatenateHourSpinner.setModel(new SpinnerNumberModel(0, 0, 23, 1));
-        contentPane.add(concatenateHourSpinner, CC.xy(5, 25));
+        contentPane.add(concatenateHourSpinner, CC.xy(5, 29));
 
         //---- label16 ----
         label16.setText(":");
-        contentPane.add(label16, CC.xy(7, 25, CC.CENTER, CC.DEFAULT));
+        contentPane.add(label16, CC.xy(7, 29, CC.CENTER, CC.DEFAULT));
 
         //---- concatenateMinuteSpinner ----
         concatenateMinuteSpinner.setModel(new SpinnerNumberModel(0, 0, 59, 1));
-        contentPane.add(concatenateMinuteSpinner, CC.xy(9, 25));
+        contentPane.add(concatenateMinuteSpinner, CC.xy(9, 29));
 
         //---- label12 ----
         label12.setText("Destination");
-        contentPane.add(label12, CC.xy(3, 27));
+        contentPane.add(label12, CC.xy(3, 31));
 
         //---- concatenateTextField ----
         concatenateTextField.setEditable(false);
-        contentPane.add(concatenateTextField, CC.xywh(5, 27, 7, 1));
+        contentPane.add(concatenateTextField, CC.xywh(5, 31, 7, 1));
 
         //---- concatenateDestinationButton ----
         concatenateDestinationButton.setText("Browse");
-        contentPane.add(concatenateDestinationButton, CC.xy(13, 27));
+        contentPane.add(concatenateDestinationButton, CC.xy(13, 31));
 
         //---- subCheckBox ----
         subCheckBox.setText("Sub");
-        contentPane.add(subCheckBox, CC.xywh(3, 29, 9, 1));
+        contentPane.add(subCheckBox, CC.xywh(3, 33, 9, 1));
 
         //---- label14 ----
         label14.setText("Language");
-        contentPane.add(label14, CC.xy(3, 31));
+        contentPane.add(label14, CC.xy(3, 35));
 
         //---- languageComboBox ----
         languageComboBox.setModel(new DefaultComboBoxModel<>(new String[] {
@@ -420,7 +477,7 @@ public class StreamConfigurationDialog extends JDialog {
             "French",
             "Portuguese"
         }));
-        contentPane.add(languageComboBox, CC.xywh(5, 31, 7, 1, CC.LEFT, CC.DEFAULT));
+        contentPane.add(languageComboBox, CC.xywh(5, 35, 7, 1, CC.LEFT, CC.DEFAULT));
 
         //======== scrollPane2 ========
         {
@@ -441,8 +498,8 @@ public class StreamConfigurationDialog extends JDialog {
             });
             scrollPane2.setViewportView(subList);
         }
-        contentPane.add(scrollPane2, CC.xywh(3, 33, 11, 1));
-        contentPane.add(vSpacer2, CC.xywh(3, 35, 11, 1));
+        contentPane.add(scrollPane2, CC.xywh(3, 37, 11, 1));
+        contentPane.add(vSpacer2, CC.xywh(3, 39, 11, 1));
         pack();
         setLocationRelativeTo(getOwner());
 
@@ -489,6 +546,13 @@ public class StreamConfigurationDialog extends JDialog {
     private JLabel destinationLabel;
     public JTextField destinationTextField;
     public JButton destinationButton;
+    private JLabel timeZoneLabel;
+    public JComboBox<String> timeZoneComboBox;
+    public JCheckBox dailySplitCheckBox;
+    private JLabel dailySplitAtLabel;
+    public JSpinner dailySplitHourSpinner;
+    private JLabel dailySplitSeparatorLabel;
+    public JSpinner dailySplitMinuteSpinner;
     public JCheckBox scheduleCheckBox;
     private JPanel panel1;
     private JPanel vSpacer3;
