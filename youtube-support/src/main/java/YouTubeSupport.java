@@ -163,8 +163,9 @@ public class YouTubeSupport extends FFMPEGSupport {
 
             String[] arguments = new String[]{
                     "--flat-playlist",
+                    "--match-filter", "live_status = is_live",
                     "--print", "id",
-                    "--playlist-end", "1",
+                    "--playlist-end", "10",
                     location
             };
 

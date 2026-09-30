@@ -269,8 +269,10 @@ La implementacion activa prefiere `nuevabranch\youtube\node.exe` y agrega
 `nuevabranch\youtube\yt-dlp.exe` como Node 24 y `YouTubeSupport.jar` deben
 mantenerse juntos al copiar o reconstruir el portable.
 
-Esta configuracion no resuelve todavia la seleccion de multiples vivos simultaneos:
-`/streams` sigue limitado al primer resultado.
+Para URLs de canal terminadas en `/streams`, el soporte inspecciona hasta diez
+entradas y selecciona la primera cuyo `live_status` sea `is_live`. Esto evita
+que una transmision programada desplace al vivo actual. Si hay varios vivos
+simultaneos, por ahora se descarga solamente el primero que devuelve YouTube.
 
 ## Branches Importantes
 
