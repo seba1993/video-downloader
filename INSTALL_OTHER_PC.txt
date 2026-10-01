@@ -1,0 +1,125 @@
+VIDEO DOWNLOADER - INSTALACION O ACTUALIZACION EN OTRA PC
+=========================================================
+
+Repositorio:
+https://github.com/seba1993/video-downloader.git
+
+Rama que contiene la version actual:
+feature/remote-control-api
+
+
+1. REQUISITOS
+-------------
+
+- Windows de 64 bits.
+- Git.
+- Java. Se recomienda reutilizar la carpeta runtime de la instalacion anterior.
+  Si no existe, se puede usar Java 9 o superior instalado en Windows.
+- FFmpeg y ffprobe disponibles de una de estas formas:
+  a) dentro de la carpeta tools de la aplicacion; o
+  b) instalados y disponibles en PATH.
+- Node.js disponible de una de estas formas:
+  a) como youtube\node.exe; o
+  b) instalado y disponible en PATH.
+- Firefox instalado, con una cuenta de YouTube iniciada y cookies validas.
+- Conexion a Internet para yt-dlp y el solver EJS de YouTube.
+
+El repositorio ya incluye:
+
+- Downloader.jar
+- run-downloader.bat
+- los plugins de supports
+- yt-dlp.exe y su configuracion
+- el codigo fuente y la documentacion
+
+El repositorio no incluye el runtime completo de Java, FFmpeg, ffprobe ni Node,
+porque son binarios grandes. Se pueden reutilizar desde la version anterior.
+
+
+2. ACTUALIZAR UNA VERSION ANTERIOR (RECOMENDADO)
+------------------------------------------------
+
+1. Cerrar completamente el downloader.
+2. Confirmar en el Administrador de tareas que no quede java.exe o javaw.exe
+   ejecutando Downloader.jar.
+3. Hacer una copia de seguridad de la carpeta actual.
+4. No borrar ni reemplazar estas carpetas/archivos de la PC de destino:
+
+   configurations\
+   logs\
+   output\
+   remote-api.properties
+   config.props
+
+5. Clonar la rama actual en una carpeta temporal:
+
+   git clone --branch feature/remote-control-api --single-branch https://github.com/seba1993/video-downloader.git video-downloader-update
+
+6. Copiar desde video-downloader-update hacia la carpeta donde funciona la
+   version anterior:
+
+   Downloader.jar
+   run-downloader.bat
+   supports\*.jar
+   youtube\yt-dlp.exe
+   youtube\yt-dlp.conf
+
+7. Conservar de la version anterior, si existen:
+
+   runtime\
+   tools\
+   youtube\node.exe
+   configurations\
+   remote-api.properties
+
+8. Iniciar siempre con run-downloader.bat.
+
+
+3. INSTALACION NUEVA USANDO DEPENDENCIAS DEL SISTEMA
+----------------------------------------------------
+
+1. Clonar la rama:
+
+   git clone --branch feature/remote-control-api --single-branch https://github.com/seba1993/video-downloader.git
+
+2. Verificar desde CMD:
+
+   java -version
+   ffmpeg -version
+   ffprobe -version
+   node --version
+
+3. Abrir Firefox, iniciar sesion en YouTube y reproducir un video o vivo.
+4. Configurar las rutas de destino de las senales para esa PC.
+5. Ejecutar run-downloader.bat.
+
+
+4. PRUEBA MANUAL DE YOUTUBE
+---------------------------
+
+Desde la carpeta del downloader ejecutar:
+
+youtube\yt-dlp.exe --ignore-config --cookies-from-browser firefox --js-runtimes node --remote-components ejs:github -F "https://www.youtube.com/watch?v=ArKbAx1K-2U"
+
+Si aparece "Sign in to confirm you're not a bot" o se informa que las cookies
+ya no son validas, abrir Firefox, cerrar e iniciar nuevamente la sesion de
+YouTube, reproducir un video y repetir la prueba.
+
+
+5. DATOS QUE NO DEBEN SUBIRSE NI COPIARSE ENTRE PCS
+---------------------------------------------------
+
+- Cookies exportadas de navegadores.
+- remote-api.properties si contiene un token real.
+- Logs y archivos de grabacion.
+- Configuraciones con rutas de discos que no existen en la PC de destino.
+
+
+6. COMPROBACION FINAL
+---------------------
+
+- La ventana del downloader abre mediante run-downloader.bat.
+- Los plugins aparecen cargados.
+- Una URL de YouTube devuelve calidades.
+- FFmpeg crea un archivo en la ruta configurada.
+- La zona horaria y el corte diario de cada senal son correctos.
