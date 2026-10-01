@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 public class YouTubeSupport extends FFMPEGSupport {
 
-    private static final long YT_DLP_TIMEOUT_SECONDS = 60L;
+    private static final long YT_DLP_TIMEOUT_SECONDS = 10L;
 
     private static final Pattern YOUTUBE_VIDEO_ID_PATTERN = Pattern.compile("\\\"videoId\\\":\\\"(?<id>.[^\\\"]+)");
     private static final Pattern YOUTUBE_EMBED_PATTERN = Pattern.compile("https?://www\\.youtube\\.com/embed/(?<id>[A-Za-z0-9_-]{6,})", Pattern.CASE_INSENSITIVE);

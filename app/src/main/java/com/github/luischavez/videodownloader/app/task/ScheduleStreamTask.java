@@ -24,10 +24,6 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
 
     private static final DateTimeFormatter DIRECTORY_FORMATTER = DateTimeFormatter.ofPattern("yyyy'_'MM'_'dd");
     private static final DateTimeFormatter FILE_NAME_FORMATTER = DateTimeFormatter.ofPattern("yyyy'_'MM'_'dd_HH_mm_ss");
-    private static final long FAST_FAILURE_THRESHOLD_MS = 15_000L;
-    private static final long FIRST_RETRY_DELAY_MS = 30_000L;
-    private static final long SECOND_RETRY_DELAY_MS = 60_000L;
-    private static final long MAX_RETRY_DELAY_MS = 120_000L;
     private static final ScheduledExecutorService DAILY_ROTATION_EXECUTOR = Executors.newScheduledThreadPool(4, runnable -> {
         Thread thread = new Thread(runnable, "DailyStreamRotation");
         thread.setDaemon(true);
@@ -38,11 +34,6 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
 
     private volatile StreamConfiguration streamConfiguration;
     private volatile Task task;
-    private Task trackedTask;
-    private boolean trackedTaskRunning;
-    private long trackedTaskStartTime;
-    private int consecutiveFastFailures;
-    private long nextAllowedRetryTime;
     private ScheduledFuture<?> dailyRotationFuture;
     private Task dailyRotationTask;
     private String dailyRotationSignature;
@@ -77,23 +68,6 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
                 || location.contains("cnnbrasil.com.br/ao-vivo")
                 || location.contains("nbcnews.com/watch")
                 || location.contains("cbsnews.com/");
-    }
-
-    private long resolveRetryDelay() {
-        if (consecutiveFastFailures <= 1) {
-            return FIRST_RETRY_DELAY_MS;
-        }
-
-        if (consecutiveFastFailures == 2) {
-            return SECOND_RETRY_DELAY_MS;
-        }
-
-        return MAX_RETRY_DELAY_MS;
-    }
-
-    private void resetRetryState() {
-        consecutiveFastFailures = 0;
-        nextAllowedRetryTime = 0L;
     }
 
     private String buildDailyRotationSignature() {
@@ -176,10 +150,6 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
                 getSystem().getManager(TaskManager.class).remove(tag);
             }
             task = null;
-            trackedTask = null;
-            trackedTaskRunning = false;
-            trackedTaskStartTime = 0L;
-            resetRetryState();
             generateTask();
         } catch (Exception ex) {
             error(ScheduleStreamTask.class,
@@ -188,59 +158,13 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
         }
     }
 
-    private void finalizeTrackedTask(long now) {
-        if (!isYouTubeStream() || trackedTaskStartTime <= 0L) {
-            trackedTaskStartTime = 0L;
-            return;
-        }
-
-        long duration = now - trackedTaskStartTime;
-        trackedTaskStartTime = 0L;
-
-        if (duration < FAST_FAILURE_THRESHOLD_MS) {
-            consecutiveFastFailures++;
-            nextAllowedRetryTime = now + resolveRetryDelay();
-
-            debug(ScheduleStreamTask.class, String.format(
-                    "youtube retry cooldown tag=%d failures=%d duration_ms=%d retry_at=%d",
-                    tag, consecutiveFastFailures, duration, nextAllowedRetryTime));
-        } else {
-            resetRetryState();
-        }
-    }
-
-    private void updateTrackedTaskState(long now) {
-        Task currentTask = task;
-        boolean currentTaskRunning = currentTask != null && currentTask.isRunning();
-
-        if (trackedTask != currentTask) {
-            if (trackedTask != null && trackedTaskRunning) {
-                finalizeTrackedTask(now);
-            }
-
-            trackedTask = currentTask;
-            trackedTaskRunning = currentTaskRunning;
-            trackedTaskStartTime = currentTaskRunning ? now : 0L;
-            return;
-        }
-
-        if (!trackedTaskRunning && currentTaskRunning) {
-            trackedTaskRunning = true;
-            trackedTaskStartTime = now;
-            return;
-        }
-
-        if (trackedTaskRunning && !currentTaskRunning) {
-            trackedTaskRunning = false;
-            finalizeTrackedTask(now);
-        }
-    }
-
     private synchronized void generateTask() throws Exception {
         refresh();
-        long now = System.currentTimeMillis();
 
-        updateTrackedTaskState(now);
+        if (streamConfiguration == null || !streamConfiguration.isEnabled()) {
+            cancelDailyRotation();
+            return;
+        }
 
         if (task != null) {
             if (task.isFresh() || task.isRunning()) {
@@ -249,12 +173,19 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
             }
         }
 
-        if (isYouTubeStream() && nextAllowedRetryTime > now) {
+        String location = streamConfiguration.getUrl();
+        Support support = getSystem().getManager(SupportManager.class).get(location);
+        List<Media> medias = getSystem().getManager(SupportManager.class).media(location);
+
+        // Resolution may block on a remote site. Re-read the configuration before
+        // starting FFmpeg so a disable performed in the meantime takes effect.
+        refresh();
+        if (streamConfiguration == null || !streamConfiguration.isEnabled()
+                || !location.equals(streamConfiguration.getUrl())
+                || (task != null && (task.isFresh() || task.isRunning()))) {
+            cancelDailyRotation();
             return;
         }
-
-        Support support = getSystem().getManager(SupportManager.class).get(streamConfiguration.getUrl());
-        List<Media> medias = getSystem().getManager(SupportManager.class).media(streamConfiguration.getUrl());
 
         if (!medias.isEmpty()) {
             final ZonedDateTime currentTime = StreamTime.now(streamConfiguration);
@@ -292,12 +223,18 @@ public class ScheduleStreamTask extends KeepRunningScheduleTask {
                 taskParameters.put("max_duration_seconds", secondsUntilSplit);
             }
 
-            task = support.generateTask(streamConfiguration.getUrl(), selectedMedia, taskParameters);
+            Task generatedTask = support.generateTask(location, selectedMedia, taskParameters);
 
+            refresh();
+            if (streamConfiguration == null || !streamConfiguration.isEnabled()
+                    || !location.equals(streamConfiguration.getUrl())
+                    || (task != null && (task.isFresh() || task.isRunning()))) {
+                cancelDailyRotation();
+                return;
+            }
+
+            task = generatedTask;
             getSystem().getManager(TaskManager.class).add(tag, task);
-            trackedTask = task;
-            trackedTaskRunning = task.isRunning();
-            trackedTaskStartTime = trackedTaskRunning ? System.currentTimeMillis() : 0L;
             scheduleDailyRotationIfNeeded();
         }
     }
