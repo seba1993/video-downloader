@@ -16,11 +16,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class YouTubeSupport extends FFMPEGSupport {
+
+    private static final long YT_DLP_TIMEOUT_SECONDS = 60L;
 
     private static final Pattern YOUTUBE_VIDEO_ID_PATTERN = Pattern.compile("\\\"videoId\\\":\\\"(?<id>.[^\\\"]+)");
     private static final Pattern YOUTUBE_EMBED_PATTERN = Pattern.compile("https?://www\\.youtube\\.com/embed/(?<id>[A-Za-z0-9_-]{6,})", Pattern.CASE_INSENSITIVE);
@@ -77,23 +80,41 @@ public class YouTubeSupport extends FFMPEGSupport {
         processBuilder.redirectErrorStream(true);
 
         Process process = processBuilder.start();
-        StringBuilder output = new StringBuilder();
+        StringBuffer output = new StringBuffer();
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-            String line;
+        Thread outputReader = new Thread(() -> {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
 
-            while ((line = reader.readLine()) != null) {
-                output.append(line).append('\n');
+                while ((line = reader.readLine()) != null) {
+                    output.append(line).append('\n');
+                }
+            } catch (Exception ex) {
+                output.append("ERROR: failed to read yt-dlp output: ")
+                        .append(ex.getMessage())
+                        .append('\n');
             }
-        }
+        }, "YouTubeSupport-yt-dlp-output");
+        outputReader.setDaemon(true);
+        outputReader.start();
 
-        int exitCode = process.waitFor();
+        boolean finished = process.waitFor(YT_DLP_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
-        if (process.isAlive()) {
+        if (!finished) {
+            process.descendants().forEach(ProcessHandle::destroyForcibly);
             process.destroyForcibly();
+            process.waitFor(5, TimeUnit.SECONDS);
+            output.append("ERROR: yt-dlp timed out after ")
+                    .append(YT_DLP_TIMEOUT_SECONDS)
+                    .append(" seconds\n");
         }
 
-        return new YtDlpResult(exitCode, output.toString());
+        outputReader.join(5_000L);
+        if (outputReader.isAlive()) {
+            outputReader.interrupt();
+        }
+
+        return new YtDlpResult(finished ? process.exitValue() : -1, output.toString());
     }
 
     private String extractFirstVideoId(String output) {
